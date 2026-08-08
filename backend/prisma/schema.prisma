@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  PROVIDER
+  ADMIN
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  phone        String   @default("")
+  commune      String   @default("")
+  role         Role     @default(CLIENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model ProviderApplication {
+  id          String            @id @default(cuid())
+  domain      String
+  specialties String            @default("[]")
+  fullName    String
+  phone       String
+  commune     String
+  experience  String
+  languages   String            @default("[]")
+  motivation  String
+  status      ApplicationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model Provider {
+  id           String   @id
+  name         String
+  domainSlug   String
+  role         String
+  commune      String
+  rating       Float
+  reviews      Int
+  experience   Int
+  priceFrom    Int
+  languages    String
+  badges       String
+  bio          String
+  initials     String
+  topRated     Boolean  @default(false)
+  availability String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([domainSlug])
+}

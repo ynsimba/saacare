@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#101a30" />
+
+    <!-- Icônes -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- SEO par défaut (surchargé par page via react-helmet-async) -->
+    <title>SaaCare — Professionnels de confiance à domicile en RDC</title>
+    <meta
+      name="description"
+      content="SaaCare met en relation les familles de Kinshasa avec des nounous, chauffeurs, répétiteurs et artisans vérifiés, formés et notés. Réservez et payez en toute sécurité."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="SaaCare" />
+    <link rel="canonical" href="https://www.saacare.cd/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SaaCare" />
+    <meta property="og:title" content="SaaCare — Professionnels de confiance à domicile en RDC" />
+    <meta
+      property="og:description"
+      content="Garde d'enfants, chauffeur, soutien scolaire, services à domicile : trouvez un prestataire vérifié et payez en toute sécurité."
+    />
+    <meta property="og:image" content="https://www.saacare.cd/og-cover.jpg" />
+    <meta property="og:locale" content="fr_CD" />
+    <meta property="og:url" content="https://www.saacare.cd/" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SaaCare — Professionnels de confiance à domicile en RDC" />
+    <meta
+      name="twitter:description"
+      content="Garde d'enfants, chauffeur, soutien scolaire, services à domicile : trouvez un prestataire vérifié et payez en toute sécurité."
+    />
+    <meta name="twitter:image" content="https://www.saacare.cd/og-cover.jpg" />
+
+    <!-- Les polices sont auto-hébergées via @fontsource (voir src/main.jsx) : aucune requête externe nécessaire. -->
+
+    <!-- Données structurées : organisation -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SaaCare",
+        "url": "https://www.saacare.cd/",
+        "logo": "https://www.saacare.cd/favicon.svg",
+        "description": "Plateforme de mise en relation avec des professionnels de confiance à domicile en République Démocratique du Congo.",
+        "areaServed": {
+          "@type": "City",
+          "name": "Kinshasa"
+        },
+        "sameAs": []
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

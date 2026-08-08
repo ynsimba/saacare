@@ -1,0 +1,377 @@
+@import "tailwindcss";
+
+/* ============================================================
+   TOKENS DE MARQUE SAACARE
+
+   Palette officielle : #9f1a4a · #03294c · #ffffff · #000000
+
+   Les noms de jetons (teal, gold, coral…) sont conservés : ils sont
+   employés dans une soixantaine de fichiers et désignent des ROLES, pas
+   des teintes. Seules leurs valeurs changent ici, ce qui reskinne toute
+   la plateforme d'un seul endroit.
+
+     teal-*   → BORDEAUX #9f1a4a — accent principal, vérification
+     coral-*  → bordeaux profond — appels à l'action
+     gold-*   → bordeaux clair — sceau, distinctions, mise en avant
+     navy-*   → BLEU NUIT #03294c — autorité, fonds sombres
+     ink-*    → NOIR #000000 — texte et fonds les plus profonds
+     paper-*  → BLANC #ffffff et gris neutres
+   ============================================================ */
+@theme {
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  --color-ink-950: #000000;
+  --color-ink-900: #0a0f16;
+
+  --color-navy-900: #021b33;
+  --color-navy-800: #03294c;
+  --color-navy-700: #073a66;
+  --color-navy-600: #0d4e85;
+  --color-navy-500: #1c6399;
+
+  /* Accent principal — bordeaux de marque */
+  --color-teal-800: #5f1030;
+  --color-teal-700: #7d143d;
+  --color-teal-600: #9f1a4a;
+  --color-teal-500: #b8285b;
+  --color-teal-400: #cf4a77;
+  --color-teal-300: #e08aa6;
+  --color-teal-200: #eec2d1;
+  --color-teal-100: #f7e3ea;
+  --color-teal-50: #fdf3f6;
+
+  /* Sceau et distinctions — bordeaux clair */
+  --color-gold-800: #6d1235;
+  --color-gold-700: #8c1743;
+  --color-gold-600: #ae2456;
+  --color-gold-500: #c93268;
+  --color-gold-200: #f0c8d6;
+  --color-gold-100: #f9e7ee;
+
+  /* Appels à l'action — bordeaux profond */
+  --color-coral-800: #59102d;
+  --color-coral-700: #74143b;
+  --color-coral-600: #8d1845;
+  --color-coral-500: #9f1a4a;
+  --color-coral-100: #f6e0e8;
+
+  --color-paper-50: #ffffff;
+  --color-paper-100: #f6f7f9;
+  --color-paper-200: #eaedf1;
+  --color-paper-300: #dbe0e6;
+
+  --shadow-soft: 0 1px 2px rgba(3, 41, 76, 0.05), 0 8px 24px -8px rgba(3, 41, 76, 0.14);
+  --shadow-lifted: 0 20px 45px -18px rgba(3, 41, 76, 0.38);
+
+  /* ---- Rayons : angles resserrés, plus sobres ---- */
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+  --radius-4xl: 12px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-marquee: marquee 34s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-ken-burns: ken-burns 18s ease-in-out infinite alternate;
+  --animate-aurora: aurora 22s ease-in-out infinite;
+  --animate-aurora-slow: aurora 32s ease-in-out infinite reverse;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-gradient-pan: gradient-pan 9s ease infinite;
+  --animate-scroll-hint: scroll-hint 2.2s ease-in-out infinite;
+  --animate-tilt: tilt 12s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--float-rot, -2deg)); }
+  50% { transform: translateY(-10px) rotate(var(--float-rot, -2deg)); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.55; }
+  80%, 100% { transform: scale(1.6); opacity: 0; }
+}
+/* Zoom lent façon « Ken Burns » sur les visuels du hero */
+@keyframes ken-burns {
+  0%   { transform: scale(1.06) translate3d(0, 0, 0); }
+  100% { transform: scale(1.18) translate3d(-1.5%, -1.5%, 0); }
+}
+/* Halos colorés en mouvement lent derrière le hero */
+@keyframes aurora {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(6%, -8%, 0) scale(1.14); }
+  66%      { transform: translate3d(-7%, 5%, 0) scale(0.92); }
+}
+/* Balayage lumineux (boutons, bordures, skeletons) */
+@keyframes shimmer {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(220%); }
+}
+@keyframes gradient-pan {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes scroll-hint {
+  0%   { transform: translateY(0); opacity: 0; }
+  35%  { opacity: 1; }
+  100% { transform: translateY(14px); opacity: 0; }
+}
+@keyframes tilt {
+  0%, 100% { transform: rotate(-1.2deg) translateY(0); }
+  50%      { transform: rotate(1.2deg) translateY(-6px); }
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ------------------------------------------------------------
+   Aucun défilement horizontal, jamais.
+   `clip` plutôt que `hidden` : il coupe le débordement sans créer
+   de conteneur de défilement, donc `position: sticky` (barre de
+   filtres, colonnes latérales) et l'ancrage `scroll-margin`
+   continuent de fonctionner normalement.
+   ------------------------------------------------------------ */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background-color: var(--color-paper-100);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-gold-200);
+  color: var(--color-ink-900);
+}
+
+/* Focus visible cohérent sur toute la plateforme (accessibilité clavier) */
+:focus-visible {
+  outline: 2.5px solid var(--color-gold-500);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Lien d'évitement (skip link) */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Barre de défilement discrète */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-paper-100); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-navy-600);
+  border-radius: 2px;
+  border: 2.5px solid var(--color-paper-100);
+}
+
+/* Texture "papier" très subtile pour éviter le blanc plat */
+.bg-grain {
+  background-image: radial-gradient(var(--color-navy-700) 0.5px, transparent 0.5px);
+  background-size: 18px 18px;
+}
+
+/* Anneau de "tampon vérifié" réutilisé comme signature graphique */
+.seal-ring {
+  border: 1.5px dashed var(--color-gold-500);
+  border-radius: 9999px;
+}
+
+/* ============================================================
+   SURFACES & EFFETS MODERNES
+   ============================================================ */
+
+/* Verre dépoli clair — cartes posées sur du contenu clair */
+.glass {
+  background: color-mix(in srgb, var(--color-paper-50) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(3, 41, 76, 0.07);
+}
+
+/* Verre dépoli sombre — cartes posées sur le hero immersif */
+.glass-dark {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Bordure dégradée animée (cadre du champ de recherche du hero) */
+.gradient-border {
+  position: relative;
+  isolation: isolate;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    rgba(159, 26, 74, 0.7),
+    rgba(3, 41, 76, 0.55),
+    rgba(159, 26, 74, 0.7)
+  );
+  background-size: 300% 300%;
+  animation: gradient-pan 9s ease infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Texte en dégradé de marque — nuances claires du bordeaux, pour rester
+   parfaitement lisible sur les fonds sombres du hero. */
+.text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-teal-300),
+    var(--color-teal-200) 45%,
+    var(--color-teal-300) 80%
+  );
+  background-size: 220% auto;
+  animation: gradient-pan 8s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Grain photographique très léger posé sur les visuels sombres */
+.noise-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* Halo coloré flouté (aurora) */
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Balayage lumineux au survol — s'applique à un enfant .shine-sweep */
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.shine:hover::after,
+.shine:focus-visible::after {
+  animation: shimmer 0.9s var(--ease-out-expo);
+}
+
+/* Masque de fondu latéral pour les bandeaux défilants */
+.fade-edges {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Soulignement animé pour les liens de navigation */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--ease-out-expo);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1.5px;
+}
+
+/* ============================================================
+   CURSEUR PERSONNALISÉ (desktop à pointeur fin uniquement)
+   ============================================================ */
+@media (hover: hover) and (pointer: fine) {
+  body.has-custom-cursor,
+  body.has-custom-cursor a,
+  body.has-custom-cursor button,
+  body.has-custom-cursor select,
+  body.has-custom-cursor [role="button"] {
+    cursor: none;
+  }
+  body.has-custom-cursor input,
+  body.has-custom-cursor textarea {
+    cursor: text;
+  }
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 9999px;
+  mix-blend-mode: difference;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+  body.has-custom-cursor,
+  body.has-custom-cursor a,
+  body.has-custom-cursor button {
+    cursor: auto;
+  }
+}
