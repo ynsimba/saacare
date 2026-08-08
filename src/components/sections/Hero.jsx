@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import { Search, ShieldCheck, Lock, Headphones, MapPin, BadgeCheck, ChevronDown } from "lucide-react";
+import { Search, ShieldCheck, Lock, Headphones, MapPin, BadgeCheck, ChevronDown, Check } from "lucide-react";
 import Button from "../ui/Button";
 import AnimatedText from "../ui/AnimatedText";
 import { domains } from "../../data/domains";
+import { COMMUNES } from "../../data/providerForm";
 import { EASE, useIsReducedMotion, usePointerParallax } from "../../lib/motion";
 import { useDeclareNavTheme } from "../../lib/navTheme";
 
@@ -177,39 +178,29 @@ export default function Hero() {
               onSubmit={onSearch}
               role="search"
               aria-label="Recherche rapide de prestataire"
-              className="gradient-border glass-dark mt-7 flex flex-col gap-2 rounded-2xl p-2 sm:mt-9 sm:flex-row sm:items-center"
+              className="gradient-border glass-dark relative z-40 mt-7 flex flex-col gap-2 rounded-2xl p-2 sm:mt-9 sm:flex-row sm:items-center"
             >
-              <div className="flex flex-1 items-center gap-2.5 rounded-xl px-3 py-1 transition-colors focus-within:bg-white/5">
-                <BadgeCheck className="size-4 shrink-0 text-teal-300" aria-hidden="true" />
-                <label className="sr-only" htmlFor="hero-domain">Domaine</label>
-                <select
-                  id="hero-domain"
-                  value={domainSlug}
-                  onChange={(e) => setDomainSlug(e.target.value)}
-                  className="w-full cursor-pointer appearance-none border-0 bg-transparent py-2.5 text-sm text-paper-50 outline-none [&>option]:bg-navy-900 [&>option]:text-paper-50"
-                >
-                  <option value="">Tous les domaines</option>
-                  {domains.map((d) => (
-                    <option key={d.slug} value={d.slug}>{d.shortName}</option>
-                  ))}
-                </select>
-                <ChevronDown className="size-4 shrink-0 text-paper-100/40" aria-hidden="true" />
-              </div>
+              <HeroSelect
+                id="hero-domain"
+                label="Domaine"
+                icon={BadgeCheck}
+                value={domainSlug}
+                onChange={setDomainSlug}
+                placeholder="Tous les domaines"
+                options={domains.map((d) => ({ value: d.slug, label: d.name }))}
+              />
 
               <span className="hidden h-7 w-px bg-white/12 sm:block" aria-hidden="true" />
 
-              <div className="flex flex-1 items-center gap-2.5 rounded-xl px-3 py-1 transition-colors focus-within:bg-white/5">
-                <MapPin className="size-4 shrink-0 text-teal-300" aria-hidden="true" />
-                <label className="sr-only" htmlFor="hero-commune">Commune</label>
-                <input
-                  id="hero-commune"
-                  type="text"
-                  value={commune}
-                  onChange={(e) => setCommune(e.target.value)}
-                  placeholder="Commune (ex. Gombe, Limete…)"
-                  className="w-full border-0 bg-transparent py-2.5 text-sm text-paper-50 outline-none placeholder:text-paper-100/45"
-                />
-              </div>
+              <HeroSelect
+                id="hero-commune"
+                label="Commune"
+                icon={MapPin}
+                value={commune}
+                onChange={setCommune}
+                placeholder="Toutes les communes"
+                options={COMMUNES.map((c) => ({ value: c, label: c }))}
+              />
 
               <button
                 type="submit"
@@ -221,7 +212,7 @@ export default function Hero() {
             </motion.form>
 
             {/* Actions */}
-            <motion.div variants={item} className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <motion.div variants={item} className="relative z-0 mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Button to="/trouver-un-prestataire" size="lg" variant="primary" withArrow magnetic className="w-full sm:w-auto">
                 Trouver un prestataire
               </Button>
@@ -286,5 +277,107 @@ export default function Hero() {
         aria-hidden="true"
       />
     </section>
+  );
+}
+
+/** Liste déroulante du hero : ouverture au clic (champ + chevron), panneau sombre optimisé. */
+function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, options }) {
+  const rootRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const selected = options.find((opt) => opt.value === value) ?? null;
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onPointer = (e) => {
+      if (!rootRef.current?.contains(e.target)) setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className={`relative min-w-0 flex-1 ${open ? "z-50" : "z-0"}`}>
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={label}
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-1 text-left transition-colors hover:bg-white/5 focus-visible:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+      >
+        <Icon className="size-4 shrink-0 text-teal-300" aria-hidden="true" />
+        <span className={`min-w-0 flex-1 truncate py-2.5 text-sm ${selected ? "text-paper-50" : "text-paper-100/55"}`}>
+          {selected?.label ?? placeholder}
+        </span>
+        <ChevronDown
+          className={`size-4 shrink-0 text-paper-100/40 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            aria-labelledby={id}
+            initial={{ opacity: 0, y: 6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: EASE }}
+            className="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 max-h-56 overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-navy-900 p-1.5 shadow-lifted sm:max-h-64"
+          >
+            <li role="presentation">
+              <button
+                type="button"
+                role="option"
+                aria-selected={!value}
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                  !value ? "bg-white/10 text-paper-50" : "text-paper-100/75 hover:bg-white/8 hover:text-paper-50"
+                }`}
+              >
+                <span className="truncate">{placeholder}</span>
+                {!value && <Check className="size-3.5 shrink-0 text-teal-300" aria-hidden="true" />}
+              </button>
+            </li>
+            {options.map((opt) => {
+              const isSelected = opt.value === value;
+              return (
+                <li key={opt.value} role="presentation">
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      onChange(opt.value);
+                      setOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                      isSelected
+                        ? "bg-teal-500/20 text-paper-50"
+                        : "text-paper-100/75 hover:bg-white/8 hover:text-paper-50"
+                    }`}
+                  >
+                    <span className="truncate">{opt.label}</span>
+                    {isSelected && <Check className="size-3.5 shrink-0 text-teal-300" aria-hidden="true" />}
+                  </button>
+                </li>
+              );
+            })}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
