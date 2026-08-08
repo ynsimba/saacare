@@ -111,23 +111,31 @@ export default function Footer() {
         {/* ---------------- Bande d'assistance ---------------- */}
         <Reveal
           variant="up"
-          className="flex flex-col gap-6 border-b border-white/8 py-10 sm:py-12 lg:flex-row lg:items-center lg:justify-between"
+          className="flex flex-col gap-4 border-b border-white/8 py-6 sm:gap-6 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:py-12"
         >
           <div>
-            <h2 className="text-balance font-display text-2xl font-semibold leading-snug text-paper-50 sm:text-[1.75rem]">
+            <h2 className="text-balance font-display text-xl font-semibold leading-snug text-paper-50 sm:text-2xl lg:text-[1.75rem]">
               Une question avant de réserver ? Parlons-en.
             </h2>
-            <p className="mt-2 flex items-center gap-2 text-sm text-white/55">
+            <p className="mt-1.5 hidden items-center gap-2 text-sm text-white/55 sm:flex">
               <Clock className="size-3.5 shrink-0 text-teal-300" aria-hidden="true" />
               Notre équipe répond sous 24 heures ouvrées.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Button to="/contact" size="lg" withArrow magnetic>
+          <div className="flex gap-2 sm:gap-3">
+            <Button to="/contact" size="md" withArrow magnetic className="flex-1 sm:flex-none">
               Nous écrire
             </Button>
-            <Button href={WHATSAPP_HREF} variant="glass" size="lg" magnetic rel="noopener noreferrer" target="_blank">
+            <Button
+              href={WHATSAPP_HREF}
+              variant="glass"
+              size="md"
+              magnetic
+              rel="noopener noreferrer"
+              target="_blank"
+              className="flex-1 sm:flex-none"
+            >
               <span className="inline-flex items-center gap-2">
                 <MessageCircle className="size-4" aria-hidden="true" />
                 WhatsApp
@@ -137,9 +145,8 @@ export default function Footer() {
         </Reveal>
 
         {/* ---------------- Colonnes ---------------- */}
-        <div className="grid grid-cols-1 gap-x-10 gap-y-2 border-t border-white/8 py-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-y-12 lg:py-16">
-          <Reveal variant="blur" className="mb-6 lg:mb-0">
-            {/* Fond navy : c'est la version claire du logo qui s'applique. */}
+        <div className="grid grid-cols-1 gap-x-10 gap-y-0 py-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-y-12 lg:py-14">
+          <Reveal variant="blur" className="mb-4 lg:mb-0">
             <Link to="/" className="group inline-flex items-center" aria-label="SaaCare — Accueil">
               <img
                 src="/logo-1.png"
@@ -147,16 +154,16 @@ export default function Footer() {
                 width={2480}
                 height={781}
                 loading="lazy"
-                className="h-10 w-auto object-contain object-left transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.04]"
+                className="h-8 w-auto object-contain object-left transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.04] sm:h-10"
               />
             </Link>
 
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/55">
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/55 line-clamp-2 sm:mt-4 sm:line-clamp-none">
               Des professionnels vérifiés, formés et suivis pour la garde d'enfants, le transport, le
               soutien scolaire et les services à domicile — à Kinshasa.
             </p>
 
-            <ul className="mt-7 flex flex-col gap-2">
+            <ul className="mt-4 flex flex-col gap-0.5 sm:mt-6 sm:gap-1">
               {CONTACT.map(({ icon: Icon, label, sub, href }) => (
                 <li key={label}>
                   <ContactRow icon={Icon} label={label} sub={sub} href={href} />
@@ -171,16 +178,16 @@ export default function Footer() {
             return (
               <div
                 key={col.title}
-                className="border-b border-white/8 py-1 last:border-b-0 lg:border-b-0 lg:py-0"
+                className="border-b border-white/8 last:border-b-0 lg:border-b-0"
               >
-                <h3 className="lg:mb-5">
+                <h3 className="lg:mb-4">
                   <button
                     type="button"
                     onClick={() => setOpenColumn((current) => (current === col.title ? null : col.title))}
                     aria-expanded={isDesktop ? undefined : isOpen}
-                    className="flex w-full items-center justify-between gap-3 py-4 text-left lg:pointer-events-none lg:py-0"
+                    className="flex w-full items-center justify-between gap-3 py-2.5 text-left sm:py-3.5 lg:pointer-events-none lg:py-0"
                   >
-                    <span className="flex items-baseline gap-2 font-mono text-xs font-semibold uppercase tracking-[0.16em] text-white/45">
+                    <span className="flex items-baseline gap-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white/45 sm:text-xs">
                       <span className="text-teal-400/60">0{colIndex + 1}</span>
                       {col.title}
                     </span>
@@ -199,10 +206,10 @@ export default function Footer() {
                       initial={isDesktop || reduced ? false : { height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={reduced ? undefined : { height: 0, opacity: 0 }}
-                      transition={{ height: { duration: 0.4, ease: EASE }, opacity: { duration: 0.25 } }}
+                      transition={{ height: { duration: 0.35, ease: EASE }, opacity: { duration: 0.2 } }}
                       className="overflow-hidden"
                     >
-                      <ul className="flex flex-col gap-1 pb-5 lg:pb-0">
+                      <ul className="flex flex-col gap-0.5 pb-3 lg:pb-0">
                         {col.links.map((l) => (
                           <li key={`${col.title}-${l.to}-${l.label}`}>
                             <FooterLink to={l.to}>{l.label}</FooterLink>
@@ -220,30 +227,32 @@ export default function Footer() {
         {/* ---------------- Réassurance ---------------- */}
         <Reveal
           variant="fade"
-          className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 rounded-2xl border border-white/8 bg-white/3 px-6 py-4"
+          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-xl border border-white/8 bg-white/3 px-4 py-3 sm:gap-x-10 sm:rounded-2xl sm:px-6 sm:py-4"
         >
-          <span className="inline-flex items-center gap-2 text-xs text-white/55">
-            <ShieldCheck className="size-4 shrink-0 text-teal-300" aria-hidden="true" />
-            Prestataires vérifiés et formés
+          <span className="inline-flex items-center gap-2 text-[0.7rem] text-white/55 sm:text-xs">
+            <ShieldCheck className="size-3.5 shrink-0 text-teal-300 sm:size-4" aria-hidden="true" />
+            Prestataires vérifiés
           </span>
           <span className="hidden h-4 w-px bg-white/10 sm:block" aria-hidden="true" />
-          <span className="inline-flex items-center gap-2 text-xs text-white/55">
-            <Lock className="size-4 shrink-0 text-teal-300" aria-hidden="true" />
-            Paiement protégé jusqu'à validation
+          <span className="inline-flex items-center gap-2 text-[0.7rem] text-white/55 sm:text-xs">
+            <Lock className="size-3.5 shrink-0 text-teal-300 sm:size-4" aria-hidden="true" />
+            Paiement protégé
           </span>
         </Reveal>
 
         {/* ---------------- Barre de bas de page ---------------- */}
-        <div className="flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
-          <p className="text-xs text-white/45">© {YEAR} SaaCare RDC. Tous droits réservés.</p>
-          <div className="flex items-center gap-5">
+        <div className="flex flex-col items-center justify-between gap-3 py-5 sm:flex-row sm:gap-4 sm:py-8">
+          <p className="text-center text-[0.7rem] text-white/45 sm:text-left sm:text-xs">
+            © {YEAR} SaaCare RDC. Tous droits réservés.
+          </p>
+          <div className="flex items-center gap-4">
             <p className="hidden font-mono text-[0.68rem] uppercase tracking-[0.14em] text-white/35 sm:block">
               Kinshasa · RDC
             </p>
             <button
               type="button"
               onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })}
-              className="group inline-flex min-h-11 items-center gap-2 rounded-md border border-white/10 px-4 py-2.5 text-sm text-white/55 transition-colors duration-300 hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-gold-500"
+              className="group inline-flex min-h-10 items-center gap-2 rounded-md border border-white/10 px-3.5 py-2 text-xs text-white/55 transition-colors duration-300 hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-gold-500 sm:min-h-11 sm:text-sm"
             >
               Retour en haut
               <ArrowUp
@@ -255,14 +264,17 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ---------------- Signature typographique ---------------- */}
-      <div className="pointer-events-none relative h-[9vw] min-h-[3.5rem] select-none overflow-hidden" aria-hidden="true">
+      {/* ---------------- Signature typographique (desktop / tablette) ---------------- */}
+      <div
+        className="pointer-events-none relative hidden select-none overflow-hidden sm:block sm:h-[7vw] sm:min-h-[2.75rem] lg:h-[9vw] lg:min-h-[3.5rem]"
+        aria-hidden="true"
+      >
         <motion.span
           initial={reduced ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 1, ease: EASE }}
-          className="absolute inset-x-0 -bottom-[2.5vw] block text-center font-display text-[15vw] font-semibold leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.10)]"
+          className="absolute inset-x-0 -bottom-[2.5vw] block text-center font-display text-[12vw] font-semibold leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.10)] lg:text-[15vw]"
         >
           SaaCare
         </motion.span>
@@ -275,20 +287,20 @@ export default function Footer() {
 function ContactRow({ icon: Icon, label, sub, href }) {
   const content = (
     <>
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/6 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:bg-teal-500/20">
-        <Icon className="size-4 text-teal-300" aria-hidden="true" />
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/6 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:bg-teal-500/20 sm:size-9 sm:rounded-xl">
+        <Icon className="size-3.5 text-teal-300 sm:size-4" aria-hidden="true" />
       </span>
       <span className="min-w-0">
-        <span className="block text-sm leading-snug text-white/70 transition-colors duration-300 group-hover:text-white">
+        <span className="block truncate text-sm leading-snug text-white/70 transition-colors duration-300 group-hover:text-white">
           {label}
         </span>
-        <span className="mt-0.5 block text-[0.7rem] text-white/35">{sub}</span>
+        <span className="mt-0.5 hidden text-[0.7rem] text-white/35 sm:block">{sub}</span>
       </span>
     </>
   );
 
   const className =
-    "group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors duration-300 hover:bg-white/4";
+    "group flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 transition-colors duration-300 hover:bg-white/4 sm:gap-3 sm:rounded-xl sm:px-2 sm:py-2";
 
   return href ? (
     <a href={href} className={className}>
@@ -304,7 +316,7 @@ function FooterLink({ to, children }) {
   return (
     <Link
       to={to}
-      className="group flex min-h-11 items-center gap-0 rounded-lg py-2.5 text-sm text-white/60 transition-colors duration-300 hover:text-white"
+      className="group flex min-h-9 items-center gap-0 rounded-lg py-1.5 text-sm text-white/60 transition-colors duration-300 hover:text-white sm:min-h-10 sm:py-2"
     >
       <span
         className="mr-0 size-1 shrink-0 scale-0 rounded-full bg-teal-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:mr-2 group-hover:scale-100"
