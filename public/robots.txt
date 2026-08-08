@@ -1,7 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /espace-client
 Disallow: /espace-client/
+Disallow: /espace-prestataire
 Disallow: /espace-prestataire/
-Disallow: /admin/
+Disallow: /espace/
+Disallow: /connexion
+Disallow: /404
 
 Sitemap: https://www.saacare.cd/sitemap.xml

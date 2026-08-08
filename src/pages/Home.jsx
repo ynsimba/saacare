@@ -11,20 +11,36 @@ export default function Home() {
   return (
     <>
       <Seo
-        title="Accueil"
-        description="SaaCare met en relation les familles de Kinshasa avec des nounous, chauffeurs, répétiteurs et artisans vérifiés, formés et notés. Réservez et payez en toute sécurité."
+        description="Trouvez une nounou, un chauffeur, un répétiteur ou un artisan vérifié à Kinshasa. SaaCare sécurise la mise en relation, la réservation et le paiement jusqu'à votre validation."
         path="/"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "SaaCare",
-          url: "https://www.saacare.cd/",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: "https://www.saacare.cd/trouver-un-prestataire?domaine={search_term_string}",
-            "query-input": "required name=search_term_string",
+        image="/hero.png"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "SaaCare",
+            url: "https://www.saacare.cd/",
+            inLanguage: "fr-CD",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: {
+                "@type": "EntryPoint",
+                urlTemplate: "https://www.saacare.cd/trouver-un-prestataire?q={search_term_string}",
+              },
+              "query-input": "required name=search_term_string",
+            },
           },
-        }}
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "SaaCare",
+            url: "https://www.saacare.cd/",
+            logo: "https://www.saacare.cd/icone.png",
+            email: "contact@saacare.com",
+            telephone: "+243816483538",
+            areaServed: { "@type": "City", name: "Kinshasa" },
+          },
+        ]}
       />
       <Hero />
       <StatsBand />

@@ -51,6 +51,7 @@ export default function Connexion() {
         title="Connexion"
         description="Connectez-vous à votre compte SaaCare pour gérer vos réservations ou votre activité de prestataire."
         path="/connexion"
+        noindex
       />
 
       <PageHero
