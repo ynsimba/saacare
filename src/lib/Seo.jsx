@@ -1,8 +1,8 @@
 import { Helmet } from "react-helmet-async";
 
 export const SITE = "https://www.saacare.cd";
-const DEFAULT_IMAGE = `${SITE}/hero.png`;
-const DEFAULT_TITLE = "SaaCare — Prestataires vérifiés à domicile à Kinshasa (RDC)";
+const DEFAULT_IMAGE = `${SITE}/og-image.png`;
+const DEFAULT_TITLE = "SaaCare — Des services qui vous accompagnent · Kinshasa";
 
 /**
  * Composant SEO par page : titre, description, canonical, Open Graph,

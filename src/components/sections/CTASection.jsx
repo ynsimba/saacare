@@ -7,11 +7,11 @@ import Section3D from "../ui/Section3D";
 import { useIsReducedMotion } from "../../lib/motion";
 
 export default function CTASection({
-  eyebrow = "Prêt à commencer ?",
-  title = "Trouvez un prestataire de confiance dès aujourd'hui.",
-  subtitle = "Recherche gratuite, paiement protégé, satisfaction suivie à chaque prestation.",
-  primaryTo = "/trouver-un-prestataire",
-  primaryLabel = "Trouver un prestataire",
+  eyebrow = "Avancer ensemble, chaque jour",
+  title = "Le bon service, au bon moment.",
+  subtitle = "Recherche sans inscription, agents vérifiés en 7 étapes, remplacement sous 24 heures.",
+  primaryTo = "/prestataires",
+  primaryLabel = "Demander un prestataire",
   secondaryTo = "/devenir-prestataire",
   secondaryLabel = "Devenir prestataire",
 }) {
@@ -39,18 +39,12 @@ export default function CTASection({
           <div className="aurora-blob right-[5%] bottom-[-40%] size-72 bg-gold-500/16 animate-aurora-slow" />
         </motion.div>
 
-        {/* Trame fine */}
-        <div
-          className="absolute inset-0 -z-10 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(65%_65%_at_50%_35%,#000,transparent)]"
-          aria-hidden="true"
-        />
-
         <span className="relative inline-flex items-center gap-2 rounded-md border border-white/12 bg-white/6 px-4 py-1.5 font-mono text-xs font-medium uppercase tracking-[0.18em] text-gold-200">
           <Sparkles className="size-3.5" aria-hidden="true" />
           {eyebrow}
         </span>
 
-        <h2 className="relative mt-6 text-balance font-display text-3xl font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[2.6rem]">
+        <h2 className="relative mt-6 text-balance font-display text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-[2.6rem]">
           {title}
         </h2>
 
@@ -59,7 +53,7 @@ export default function CTASection({
         </p>
 
         <div className="relative mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Button to={primaryTo} size="lg" withArrow magnetic>
+          <Button to={primaryTo} size="lg" variant="onDark" withArrow magnetic>
             {primaryLabel}
           </Button>
           <Button to={secondaryTo} variant="glass" size="lg" magnetic>
@@ -68,7 +62,7 @@ export default function CTASection({
         </div>
 
         <p className="relative mt-8 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-white/40">
-          Sans engagement · Paiement libéré après validation
+          Aucun frais pour les agents · Un interlocuteur dédié
         </p>
       </Reveal>
     </section>

@@ -14,9 +14,8 @@
     "db:seed": "npm --prefix backend run db:seed"
   },
   "dependencies": {
-    "@fontsource/fraunces": "^5.3.0",
-    "@fontsource/ibm-plex-mono": "^5.3.0",
-    "@fontsource/manrope": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
     "lucide-react": "^1.30.0",
     "motion": "^13.0.0",
     "react": "^19.2.8",

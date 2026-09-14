@@ -56,7 +56,7 @@ export default function SectionHeading({
       )}
       <Component
         variants={reduced ? undefined : item}
-        className={`text-balance font-display text-3xl font-semibold leading-[1.1] tracking-[-0.015em] sm:text-4xl ${
+        className={`text-balance font-display text-3xl font-bold leading-[1.1] tracking-[-0.015em] sm:text-4xl ${
           invert ? "text-paper-50" : "text-ink-900"
         } ${titleClassName}`}
       >

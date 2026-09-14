@@ -1,268 +1,263 @@
-import { useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
-import { MapPin, Languages, BriefcaseBusiness, ShieldAlert, CheckCircle2 } from "lucide-react";
-import Seo from "../lib/Seo";
+import { motion } from "motion/react";
+import { MapPin, Languages, BriefcaseBusiness, CheckCircle2, Clock, Award, BadgeCheck, CalendarDays, ArrowUpRight } from "lucide-react";
+import Seo, { SITE } from "../lib/Seo";
 import Rating from "../components/ui/Rating";
 import Badge from "../components/ui/Badge";
+import Button from "../components/ui/Button";
 import ProviderCard from "../components/ui/ProviderCard";
+import RequestForm from "../components/ui/RequestForm";
 import { Eyebrow } from "../components/ui/SectionHeading";
-import { getProviderById, getProvidersByDomain } from "../data/providers";
+import { providers, getProviderByReference, AVAILABILITY, LEVELS, hasPublicRating } from "../data/providers";
 import { getDomainBySlug } from "../data/domains";
+import { saatrustSteps } from "../data/content";
 import { THEME } from "../lib/theme";
 import { fadeUp } from "../lib/motion";
 
-const REVIEW_POOL = [
-  { author: "Client SaaCare", text: "Prestation impeccable, ponctuel et très professionnel. Je recommande sans hésiter." },
-  { author: "Client SaaCare", text: "Communication claire du début à la fin, exactement ce qui était convenu dans le devis." },
-  { author: "Client SaaCare", text: "Deuxième réservation avec ce prestataire, toujours aussi sérieux et à l'écoute." },
-];
+const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const HALF_DAYS = ["Matin", "Après-midi"];
 
-const DURATIONS = ["Journée", "Semaine", "Mois", "Durée indéterminée"];
+/** Calendrier simplifié par demi-journées, sans aucun détail sur les clients (§4.4). */
+function weekGrid(provider) {
+  const seed = [...provider.reference].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const base = provider.availability === "immediate" ? 0.75 : provider.availability === "week" ? 0.5 : 0.3;
+  return DAYS.map((_, d) => HALF_DAYS.map((__, h) => ((seed * (d + 3) * (h + 7)) % 100) / 100 < base));
+}
 
 export default function ProviderProfile() {
-  const { id } = useParams();
-  const provider = getProviderById(id);
-  const [submitted, setSubmitted] = useState(false);
-  const [duration, setDuration] = useState("Journée");
-
+  const { reference } = useParams();
+  const provider = getProviderByReference(reference);
   if (!provider) return <Navigate to="/404" replace />;
 
   const domain = getDomainBySlug(provider.domainSlug);
   const theme = THEME[domain.theme];
-  const similar = getProvidersByDomain(provider.domainSlug).filter((p) => p.id !== provider.id).slice(0, 3);
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
+  const metierRoot = provider.metier.split(" — ")[0];
+  const similar = providers
+    .filter((p) => p.reference !== provider.reference && p.metier.startsWith(metierRoot))
+    .sort((a, b) => (b.commune === provider.commune) - (a.commune === provider.commune))
+    .slice(0, 3);
+  const grid = weekGrid(provider);
+  const publicRating = hasPublicRating(provider);
 
   return (
     <>
       <Seo
-        title={`${provider.name} — ${provider.role}`}
-        description={`${provider.bio} Prestataire ${domain.name} vérifié, basé à ${provider.commune}.`}
-        path={`/prestataires/${provider.id}`}
+        title={`${provider.metier} vérifié à ${provider.commune} — ${provider.reference}`}
+        description={`${provider.metier} ${provider.level.toLowerCase()} SaaCare à ${provider.commune}, ${provider.experience} ans d'expérience, langues : ${provider.languages.join(", ")}. Profil anonymisé, mise en relation par SaaCare.`}
+        path={`/prestataires/${provider.reference}`}
         jsonLd={{
           "@context": "https://schema.org",
-          "@type": "Person",
-          name: provider.name,
-          jobTitle: provider.role,
-          address: provider.commune,
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: provider.rating,
-            reviewCount: provider.reviews,
-          },
+          "@type": "Service",
+          name: `${provider.metier} — ${provider.reference}`,
+          provider: { "@type": "LocalBusiness", name: "SaaCare", url: SITE },
+          areaServed: provider.zones.map((z) => ({ "@type": "Place", name: `${z}, Kinshasa` })),
+          ...(publicRating && {
+            aggregateRating: { "@type": "AggregateRating", ratingValue: provider.rating, reviewCount: provider.reviews },
+          }),
         }}
       />
 
-      <section className="border-b border-ink-900/8 bg-white pb-10 pt-16 sm:pt-20">
+      {/* ---------------- En-tête ---------------- */}
+      <section className="border-b border-ink-900/8 bg-white pb-10 pt-12 sm:pt-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-2 text-sm text-ink-900/65">
+          <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-2 text-sm text-ink-900/70">
             <Link to="/" className="hover:text-ink-900">Accueil</Link>
             <span aria-hidden="true">/</span>
-            <Link to={`/domaines/${domain.slug}`} className="hover:text-ink-900">{domain.name}</Link>
+            <Link to={`/prestataires?service=${domain.slug}`} className="hover:text-ink-900">{domain.name}</Link>
             <span aria-hidden="true">/</span>
-            <span className="text-ink-900/70">{provider.name}</span>
+            <span className="text-ink-900">{provider.reference}</span>
           </nav>
 
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-              <div
-                className={`flex size-20 shrink-0 items-center justify-center rounded-3xl ${theme.bg} font-display text-2xl font-semibold text-white shadow-lifted`}
-                aria-hidden="true"
-              >
+              <div className={`flex size-20 shrink-0 items-center justify-center rounded-3xl ${theme.bg} font-display text-3xl font-bold text-white`} aria-hidden="true">
                 {provider.initials}
               </div>
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-2xl font-semibold text-ink-900 sm:text-3xl">{provider.name}</h1>
-                  {provider.topRated && <Badge label="Top prestataire" />}
+                <p className="text-sm font-semibold tracking-wide text-navy-500">{provider.reference}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <h1 className="font-display text-2xl font-bold text-ink-900 sm:text-3xl">{provider.metier}</h1>
+                  <Badge label={provider.level} size="md" />
                 </div>
-                <p className="mt-1 text-ink-900/65">{provider.role} · {domain.name}</p>
-                <div className="mt-3">
-                  <Rating value={provider.rating} reviews={provider.reviews} size="md" />
+                <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-900/80">
+                  {publicRating ? <Rating value={provider.rating} reviews={provider.reviews} size="md" /> : <span>Moins de 3 évaluations</span>}
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="size-4 text-teal-600" aria-hidden="true" />
+                    {provider.commune}
+                  </span>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-2">
-            {provider.badges.map((b) => (
-              <Badge key={b} label={b} size="md" />
-            ))}
+            <Button href="#demande" size="lg" withArrow>
+              Demander ce prestataire
+            </Button>
           </div>
         </div>
       </section>
 
-      <section className="bg-paper-100 py-14 sm:py-20">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_380px] lg:px-8">
-          <div className="order-2 flex flex-col gap-10 lg:order-1">
-            <div className="rounded-2xl border border-ink-900/8 bg-white p-6 sm:p-8">
-              <h2 className="font-display text-xl font-semibold text-ink-900">À propos</h2>
-              <p className="mt-3 leading-relaxed text-ink-900/70">{provider.bio}</p>
+      <section className="bg-paper-100 py-12 sm:py-16">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_24rem] lg:px-8">
+          <div className="flex flex-col gap-6">
+            {/* Faits clés */}
+            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink-900/8 bg-ink-900/8 sm:grid-cols-4">
+              <Fact icon={BriefcaseBusiness} term="Expérience" detail={`${provider.experience} ans`} />
+              <Fact icon={Languages} term="Langues" detail={provider.languages.join(", ")} />
+              <Fact icon={Clock} term="Disponibilité" detail={AVAILABILITY[provider.availability]} />
+              <Fact icon={Award} term="Niveau" detail={provider.level} />
+            </dl>
 
-              <ul className="mt-6 grid grid-cols-1 gap-4 border-t border-ink-900/8 pt-6 sm:grid-cols-3">
-                <li className="flex items-start gap-2.5">
-                  <MapPin className="mt-0.5 size-4 shrink-0 text-teal-600" aria-hidden="true" />
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-ink-900/65">Zone</p>
-                    <p className="text-sm text-ink-900">{provider.commune}</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <BriefcaseBusiness className="mt-0.5 size-4 shrink-0 text-teal-600" aria-hidden="true" />
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-ink-900/65">Expérience</p>
-                    <p className="text-sm text-ink-900">{provider.experience} ans</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Languages className="mt-0.5 size-4 shrink-0 text-teal-600" aria-hidden="true" />
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-ink-900/65">Langues</p>
-                    <p className="text-sm text-ink-900">{provider.languages.join(", ")}</p>
-                  </div>
-                </li>
+            {/* Bloc vérification */}
+            <Card title="Vérification SaaTrust" eyebrow={`Sceau ${provider.seal}`}>
+              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {saatrustSteps.map((s) => (
+                  <li key={s.number} className="flex items-center gap-2.5 rounded-lg bg-paper-100 px-3 py-2.5 text-sm text-ink-900">
+                    <CheckCircle2 className="size-4 shrink-0 text-teal-600" aria-hidden="true" />
+                    <span className="flex-1">{s.title}</span>
+                    <span className="text-xs text-navy-600">{provider.verifiedAt}</span>
+                  </li>
+                ))}
               </ul>
+              <div className="mt-4 flex flex-col gap-2 border-t border-ink-900/8 pt-4 text-sm text-ink-900/80 sm:flex-row sm:items-center sm:justify-between">
+                <p>
+                  {LEVELS[provider.level]} Prochaine revérification : <strong className="text-ink-900">{provider.nextCheck}</strong>.
+                </p>
+                <Link to={`/verifier?sceau=${provider.seal}`} className="inline-flex shrink-0 items-center gap-1 font-semibold text-teal-700 hover:underline">
+                  Vérifier ce sceau <ArrowUpRight className="size-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </Card>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Card title="Compétences validées" eyebrow={`Test pratique · ${provider.verifiedAt}`}>
+                <ul className="flex flex-wrap gap-2">
+                  {provider.skills.map((s) => (
+                    <li key={s} className="rounded-full bg-teal-50 px-3 py-1.5 text-sm text-teal-700">{s}</li>
+                  ))}
+                </ul>
+              </Card>
+              <Card title="Formations" eyebrow="Saa Academy">
+                <ul className="flex flex-col gap-2">
+                  {provider.trainings.map((t) => (
+                    <li key={t} className="flex items-center gap-2 text-sm text-ink-900">
+                      <BadgeCheck className="size-4 text-gold-600" aria-hidden="true" />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </Card>
             </div>
 
-            <div className="flex gap-3 rounded-2xl border border-gold-200 bg-gold-100/50 p-5">
-              <ShieldAlert className="size-5 shrink-0 text-gold-700" aria-hidden="true" />
-              <p className="text-sm leading-relaxed text-ink-900/75">{domain.safety}</p>
-            </div>
-
-            <div>
-              <h2 className="font-display text-xl font-semibold text-ink-900">Avis clients</h2>
-              <div className="mt-5 flex flex-col gap-4">
-                {REVIEW_POOL.map((review, i) => (
-                  <div key={i} className="rounded-2xl border border-ink-900/8 bg-white p-5">
-                    <Rating value={5} size="sm" />
-                    <p className="mt-3 text-sm leading-relaxed text-ink-900/70">« {review.text} »</p>
-                    <p className="mt-3 text-xs font-medium text-ink-900/65">{review.author}</p>
+            <Card title="Expérience au registre">
+              <dl className="grid grid-cols-3 gap-4 text-center">
+                {[
+                  [provider.missions, "missions réalisées"],
+                  [provider.hours, "heures cumulées"],
+                  [provider.since, "entrée au registre"],
+                ].map(([value, label]) => (
+                  <div key={label}>
+                    <dd className="font-display text-2xl font-bold text-teal-700">{value}</dd>
+                    <dt className="text-xs text-ink-900/70">{label}</dt>
                   </div>
                 ))}
+              </dl>
+            </Card>
+
+            <Card title="Disponibilité" eyebrow="Semaine type, par demi-journée">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[26rem] border-separate border-spacing-1 text-center text-xs">
+                  <caption className="sr-only">Disponibilités par demi-journée</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" className="sr-only">Créneau</th>
+                      {DAYS.map((d) => (
+                        <th key={d} scope="col" className="font-semibold text-navy-600">{d}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {HALF_DAYS.map((h, hi) => (
+                      <tr key={h}>
+                        <th scope="row" className="pr-2 text-left font-medium text-ink-900">{h}</th>
+                        {grid.map((day, di) => (
+                          <td key={DAYS[di]} className={`h-9 rounded-md ${day[hi] ? "bg-teal-600 text-white" : "bg-paper-200 text-ink-900/60"}`}>
+                            {day[hi] ? "Libre" : "—"}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
+              <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-ink-900/70">
+                <CalendarDays className="size-3.5" aria-hidden="true" />
+                Créneaux : {provider.slots.join(", ")}. Confirmés par votre chargé de clientèle.
+              </p>
+            </Card>
+
+            <Card title="Avis clients">
+              {provider.reviewsList.length ? (
+                <ul className="flex flex-col gap-3">
+                  {provider.reviewsList.slice(0, 3).map((r) => (
+                    <li key={`${r.firstName}-${r.date}`} className="rounded-xl bg-paper-100 p-4">
+                      <p className="text-sm leading-relaxed text-ink-900">« {r.text} »</p>
+                      <p className="mt-2 text-xs font-medium text-navy-600">
+                        {r.firstName}, {r.commune} · {r.date}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-ink-900/75">Pas encore d'avis publié pour ce profil.</p>
+              )}
+            </Card>
           </div>
 
-          {/* Carte de réservation — en premier sur mobile pour rester accessible */}
-          <motion.div variants={fadeUp} initial="hidden" animate="show" className="order-1 h-fit rounded-2xl border border-ink-900/8 bg-white p-5 shadow-soft sm:p-6 lg:order-2 lg:sticky lg:top-28">
-            <AnimatePresence mode="wait">
-              {submitted ? (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center gap-3 py-6 text-center"
-                  role="status"
-                >
-                  <CheckCircle2 className="size-10 text-teal-600" aria-hidden="true" />
-                  <p className="font-display text-lg font-semibold text-ink-900">Demande envoyée</p>
-                  <p className="text-sm leading-relaxed text-ink-900/65">
-                    Notre équipe confirme la disponibilité de {provider.name.split(" ")[0]} et vous transmet un
-                    devis avant tout paiement. Vous recevrez une notification dans votre espace client.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setSubmitted(false)}
-                    className="mt-2 text-sm font-semibold text-teal-700 underline underline-offset-4"
-                  >
-                    Modifier la demande
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={onSubmit} className="flex flex-col gap-5">
-                  <div>
-                    <p className="text-sm text-ink-900/65">Tarif indicatif</p>
-                    <p className="font-display text-3xl font-semibold text-ink-900">
-                      {provider.priceFrom}$
-                      <span className="text-base font-normal text-ink-900/65">/Heure</span>
-                    </p>
-                  </div>
-
-                  <fieldset>
-                    <legend className="text-xs font-semibold uppercase tracking-wide text-ink-900/65">Type de contrat</legend>
-                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                      {DURATIONS.map((d) => (
-                        <label
-                          key={d}
-                          className={`flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-3 py-2.5 text-center text-sm font-medium transition-colors ${
-                            duration === d ? "border-teal-600 bg-teal-50 text-teal-700" : "border-ink-900/10 text-ink-900/65 hover:border-ink-900/25"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="duration"
-                            value={d}
-                            checked={duration === d}
-                            onChange={() => setDuration(d)}
-                            className="sr-only"
-                          />
-                          {d}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-
-                  <div>
-                    <label htmlFor="booking-date" className="text-xs font-semibold uppercase tracking-wide text-ink-900/65">
-                      Date souhaitée
-                    </label>
-                    <input
-                      id="booking-date"
-                      type="date"
-                      required
-                      className="mt-2 w-full rounded-xl border border-ink-900/10 bg-paper-100 px-3.5 py-2.5 text-sm text-ink-900 focus-visible:outline-2 focus-visible:outline-gold-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="booking-address" className="text-xs font-semibold uppercase tracking-wide text-ink-900/65">
-                      Adresse d'intervention
-                    </label>
-                    <input
-                      id="booking-address"
-                      type="text"
-                      required
-                      placeholder="Commune, quartier, référence"
-                      className="mt-2 w-full rounded-xl border border-ink-900/10 bg-paper-100 px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-900/35 focus-visible:outline-2 focus-visible:outline-gold-500"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full rounded-md bg-coral-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral-600 focus-visible:outline-2 focus-visible:outline-gold-500"
-                  >
-                    Demander une réservation
-                  </button>
-                  <p className="text-center text-xs text-ink-900/65">
-                    Aucun paiement n'est débité avant confirmation du devis.
-                  </p>
-                </motion.form>
-              )}
-            </AnimatePresence>
+          {/* Demande de mise en relation */}
+          <motion.div id="demande" variants={fadeUp} initial="hidden" animate="show" className="h-fit scroll-mt-24 rounded-2xl border border-ink-900/8 bg-white p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
+            <h2 className="font-display text-xl font-bold text-ink-900">Demander ce prestataire</h2>
+            <p className="mt-1 text-sm text-ink-900/75">Nous confirmons sa disponibilité et vous rappelons.</p>
+            <RequestForm domainSlug={provider.domainSlug} providerReference={provider.reference} detailed className="mt-5" />
           </motion.div>
         </div>
       </section>
 
       {similar.length > 0 && (
-        <section className="bg-white py-16 sm:py-20" aria-labelledby="similar-heading">
+        <section className="bg-white py-16" aria-labelledby="similar-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Eyebrow tone={theme.text}>À découvrir aussi</Eyebrow>
-            <h2 id="similar-heading" className="mt-4 font-display text-2xl font-semibold text-ink-900">
-              Autres prestataires {domain.shortName}
-            </h2>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <Eyebrow>Profils similaires</Eyebrow>
+            <h2 id="similar-heading" className="mt-4 font-display text-2xl font-bold text-ink-900">Autres profils {metierRoot.toLowerCase()}</h2>
+            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {similar.map((p, i) => (
-                <ProviderCard key={p.id} provider={p} index={i} />
+                <ProviderCard key={p.reference} provider={p} index={i} />
               ))}
             </div>
           </div>
         </section>
       )}
     </>
+  );
+}
+
+function Card({ title, eyebrow, children }) {
+  return (
+    <div className="rounded-2xl border border-ink-900/8 bg-white p-5 sm:p-6">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-display text-lg font-bold text-ink-900">{title}</h2>
+        {eyebrow && <span className="text-xs font-semibold uppercase tracking-[0.12em] text-gold-700">{eyebrow}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Fact({ icon: Icon, term, detail }) {
+  return (
+    <div className="bg-white p-4">
+      <dt className="flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-navy-600">
+        <Icon className="size-3.5 shrink-0" aria-hidden="true" />
+        {term}
+      </dt>
+      <dd className="mt-1 text-sm text-ink-900">{detail}</dd>
+    </div>
   );
 }

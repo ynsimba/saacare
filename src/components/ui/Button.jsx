@@ -5,20 +5,21 @@ import { ArrowRight } from "lucide-react";
 import { useMagnetic } from "../../lib/motion";
 
 const VARIANTS = {
+  /* Action principale — vert SaaCare */
   primary:
-    "bg-coral-500 text-white shadow-soft hover:bg-coral-600 hover:shadow-[0_18px_45px_-18px_rgba(141,24,69,0.75)] focus-visible:bg-coral-600",
+    "bg-teal-600 text-white shadow-soft hover:bg-teal-700 hover:shadow-[0_18px_45px_-18px_rgba(1,67,61,0.75)] focus-visible:bg-teal-700",
+  /* Encre */
   secondary:
-    "bg-navy-700 text-white shadow-soft hover:bg-navy-800 hover:shadow-[0_18px_45px_-18px_rgba(3,41,76,0.8)] focus-visible:bg-navy-800",
-  outline:
-    "bg-transparent text-navy-700 border border-navy-700/25 hover:border-navy-700/60 hover:bg-navy-700/5",
-  ghost: "bg-transparent text-navy-700 hover:bg-navy-700/5",
-  onDark: "bg-white text-navy-800 hover:bg-paper-100 hover:shadow-[0_18px_45px_-18px_rgba(255,255,255,0.45)]",
-  /* Verre dépoli clair — à poser sur un visuel sombre */
-  glass:
-    "glass-dark text-white hover:border-white/30 hover:bg-white/12",
-  /* Dégradé de marque, pour l'action principale du hero */
+    "bg-ink-900 text-white shadow-soft hover:bg-ink-950 hover:shadow-[0_18px_45px_-18px_rgba(16,42,42,0.8)] focus-visible:bg-ink-950",
+  /* Action secondaire — contour vert */
+  outline: "bg-white text-teal-700 border border-teal-600 hover:bg-teal-50",
+  ghost: "bg-transparent text-teal-700 hover:bg-teal-50",
+  onDark: "bg-white text-teal-700 hover:bg-paper-100 hover:shadow-[0_18px_45px_-18px_rgba(255,255,255,0.45)]",
+  /* Point d'attention — orange assombri pour garder un texte blanc lisible (AA) */
+  accent: "bg-coral-700 text-white shadow-soft hover:bg-coral-800",
+  glass: "glass-dark text-white hover:border-white/30 hover:bg-white/12",
   gradient:
-    "text-white shadow-[0_20px_50px_-20px_rgba(159,26,74,0.85)] bg-[linear-gradient(110deg,var(--color-teal-600),var(--color-teal-500)_45%,var(--color-coral-500))] bg-[length:220%_auto] hover:bg-[position:100%_center]",
+    "text-white shadow-[0_20px_50px_-20px_rgba(1,67,61,0.85)] bg-[linear-gradient(110deg,var(--color-teal-600),var(--color-teal-500)_45%,var(--color-teal-600))] bg-[length:220%_auto] hover:bg-[position:100%_center]",
 };
 
 const SIZES = {

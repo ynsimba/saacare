@@ -53,6 +53,12 @@ async function request(path, { method = "GET", body, auth = false, headers = {} 
   const contentType = res.headers.get("content-type") || "";
   const data = contentType.includes("application/json") ? await res.json() : null;
 
+  // Sans API derrière (hébergement statique), le serveur renvoie la page HTML :
+  // on le signale plutôt que de simuler un envoi réussi.
+  if (!data) {
+    throw new ApiError("Le service est momentanément indisponible. Contactez-nous par téléphone ou WhatsApp.", res.status);
+  }
+
   if (!res.ok) {
     throw new ApiError(data?.error || "Une erreur est survenue.", res.status, data?.details);
   }
@@ -69,6 +75,9 @@ export const api = {
   changePassword: (body) => request("/api/auth/me/password", { method: "PATCH", body, auth: true }),
   contact: (body) => request("/api/contact", { method: "POST", body }),
   apply: (body) => request("/api/applications", { method: "POST", body }),
+  request: (body) => request("/api/requests", { method: "POST", body }),
+  quote: (body) => request("/api/quotes/request", { method: "POST", body }),
+  newsletter: (body) => request("/api/newsletter", { method: "POST", body }),
   providers: (params = {}) => {
     const qs = new URLSearchParams();
     if (params.domaine) qs.set("domaine", params.domaine);

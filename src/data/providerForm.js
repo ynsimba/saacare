@@ -1,23 +1,7 @@
 /**
- * Référentiels du dossier de candidature prestataire.
- * Regroupés ici pour que le formulaire reste lisible et que ces listes puissent
- * être alimentées plus tard par l'API sans toucher aux composants.
+ * Référentiels du formulaire de candidature en six étapes (cahier des charges §5).
+ * Vocabulaire courant, compétences en cases à cocher par métier — jamais en texte libre.
  */
-
-export const GENDERS = [
-  { value: "F", label: "Femme" },
-  { value: "M", label: "Homme" },
-  { value: "AUTRE", label: "Autre" },
-  { value: "NSP", label: "Je préfère ne pas répondre" },
-];
-
-export const ID_DOCUMENT_TYPES = [
-  { value: "CNI", label: "Carte nationale d'identité" },
-  { value: "PASSEPORT", label: "Passeport" },
-  { value: "PERMIS", label: "Permis de conduire" },
-  { value: "CARTE_ELECTEUR", label: "Carte d'électeur" },
-  { value: "AUTRE", label: "Autre pièce officielle" },
-];
 
 export const COMMUNES = [
   "Bandalungwa",
@@ -26,6 +10,7 @@ export const COMMUNES = [
   "Gombe",
   "Kalamu",
   "Kasa-Vubu",
+  "Kimbanseke",
   "Kinshasa",
   "Kintambo",
   "Kisenso",
@@ -45,111 +30,78 @@ export const COMMUNES = [
   "Selembao",
 ];
 
-export const EXPERIENCE_YEARS = [
-  { value: "0-1", label: "Moins d'un an" },
-  { value: "1-3", label: "1 à 3 ans" },
-  { value: "3-6", label: "3 à 6 ans" },
-  { value: "6-10", label: "6 à 10 ans" },
-  { value: "10+", label: "Plus de 10 ans" },
-];
-
-export const EXPERIENCE_LEVELS = [
-  { value: "DEBUTANT", label: "Débutant", hint: "Première expérience professionnelle" },
-  { value: "INTERMEDIAIRE", label: "Intermédiaire", hint: "Autonome sur les missions courantes" },
-  { value: "CONFIRME", label: "Confirmé", hint: "Autonome sur les missions complexes" },
-  { value: "EXPERT", label: "Expert", hint: "Référent, capable de former d'autres prestataires" },
-];
-
-export const AVAILABILITY_STATUS = [
-  { value: "DISPONIBLE", label: "Disponible", tone: "teal", hint: "J'accepte des missions dès maintenant" },
-  { value: "OCCUPE", label: "Occupé", tone: "gold", hint: "Je termine une mission en cours" },
-  { value: "INDISPONIBLE", label: "Indisponible", tone: "navy", hint: "Je ne prends pas de mission" },
-];
-
-export const WEEK_DAYS = [
-  { value: "LUN", label: "Lundi", short: "Lun" },
-  { value: "MAR", label: "Mardi", short: "Mar" },
-  { value: "MER", label: "Mercredi", short: "Mer" },
-  { value: "JEU", label: "Jeudi", short: "Jeu" },
-  { value: "VEN", label: "Vendredi", short: "Ven" },
-  { value: "SAM", label: "Samedi", short: "Sam" },
-  { value: "DIM", label: "Dimanche", short: "Dim" },
-];
-
-export const TIME_SLOTS = [
-  { value: "MATIN", label: "Matin", hint: "6 h – 12 h" },
-  { value: "APRES_MIDI", label: "Après-midi", hint: "12 h – 18 h" },
-  { value: "SOIR", label: "Soirée", hint: "18 h – 22 h" },
-  { value: "NUIT", label: "Nuit", hint: "22 h – 6 h" },
-];
-
-export const RESPONSE_TIMES = [
-  { value: "2H", label: "Moins de 2 heures" },
-  { value: "DEMI_JOURNEE", label: "Dans la demi-journée" },
-  { value: "24H", label: "Sous 24 heures" },
-  { value: "48H", label: "Sous 48 heures" },
+export const GENDERS = [
+  { value: "F", label: "Femme" },
+  { value: "M", label: "Homme" },
 ];
 
 export const LANGUAGES = ["Français", "Lingala", "Swahili", "Tshiluba", "Kikongo", "Anglais"];
 
-export const MOBILE_MONEY_OPERATORS = [
-  { value: "MPESA", label: "M-Pesa (Vodacom)" },
-  { value: "AIRTEL", label: "Airtel Money" },
-  { value: "ORANGE", label: "Orange Money" },
+export const EXPERIENCE_RANGES = [
+  { value: "moins-2", label: "Moins de 2 ans" },
+  { value: "2-5", label: "2 à 5 ans" },
+  { value: "plus-5", label: "Plus de 5 ans" },
 ];
 
-export const CARD_NETWORKS = [
-  { value: "VISA", label: "Visa" },
-  { value: "MASTERCARD", label: "Mastercard" },
+/** Métiers recherchés, rattachés à leur pôle, avec les compétences cochables. */
+export const METIERS = [
+  { value: "nounou", label: "Nounou", pole: "kids-care", skills: ["Garde de nourrisson", "Garde de nuit", "Sortie d'école", "Aide aux devoirs", "Préparation des repas de l'enfant", "Éveil et jeux"] },
+  { value: "accompagnante-post-natale", label: "Accompagnante post-natale", pole: "walet", skills: ["Soutien à la mère", "Aide pratique au nouveau-né", "Relais de nuit", "Soutien à l'allaitement", "Tenue du foyer"] },
+  { value: "aide-menagere", label: "Aide-ménagère", pole: "home", skills: ["Entretien courant", "Nettoyage complet", "Repassage", "Lessive", "Courses du quotidien"] },
+  { value: "cuisinier", label: "Cuisinier", pole: "home", skills: ["Cuisine congolaise", "Cuisine internationale", "Pâtisserie", "Réceptions", "Gestion des courses"] },
+  { value: "chauffeur", label: "Chauffeur", pole: "driver", skills: ["Conduite en ville", "Trajets aéroport", "Conduite de direction", "Conduite de nuit", "Entretien du véhicule"] },
+  { value: "electricien", label: "Électricien", pole: "home", skills: ["Installation électrique", "Tableau électrique", "Groupe électrogène", "Éclairage", "Panneaux solaires"] },
+  { value: "plombier", label: "Plombier", pole: "home", skills: ["Recherche de fuite", "Installation sanitaire", "Débouchage", "Pompe et réservoir"] },
+  { value: "carreleur", label: "Carreleur", pole: "home", skills: ["Pose de carrelage", "Faïence", "Ragréage"] },
+  { value: "macon", label: "Maçon", pole: "home", skills: ["Maçonnerie", "Enduit", "Fondations", "Réparations"] },
+  { value: "charpentier", label: "Charpentier", pole: "home", skills: ["Charpente", "Menuiserie", "Portes et fenêtres"] },
+  { value: "tolier", label: "Tôlier", pole: "home", skills: ["Toiture en tôle", "Gouttières", "Soudure"] },
+  { value: "ajusteur", label: "Ajusteur", pole: "home", skills: ["Ajustage", "Usinage", "Maintenance mécanique"] },
+  { value: "jardinier", label: "Jardinier", pole: "home", skills: ["Entretien du jardin", "Taille", "Arrosage", "Potager"] },
+  { value: "repetiteur", label: "Répétiteur", pole: "tutora", skills: ["Primaire", "Secondaire", "Examen d'État", "Anglais", "Alphabétisation"] },
+  { value: "accompagnant-personne-agee", label: "Accompagnant de personne âgée", pole: "assist", skills: ["Aide au lever et à la toilette", "Accompagnement aux rendez-vous", "Préparation des repas", "Démarches administratives"] },
 ];
 
-/**
- * Pièces demandées. `required` conditionne la validation ; les autres restent
- * facultatives mais renforcent le dossier — c'est indiqué au candidat.
- */
-export const DOCUMENT_TYPES = [
-  {
-    id: "identite",
-    label: "Pièce d'identité",
-    hint: "Recto-verso, lisible et en cours de validité",
-    required: true,
-  },
-  {
-    id: "diplomes",
-    label: "Diplômes et certificats",
-    hint: "Formations, attestations de réussite",
-    required: false,
-  },
-  {
-    id: "attestations",
-    label: "Attestations professionnelles",
-    hint: "Anciens employeurs, lettres de recommandation",
-    required: false,
-  },
-  {
-    id: "assurance",
-    label: "Assurance professionnelle",
-    hint: "Si vous en détenez une",
-    required: false,
-  },
-  {
-    id: "registre",
-    label: "Registre de commerce",
-    hint: "Uniquement si vous candidatez en tant qu'entreprise",
-    required: false,
-  },
-  {
-    id: "portfolio",
-    label: "Portfolio / réalisations",
-    hint: "Photos de chantiers, travaux, références visuelles",
-    required: false,
-  },
+export const getMetier = (value) => METIERS.find((m) => m.value === value);
+
+export const DRIVING = ["Permis de conduire", "Véhicule personnel", "Moto"];
+
+export const EMPLOYER_TYPES = [
+  { value: "famille", label: "Une famille" },
+  { value: "entreprise", label: "Une entreprise" },
+  { value: "ong", label: "Une ONG ou une ambassade" },
+  { value: "independant", label: "À mon compte" },
+  { value: "autre", label: "Autre" },
 ];
 
-/** Étapes de la vérification menée par l'équipe qualité après dépôt du dossier. */
-export const VERIFICATION_CHECKS = [
-  { key: "identite", label: "Identité", detail: "Pièce officielle contrôlée et rapprochée de votre photo" },
-  { key: "adresse", label: "Adresse", detail: "Commune de résidence confirmée" },
-  { key: "expertise", label: "Expertise", detail: "Diplômes, certificats et mise en situation" },
-  { key: "references", label: "Références", detail: "Anciens employeurs ou clients contactés" },
+export const GUARANTOR_LINKS = [
+  { value: "famille", label: "Famille" },
+  { value: "ancien-employeur", label: "Ancien employeur" },
+  { value: "voisin", label: "Voisin" },
+  { value: "eglise", label: "Église ou association" },
+  { value: "autre", label: "Autre" },
+];
+
+export const AVAILABILITY_TYPES = [
+  { value: "plein-temps", label: "Plein temps" },
+  { value: "temps-partiel", label: "Temps partiel" },
+  { value: "missions", label: "Missions ponctuelles" },
+  { value: "nuit", label: "Nuit" },
+];
+
+export const HEARD_FROM = [
+  { value: "agent", label: "Un agent SaaCare (parrainage)" },
+  { value: "affiche", label: "Une affiche" },
+  { value: "whatsapp", label: "WhatsApp" },
+  { value: "reseaux", label: "Facebook ou Instagram" },
+  { value: "eglise", label: "Église ou association" },
+  { value: "radio", label: "Radio" },
+  { value: "autre", label: "Autre" },
+];
+
+export const APPLICATION_DOCUMENTS = [
+  { id: "idRecto", label: "Pièce d'identité — recto", hint: "Carte d'électeur ou passeport, bien lisible", required: true },
+  { id: "idVerso", label: "Pièce d'identité — verso", hint: "L'autre face de la même pièce", required: true },
+  { id: "face", label: "Photo de votre visage", hint: "De face, sans lunettes ni chapeau", required: true },
+  { id: "certificates", label: "Certificats", hint: "Si vous en avez : formation, permis, diplôme", required: false },
 ];

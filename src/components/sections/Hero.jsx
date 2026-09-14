@@ -104,11 +104,11 @@ export default function Hero() {
 
       {/* ---------- Voiles de lisibilité ---------- */}
       <div
-        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(11,15,26,0.82)_0%,rgba(11,15,26,0.55)_38%,rgba(11,15,26,0.72)_100%)] lg:bg-[linear-gradient(100deg,rgba(11,15,26,0.96)_0%,rgba(11,15,26,0.88)_32%,rgba(15,24,48,0.55)_62%,rgba(15,24,48,0.28)_100%)]"
+        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(1,31,28,0.82)_0%,rgba(1,31,28,0.55)_38%,rgba(1,31,28,0.72)_100%)] lg:bg-[linear-gradient(100deg,rgba(1,31,28,0.96)_0%,rgba(1,31,28,0.88)_32%,rgba(1,47,43,0.55)_62%,rgba(1,47,43,0.28)_100%)]"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-0 -z-10 bg-[radial-gradient(120%_80%_at_50%_35%,transparent_40%,rgba(11,15,26,0.55)_100%)] lg:bg-[radial-gradient(120%_90%_at_20%_40%,transparent_35%,rgba(11,15,26,0.7)_100%)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(120%_80%_at_50%_35%,transparent_40%,rgba(1,31,28,0.55)_100%)] lg:bg-[radial-gradient(120%_90%_at_20%_40%,transparent_35%,rgba(1,31,28,0.7)_100%)]"
         aria-hidden="true"
       />
 
@@ -122,12 +122,6 @@ export default function Hero() {
         <div className="aurora-blob bottom-[-18%] left-[18%] size-[30rem] bg-coral-500/20 animate-aurora-slow" />
         <div className="aurora-blob right-[-8%] top-[12%] size-[26rem] bg-gold-500/14 animate-aurora" />
       </motion.div>
-
-      {/* ---------- Trame fine ---------- */}
-      <div
-        className="absolute inset-0 -z-10 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:76px_76px] [mask-image:radial-gradient(80%_60%_at_30%_50%,#000,transparent)]"
-        aria-hidden="true"
-      />
 
       {/* ---------- Contenu ---------- */}
       <motion.div
@@ -150,15 +144,23 @@ export default function Hero() {
             </motion.div>
 
             {/* Titre */}
-            <h1 className="mt-6 text-balance font-display text-[2.25rem] font-semibold leading-[1.06] tracking-[-0.02em] text-paper-50 sm:mt-7 sm:text-6xl sm:leading-[1.04] lg:text-[4.15rem]">
+            <h1 className="mt-6 text-balance font-display text-[2.25rem] font-bold leading-[1.06] tracking-[-0.02em] text-paper-50 sm:mt-7 sm:text-6xl sm:leading-[1.04] lg:text-[4.15rem]">
               <AnimatedText text="Des professionnels" as="span" className="block" delay={0.35} />
               <AnimatedText text="de confiance," as="span" className="block" delay={0.5} />
-              <AnimatedText
-                text="à la porte de votre foyer."
-                as="span"
-                className="mt-1 block text-gradient"
-                delay={0.68}
-              />
+              <span className="mt-1 block">
+                <AnimatedText
+                  text="saacare"
+                  as="span"
+                  className="text-gold-500"
+                  delay={0.68}
+                />
+                {" "}
+                <AnimatedText
+                  text="à la porte de votre foyer."
+                  as="span"
+                  delay={0.78}
+                />
+              </span>
             </h1>
 
             <motion.p
@@ -204,7 +206,7 @@ export default function Hero() {
 
               <button
                 type="submit"
-                className="shine group relative flex w-full shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl bg-[linear-gradient(110deg,var(--color-teal-600),var(--color-teal-500)_50%,var(--color-coral-500))] bg-[length:220%_auto] px-6 py-3.5 text-sm font-semibold text-white transition-[background-position,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[position:100%_center] hover:shadow-[0_16px_40px_-16px_rgba(184,40,91,0.9)] focus-visible:outline-2 focus-visible:outline-gold-500 sm:w-auto sm:py-3"
+                className="shine group relative flex w-full shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl bg-[linear-gradient(110deg,var(--color-teal-600),var(--color-teal-500)_50%,var(--color-coral-500))] bg-[length:220%_auto] px-6 py-3.5 text-sm font-semibold text-white transition-[background-position,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[position:100%_center] hover:shadow-[0_16px_40px_-16px_rgba(1,67,61,0.9)] focus-visible:outline-2 focus-visible:outline-gold-500 sm:w-auto sm:py-3"
               >
                 <Search className="relative z-10 size-4 transition-transform duration-500 group-hover:scale-110" aria-hidden="true" />
                 <span className="relative z-10">Rechercher</span>

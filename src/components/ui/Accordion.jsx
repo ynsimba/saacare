@@ -38,7 +38,7 @@ export default function AccordionItem({ question, answer, defaultOpen = false })
             {question}
           </span>
           <motion.span
-            animate={{ rotate: open ? 135 : 0, backgroundColor: open ? "#9f1a4a" : "#dcefec" }}
+            animate={{ rotate: open ? 135 : 0, backgroundColor: open ? "#01433D" : "#DDEFEA" }}
             transition={{ duration: 0.4, ease: EASE }}
             className="flex size-7 shrink-0 items-center justify-center rounded-full"
           >

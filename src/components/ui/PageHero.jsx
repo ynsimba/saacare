@@ -46,12 +46,6 @@ export default function PageHero({
         <div className="aurora-blob -right-20 bottom-[-60%] size-[26rem] bg-gold-500/12 animate-aurora-slow" />
       </motion.div>
 
-      {/* Trame fine */}
-      <div
-        className="absolute inset-0 -z-10 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(70%_70%_at_40%_40%,#000,transparent)]"
-        aria-hidden="true"
-      />
-
       <div
         className={`relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${
           compact ? "pb-10 pt-10 sm:pb-16 sm:pt-20" : "pb-14 pt-12 sm:pb-24 sm:pt-24"
@@ -98,7 +92,7 @@ export default function PageHero({
           )}
 
           <h1
-            className={`mt-5 text-balance font-display font-semibold leading-[1.06] tracking-[-0.02em] ${
+            className={`mt-5 text-balance font-display font-bold leading-[1.06] tracking-[-0.02em] ${
               compact ? "text-3xl sm:text-4xl lg:text-5xl" : "text-4xl sm:text-5xl lg:text-[3.5rem]"
             }`}
           >

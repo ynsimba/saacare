@@ -17,7 +17,7 @@ const VALUES = [
     icon: ShieldCheck,
     title: "Confiance",
     description: "Chaque prestataire présenté au client est vérifié, jamais improvisé.",
-    proof: "100 % des profils contrôlés avant mise en ligne",
+    proof: "7 contrôles avant toute mise en relation",
     tone: "teal",
     span: "lg:col-span-2",
   },
@@ -25,23 +25,23 @@ const VALUES = [
     icon: Sparkles,
     title: "Professionnalisme",
     description: "Des standards de qualité clairs, mesurés et suivis dans la durée.",
-    proof: "Formation obligatoire par domaine",
+    proof: "Formation obligatoire avant la première mission",
     tone: "navy",
     span: "lg:col-span-1",
   },
   {
     icon: HeartHandshake,
     title: "Sécurité",
-    description: "Protection financière et physique pour toutes les parties, à chaque étape.",
-    proof: "Paiement séquestré jusqu'à validation",
+    description: "Contrat, assurance et remplacement : chaque partie est protégée.",
+    proof: "Remplacement sous 24 heures",
     tone: "coral",
     span: "lg:col-span-1",
   },
   {
     icon: Scale,
     title: "Équité",
-    description: "Des prestataires justement rémunérés, valorisés selon leur mérite réel.",
-    proof: "Reversement sous 24 heures",
+    description: "Des agents payés justement, qui ne paient jamais pour travailler.",
+    proof: "Aucun frais demandé aux agents",
     tone: "gold",
     span: "lg:col-span-2",
   },
@@ -49,7 +49,7 @@ const VALUES = [
     icon: Users,
     title: "Proximité",
     description: "Un support client réactif et humain, essentiel dans une relation aussi sensible.",
-    proof: "Une équipe joignable 6 jours sur 7",
+    proof: "Un chargé de clientèle joignable 6 jours sur 7",
     tone: "teal",
     span: "sm:col-span-2 lg:col-span-2",
   },
@@ -110,10 +110,6 @@ export default function ValuesBento() {
                 <div className="aurora-blob -left-16 top-[-20%] size-72 bg-teal-500/22 animate-aurora" />
                 <div className="aurora-blob -right-10 bottom-[-25%] size-64 bg-gold-500/12 animate-aurora-slow" />
               </div>
-              <div
-                className="absolute inset-0 -z-10 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(70%_70%_at_30%_30%,#000,transparent)]"
-                aria-hidden="true"
-              />
 
               <div className="relative">
                 <span className="inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.18em] text-teal-300">
@@ -122,13 +118,13 @@ export default function ValuesBento() {
                 </span>
                 <h2
                   id="values-heading"
-                  className="mt-5 text-balance font-display text-3xl font-semibold leading-[1.08] tracking-[-0.02em] sm:text-4xl"
+                  className="mt-5 text-balance font-display text-3xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-4xl"
                 >
                   Ce qui guide chacune de nos décisions
                 </h2>
                 <p className="mt-5 max-w-md text-pretty leading-relaxed text-paper-100/65">
                   Cinq principes non négociables. Ils dictent qui entre sur la plateforme, comment
-                  l'argent circule et ce que nous faisons quand quelque chose se passe mal.
+                  nos agents sont protégés et ce que nous faisons quand quelque chose se passe mal.
                 </p>
               </div>
 
@@ -211,7 +207,7 @@ function ValueTile({ value, index }) {
           </span>
         </div>
 
-        <h3 className="relative mt-6 font-display text-xl font-semibold text-ink-900">{title}</h3>
+        <h3 className="relative mt-6 font-display text-xl font-bold text-ink-900">{title}</h3>
         <p className="relative mt-2 text-sm leading-relaxed text-ink-900/60">{description}</p>
 
         {/* Preuve concrète, séparée par un trait qui se déploie au survol */}

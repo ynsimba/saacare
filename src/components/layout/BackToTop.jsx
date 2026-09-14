@@ -30,10 +30,10 @@ export default function BackToTop() {
           whileTap={{ scale: 0.93 }}
           transition={{ duration: 0.35, ease: EASE }}
           aria-label="Revenir en haut de la page"
-          className="glass fixed bottom-6 right-5 z-40 grid size-12 place-items-center rounded-full text-ink-900 shadow-lifted focus-visible:outline-2 focus-visible:outline-gold-500 sm:bottom-8 sm:right-8"
+          className="glass fixed bottom-20 right-4 z-40 grid size-12 place-items-center rounded-full text-ink-900 shadow-lifted focus-visible:outline-2 focus-visible:outline-gold-500 xl:bottom-8 xl:right-8"
         >
           <svg className="absolute inset-0 size-full -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
-            <circle cx="24" cy="24" r="22" fill="none" stroke="rgba(3,41,76,0.10)" strokeWidth="2" />
+            <circle cx="24" cy="24" r="22" fill="none" stroke="rgba(16,42,42,0.10)" strokeWidth="2" />
             <motion.circle
               cx="24"
               cy="24"

@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import contactRoutes from "./routes/contact.js";
 import applicationsRoutes from "./routes/applications.js";
 import providersRoutes from "./routes/providers.js";
+import requestsRoutes from "./routes/requests.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/applications", applicationsRoutes);
 app.use("/api/providers", providersRoutes);
+app.use("/api", requestsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -22,7 +22,7 @@ const CONTACT_INFO = [
 ];
 
 const SUBJECT_LABELS = {
-  reservation: "Question sur une réservation",
+  demande: "Question sur une demande",
   litige: "Litige ou réclamation",
   prestataire: "Devenir prestataire",
   partenariat: "Partenariat",
@@ -59,14 +59,14 @@ export default function Contact() {
     <>
       <Seo
         title="Contact"
-        description="Contactez l'équipe SaaCare pour toute question sur une réservation, un litige ou un partenariat."
+        description="Contactez l'équipe SaaCare : demande de service, litige, devis entreprise ou partenariat. Réponse sous 24 heures ouvrées."
         path="/contact"
       />
 
       <PageHero
         eyebrow="Contact"
         title="Une question ? Écrivez-nous."
-        subtitle="Notre équipe répond sous 24 heures ouvrées, pour toute question relative à une réservation, un litige ou un partenariat."
+        subtitle="Notre équipe répond sous 24 heures ouvrées, pour toute question sur une demande, un litige, un devis ou un partenariat."
         breadcrumb={[{ label: "Accueil", to: "/" }, { label: "Contact" }]}
         compact
       />
@@ -104,7 +104,7 @@ export default function Contact() {
               <div className="flex items-start gap-3 rounded-2xl border border-dashed border-teal-200 bg-teal-50/50 p-5">
                 <Clock className="mt-0.5 size-4 shrink-0 text-teal-700" aria-hidden="true" />
                 <p className="text-sm leading-relaxed text-ink-900/70">
-                  Pour un litige en cours, précisez la référence de la prestation : notre équipe qualité
+                  Pour un litige en cours, précisez votre numéro de demande : notre équipe qualité
                   traite ces demandes en priorité.
                 </p>
               </div>
@@ -131,7 +131,7 @@ export default function Contact() {
                     >
                       <CheckCircle2 className="size-9 text-teal-600" aria-hidden="true" />
                     </motion.span>
-                    <p className="mt-2 font-display text-xl font-semibold text-ink-900">Message envoyé</p>
+                    <p className="mt-2 font-display text-xl font-bold text-ink-900">Message envoyé</p>
                     <p className="max-w-xs text-sm leading-relaxed text-ink-900/65">
                       Merci pour votre message. Notre équipe vous répond sous 24 heures ouvrées.
                     </p>
@@ -153,7 +153,7 @@ export default function Contact() {
                     className="flex flex-col gap-4"
                   >
                     <div className="mb-1 border-b border-ink-900/8 pb-5">
-                      <h2 className="font-display text-xl font-semibold text-ink-900">Votre message</h2>
+                      <h2 className="font-display text-xl font-bold text-ink-900">Votre message</h2>
                       <p className="mt-1.5 text-sm leading-relaxed text-ink-900/55">
                         Remplissez le formulaire — nous vous répondons sous 24 h ouvrées.
                       </p>
@@ -174,9 +174,9 @@ export default function Contact() {
                       placeholder="Sélectionnez un sujet…"
                       options={[
                         {
-                          value: "reservation",
-                          label: "Question sur une réservation",
-                          description: "Suivi, modification ou annulation d’une prestation.",
+                          value: "demande",
+                          label: "Question sur une demande",
+                          description: "Suivi, modification ou annulation d’une demande.",
                         },
                         {
                           value: "litige",

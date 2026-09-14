@@ -77,3 +77,30 @@ model Provider {
 
   @@index([domainSlug])
 }
+
+/// Demandes entrantes du site : demande client (CLIENT) ou devis entreprise (QUOTE).
+model ServiceRequest {
+  id                String   @id @default(cuid())
+  reference         String   @unique
+  kind              String   @default("CLIENT")
+  status            String   @default("NOUVELLE")
+  service           String   @default("")
+  commune           String   @default("")
+  frequency         String   @default("")
+  firstName         String
+  phone             String
+  email             String   @default("")
+  providerReference String   @default("")
+  details           String   @default("{}")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([kind, status])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  confirmed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

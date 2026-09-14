@@ -3,69 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#101a30" />
+    <meta name="theme-color" content="#01433D" />
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=yes" />
 
-    <!-- Icônes navigateur / PWA -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="icon" type="image/png" href="/icone.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <!-- SEO par défaut (surchargé par page via react-helmet-async) -->
-    <title>SaaCare — Prestataires vérifiés à domicile à Kinshasa (RDC)</title>
+    <title>SaaCare — Des services qui vous accompagnent · Kinshasa</title>
     <meta
       name="description"
-      content="Trouvez une nounou, un chauffeur, un répétiteur ou un artisan vérifié à Kinshasa. SaaCare sécurise la mise en relation, la réservation et le paiement jusqu'à votre validation."
-    />
-    <meta
-      name="keywords"
-      content="SaaCare, Kinshasa, nounou, babysitting, chauffeur, répétiteur, plombier, électricien, services à domicile, RDC, Congo-Kinshasa, prestataire vérifié"
+      content="Nounou, accompagnante post-natale, aide-ménagère, artisan ou chauffeur : SaaCare met à votre service des agents vérifiés en 7 étapes, formés et assurés, à Kinshasa."
     />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow" />
-    <meta name="author" content="SaaCare RDC" />
+    <meta name="author" content="SaaCare" />
     <meta name="geo.region" content="CD-KN" />
     <meta name="geo.placename" content="Kinshasa" />
     <link rel="canonical" href="https://www.saacare.cd/" />
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SaaCare" />
-    <meta property="og:title" content="SaaCare — Prestataires vérifiés à domicile à Kinshasa (RDC)" />
+    <meta property="og:title" content="SaaCare — Des services qui vous accompagnent" />
     <meta
       property="og:description"
-      content="Garde d'enfants, chauffeur, soutien scolaire et services à domicile : réservez un professionnel vérifié et payez en toute sécurité."
+      content="Des agents de service à la personne vérifiés, formés et assurés à Kinshasa. Vous n'embauchez plus un inconnu."
     />
-    <meta property="og:image" content="https://www.saacare.cd/hero.png" />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:alt" content="SaaCare — professionnels de confiance à domicile à Kinshasa" />
+    <meta property="og:image" content="https://www.saacare.cd/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Logo SaaCare — Des services qui vous accompagnent" />
     <meta property="og:locale" content="fr_CD" />
     <meta property="og:url" content="https://www.saacare.cd/" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SaaCare — Prestataires vérifiés à domicile à Kinshasa (RDC)" />
+    <meta name="twitter:title" content="SaaCare — Des services qui vous accompagnent" />
     <meta
       name="twitter:description"
-      content="Garde d'enfants, chauffeur, soutien scolaire et services à domicile : réservez un professionnel vérifié et payez en toute sécurité."
+      content="Des agents de service à la personne vérifiés, formés et assurés à Kinshasa."
     />
-    <meta name="twitter:image" content="https://www.saacare.cd/hero.png" />
-    <meta name="twitter:image:alt" content="SaaCare — professionnels de confiance à domicile à Kinshasa" />
+    <meta name="twitter:image" content="https://www.saacare.cd/og-image.png" />
 
-    <!-- Données structurées : organisation -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": "LocalBusiness",
         "name": "SaaCare",
-        "legalName": "SaaCare RDC",
+        "slogan": "Des services qui vous accompagnent",
         "url": "https://www.saacare.cd/",
-        "logo": "https://www.saacare.cd/icone.png",
-        "image": "https://www.saacare.cd/hero.png",
-        "description": "Plateforme de mise en relation avec des professionnels de confiance à domicile en République Démocratique du Congo.",
+        "logo": "https://www.saacare.cd/icone-512.png",
+        "image": "https://www.saacare.cd/og-image.png",
+        "description": "Service privé de placement et de mise à disposition d'agents de service à la personne vérifiés, formés et assurés en République Démocratique du Congo.",
         "email": "contact@saacare.com",
         "telephone": "+243816483538",
         "address": {
@@ -74,18 +64,15 @@
           "addressLocality": "Kinshasa",
           "addressCountry": "CD"
         },
-        "areaServed": {
-          "@type": "City",
-          "name": "Kinshasa"
-        },
+        "areaServed": { "@type": "City", "name": "Kinshasa" },
+        "openingHours": "Mo-Sa 08:00-18:00",
         "contactPoint": {
           "@type": "ContactPoint",
           "telephone": "+243816483538",
           "contactType": "customer service",
-          "availableLanguage": ["French", "Lingala"],
+          "availableLanguage": ["French", "Lingala", "English"],
           "areaServed": "CD"
-        },
-        "sameAs": []
+        }
       }
     </script>
   </head>

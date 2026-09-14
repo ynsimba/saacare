@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, useParams, Navigate } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
@@ -8,17 +8,27 @@ import ScrollToTop from "./components/layout/ScrollToTop";
 import PageTransition from "./components/layout/PageTransition";
 import Cursor from "./components/layout/Cursor";
 import BackToTop from "./components/layout/BackToTop";
+import MobileCallBar from "./components/layout/MobileCallBar";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const Home = lazy(() => import("./pages/Home.jsx"));
-const HowItWorksPage = lazy(() => import("./pages/HowItWorksPage.jsx"));
-const DomainDetail = lazy(() => import("./pages/DomainDetail.jsx"));
+const Solutions = lazy(() => import("./pages/Solutions.jsx"));
+const SolutionDetail = lazy(() => import("./pages/SolutionDetail.jsx"));
 const FindProvider = lazy(() => import("./pages/FindProvider.jsx"));
 const ProviderProfile = lazy(() => import("./pages/ProviderProfile.jsx"));
 const BecomeProvider = lazy(() => import("./pages/BecomeProvider.jsx"));
+const ApplicationForm = lazy(() => import("./pages/ApplicationForm.jsx"));
+const SaaTrust = lazy(() => import("./pages/SaaTrust.jsx"));
+const Verifier = lazy(() => import("./pages/Verifier.jsx"));
+const HowItWorksPage = lazy(() => import("./pages/HowItWorksPage.jsx"));
+const Entreprises = lazy(() => import("./pages/Entreprises.jsx"));
+const QuoteRequest = lazy(() => import("./pages/QuoteRequest.jsx"));
+const Diaspora = lazy(() => import("./pages/Diaspora.jsx"));
+const Tarifs = lazy(() => import("./pages/Tarifs.jsx"));
+const Garanties = lazy(() => import("./pages/Garanties.jsx"));
 const About = lazy(() => import("./pages/About.jsx"));
-const FAQPage = lazy(() => import("./pages/FAQPage.jsx"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter.jsx"));
 const Contact = lazy(() => import("./pages/Contact.jsx"));
 const Connexion = lazy(() => import("./pages/Connexion.jsx"));
 const LegalPage = lazy(() => import("./pages/legal/LegalPage.jsx"));
@@ -27,6 +37,44 @@ const ClientDashboard = lazy(() => import("./pages/espace/ClientDashboard.jsx"))
 const ProviderDashboard = lazy(() => import("./pages/espace/ProviderDashboard.jsx"));
 const ProviderApplication = lazy(() => import("./pages/espace/ProviderApplication.jsx"));
 const Profile = lazy(() => import("./pages/espace/Profile.jsx"));
+
+/** Pages publiques et adresses définitives du cahier des charges §2. */
+const PUBLIC_ROUTES = [
+  ["/", Home],
+  ["/solutions", Solutions],
+  ["/solutions/:slug", SolutionDetail],
+  ["/prestataires", FindProvider],
+  ["/prestataires/:reference", ProviderProfile],
+  ["/devenir-prestataire", BecomeProvider],
+  ["/devenir-prestataire/postuler", ApplicationForm],
+  ["/saatrust", SaaTrust],
+  ["/verifier", Verifier],
+  ["/comment-ca-marche", HowItWorksPage],
+  ["/entreprises", Entreprises],
+  ["/entreprises/devis", QuoteRequest],
+  ["/diaspora", Diaspora],
+  ["/tarifs", Tarifs],
+  ["/garanties", Garanties],
+  ["/a-propos", About],
+  ["/aide", HelpCenter],
+  ["/contact", Contact],
+  ["/connexion", Connexion],
+];
+
+const LEGAL_SLUGS = ["mentions-legales", "cgu", "confidentialite"];
+
+/** Anciennes adresses : redirection permanente côté client vers les adresses définitives. */
+const LEGACY_DOMAIN_SLUGS = { "home-service": "home" };
+
+function LegacySearchRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/prestataires${search.replace("domaine=", "service=").replace("service=home-service", "service=home")}`} replace />;
+}
+
+function LegacyDomainRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/solutions/${LEGACY_DOMAIN_SLUGS[slug] ?? slug}`} replace />;
+}
 
 function RouteFallback() {
   return (
@@ -96,31 +144,22 @@ export default function App() {
           </Suspense>
         </div>
       ) : (
-        <main id="main-content" className="flex-1 pt-20">
+        <main id="main-content" className="flex-1 pb-16 pt-20 xl:pb-0">
           <Suspense fallback={<RouteFallback />}>
             <AnimatePresence mode="wait" initial={false}>
               <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<PublicPage><Home /></PublicPage>} />
-                <Route path="/comment-ca-marche" element={<PublicPage><HowItWorksPage /></PublicPage>} />
-                <Route path="/domaines/:slug" element={<PublicPage><DomainDetail /></PublicPage>} />
-                <Route path="/trouver-un-prestataire" element={<PublicPage><FindProvider /></PublicPage>} />
-                <Route path="/prestataires/:id" element={<PublicPage><ProviderProfile /></PublicPage>} />
-                <Route path="/devenir-prestataire" element={<PublicPage><BecomeProvider /></PublicPage>} />
-                <Route path="/a-propos" element={<PublicPage><About /></PublicPage>} />
-                <Route path="/faq" element={<PublicPage><FAQPage /></PublicPage>} />
-                <Route path="/contact" element={<PublicPage><Contact /></PublicPage>} />
-                <Route path="/connexion" element={<PublicPage><Connexion /></PublicPage>} />
-                {["mentions-legales", "cgu", "cgv", "confidentialite"].map((slug) => (
-                  <Route
-                    key={slug}
-                    path={`/${slug}`}
-                    element={
-                      <PublicPage>
-                        <LegalPage slug={slug} />
-                      </PublicPage>
-                    }
-                  />
+                {PUBLIC_ROUTES.map(([path, Page]) => (
+                  <Route key={path} path={path} element={<PublicPage><Page /></PublicPage>} />
                 ))}
+                {LEGAL_SLUGS.map((slug) => (
+                  <Route key={slug} path={`/${slug}`} element={<PublicPage><LegalPage slug={slug} /></PublicPage>} />
+                ))}
+
+                <Route path="/trouver-un-prestataire" element={<LegacySearchRedirect />} />
+                <Route path="/domaines/:slug" element={<LegacyDomainRedirect />} />
+                <Route path="/faq" element={<Navigate to="/aide" replace />} />
+                <Route path="/cgv" element={<Navigate to="/cgu" replace />} />
+
                 <Route path="*" element={<PublicPage><NotFound /></PublicPage>} />
               </Routes>
             </AnimatePresence>
@@ -129,6 +168,7 @@ export default function App() {
       )}
 
       {!isEspace && <Footer />}
+      {!isEspace && <MobileCallBar />}
     </div>
   );
 }

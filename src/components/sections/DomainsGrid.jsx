@@ -70,16 +70,16 @@ export default function DomainsGrid() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
           <SectionHeading
-            eyebrow="Nos domaines"
-            title={<span id="domains-heading">Un standard de confiance, quatre besoins du quotidien</span>}
-            subtitle="Chaque domaine applique le même socle d'exigence : vérification d'identité, formation obligatoire et suivi qualité continu."
+            eyebrow="Nos solutions"
+            title={<span id="domains-heading">Sept pôles, un seul registre d'agents vérifiés</span>}
+            subtitle="Enfants, naissance, maison, conduite, cours, aînés et formation : chaque pôle applique le même protocole SaaTrust."
           />
           <Reveal variant="right" delay={0.2} className="shrink-0">
             <Link
-              to="/trouver-un-prestataire"
+              to="/solutions"
               className="group inline-flex items-center gap-2 text-sm font-semibold text-teal-700 transition-colors hover:text-teal-800"
             >
-              <span className="link-underline">Voir tous les prestataires</span>
+              <span className="link-underline">Voir toutes nos solutions</span>
               <ArrowRight
                 className="size-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
                 aria-hidden="true"
@@ -143,7 +143,7 @@ export default function DomainsGrid() {
                     <DomainIcon name={activeDomain.icon} className="size-4.5" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate font-display text-sm font-semibold">
+                    <span className="block truncate font-display text-sm font-bold">
                       {activeDomain.name}
                     </span>
                     <span className="block truncate text-[0.68rem] text-white/60">
@@ -162,7 +162,7 @@ export default function DomainsGrid() {
                 </ul>
 
                 <p className="mt-4 flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-white/70">
-                  Découvrir le domaine
+                  Découvrir le pôle
                   <ArrowUpRight className="size-3" />
                 </p>
               </motion.div>
@@ -182,7 +182,7 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
   return (
     <RevealItem as="li" variant="up" className="border-b border-ink-900/10">
       <Link
-        to={`/domaines/${domain.slug}`}
+        to={`/solutions/${domain.slug}`}
         onMouseEnter={onEnter}
         onFocus={onEnter}
         className="group relative flex items-center gap-5 overflow-hidden px-2 py-7 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold-500 sm:gap-7 sm:px-5 sm:py-9 lg:py-10"
@@ -222,7 +222,7 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
         {/* Titre + accroche */}
         <span className="relative min-w-0 flex-1">
           <span
-            className={`block font-display text-xl font-semibold leading-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:text-2xl lg:text-[1.75rem] ${
+            className={`block font-display text-xl font-bold leading-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:text-2xl lg:text-[1.75rem] ${
               isHovered ? "translate-x-1 text-white" : "text-ink-900"
             }`}
           >
@@ -233,14 +233,14 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
               isHovered ? "text-white/70" : "text-ink-900/60"
             }`}
           >
-            {domain.tagline}
+            {domain.tagline}{domain.available ? "" : " · " + domain.phase}
           </span>
         </span>
 
         {/* Statistique */}
         <span className="relative hidden shrink-0 text-right lg:block">
           <span
-            className={`block font-display text-2xl font-semibold transition-colors duration-500 ${
+            className={`block font-display text-2xl font-bold transition-colors duration-500 ${
               isHovered ? "text-white" : theme.text
             }`}
           >

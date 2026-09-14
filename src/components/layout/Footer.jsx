@@ -93,19 +93,14 @@ export default function Footer() {
         aria-hidden="true"
       />
 
-      {/* Halos + trame */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(159,26,74,0.24),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(1,67,61,0.24),transparent)]"
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
         <div className="aurora-blob -left-32 bottom-0 size-[28rem] bg-teal-500/12 animate-aurora-slow" />
         <div className="aurora-blob -right-24 top-10 size-80 bg-gold-500/8 animate-aurora" />
       </div>
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.05] [background-image:linear-gradient(rgba(255,255,255,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.8)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:radial-gradient(80%_60%_at_50%_0%,#000,transparent)]"
-        aria-hidden="true"
-      />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ---------------- Bande d'assistance ---------------- */}
@@ -114,7 +109,7 @@ export default function Footer() {
           className="flex flex-col gap-4 border-b border-white/8 py-6 sm:gap-6 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:py-12"
         >
           <div>
-            <h2 className="text-balance font-display text-xl font-semibold leading-snug text-paper-50 sm:text-2xl lg:text-[1.75rem]">
+            <h2 className="text-balance font-display text-xl font-bold leading-snug text-paper-50 sm:text-2xl lg:text-[1.75rem]">
               Une question avant de réserver ? Parlons-en.
             </h2>
             <p className="mt-1.5 hidden items-center gap-2 text-sm text-white/55 sm:flex">
@@ -274,7 +269,7 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 1, ease: EASE }}
-          className="absolute inset-x-0 -bottom-[2.5vw] block text-center font-display text-[12vw] font-semibold leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.10)] lg:text-[15vw]"
+          className="absolute inset-x-0 -bottom-[2.5vw] block text-center font-display text-[12vw] font-bold leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.10)] lg:text-[15vw]"
         >
           SaaCare
         </motion.span>

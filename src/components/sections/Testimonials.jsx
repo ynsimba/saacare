@@ -57,7 +57,7 @@ export default function Testimonials() {
           align="center"
           eyebrow="Avis clients"
           title={<span id="testimonials-heading">Ce que les familles racontent</span>}
-          subtitle="Des avis authentiques, vérifiés après chaque prestation validée sur la plateforme."
+          subtitle="Prénom, commune et service : des avis recueillis après chaque mission."
         />
 
         <Reveal
@@ -97,7 +97,7 @@ export default function Testimonials() {
                   </blockquote>
 
                   <figcaption className="mt-auto flex items-center gap-3.5">
-                    <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-navy-700 font-display text-sm font-semibold text-white">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-navy-700 font-display text-sm font-bold text-white">
                       {active.initials}
                     </div>
                     <div>

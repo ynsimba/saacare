@@ -10,10 +10,10 @@ import { useHasFinePointer, useIsReducedMotion } from "../../lib/motion";
  * Sur mobile ou en mouvement réduit, seul le rendu statique est conservé.
  */
 const TONES = {
-  teal: "rgba(184,40,91,0.16)",
-  navy: "rgba(38,58,99,0.14)",
-  gold: "rgba(201,50,104,0.16)",
-  coral: "rgba(159,26,74,0.15)",
+  teal: "rgba(1,67,61,0.16)",
+  navy: "rgba(16,42,42,0.14)",
+  gold: "rgba(238,85,24,0.16)",
+  coral: "rgba(1,67,61,0.15)",
   light: "rgba(255,255,255,0.10)",
 };
 

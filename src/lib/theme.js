@@ -1,7 +1,11 @@
-/** Classes Tailwind associées à chaque thème de domaine (Kids Care, Driver, Tutora, Home Service). */
+/**
+ * Classes Tailwind associées au thème de chaque pôle.
+ * teal = vert SaaCare, navy = encre / vert profond, coral et gold = orange SaaCare.
+ * Les fonds pleins orange utilisent la teinte 700 pour garder un texte blanc lisible (AA).
+ */
 export const THEME = {
   teal: {
-    bg: "bg-teal-700",
+    bg: "bg-teal-600",
     bgSoft: "bg-teal-50",
     text: "text-teal-700",
     border: "border-teal-200",
@@ -10,12 +14,12 @@ export const THEME = {
     dot: "bg-teal-500",
   },
   navy: {
-    bg: "bg-navy-700",
-    bgSoft: "bg-navy-700/5",
+    bg: "bg-ink-900",
+    bgSoft: "bg-sky",
     text: "text-navy-700",
     border: "border-navy-700/15",
     ring: "ring-navy-700/25",
-    chip: "bg-navy-700/10 text-navy-700",
+    chip: "bg-sky text-ink-900",
     dot: "bg-navy-600",
   },
   gold: {

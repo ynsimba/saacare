@@ -24,11 +24,6 @@ export default function NotFound() {
           <div className="aurora-blob bottom-[5%] right-[12%] size-80 bg-coral-500/16 animate-aurora-slow" />
         </motion.div>
 
-        <div
-          className="absolute inset-0 -z-10 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(60%_60%_at_50%_50%,#000,transparent)]"
-          aria-hidden="true"
-        />
-
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 20, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -46,7 +41,7 @@ export default function NotFound() {
           <p className="mt-8 font-mono text-sm font-medium uppercase tracking-[0.28em] text-paper-100/45">
             Erreur 404
           </p>
-          <h1 className="mt-4 text-balance font-display text-4xl font-semibold leading-tight text-paper-50 sm:text-5xl">
+          <h1 className="mt-4 text-balance font-display text-4xl font-bold leading-tight text-paper-50 sm:text-5xl">
             Cette page n'existe pas <span className="text-gradient">ou plus</span>.
           </h1>
           <p className="mt-5 leading-relaxed text-paper-100/65">
@@ -56,7 +51,7 @@ export default function NotFound() {
             <Button to="/" size="lg" withArrow magnetic>
               Retour à l'accueil
             </Button>
-            <Button to="/trouver-un-prestataire" variant="glass" size="lg" magnetic>
+            <Button to="/prestataires" variant="glass" size="lg" magnetic>
               Trouver un prestataire
             </Button>
           </div>

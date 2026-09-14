@@ -50,3 +50,39 @@ export const applicationSchema = z.object({
 export function parseBody(schema, body) {
   return schema.parse(body);
 }
+
+const optionalText = (max) => z.string().trim().max(max).optional().default("");
+
+export const serviceRequestSchema = z.object({
+  service: z.string().trim().min(1, "Choisissez un service."),
+  commune: z.string().trim().min(2, "Choisissez une commune."),
+  frequency: z.string().trim().min(1, "Choisissez une fréquence."),
+  date: optionalText(20),
+  dueDate: optionalText(20),
+  firstName: z.string().trim().min(2, "Indiquez votre prénom."),
+  phone: z.string().trim().min(8, "Indiquez un numéro de téléphone valide."),
+  email: z.union([z.literal(""), z.string().trim().email("Courriel invalide.")]).optional().default(""),
+  address: optionalText(300),
+  need: optionalText(2000),
+  providerReference: optionalText(40),
+});
+
+export const quoteRequestSchema = z.object({
+  company: z.string().trim().min(2, "Indiquez la raison sociale."),
+  contactName: z.string().trim().min(2, "Indiquez le nom du contact."),
+  phone: z.string().trim().min(8, "Indiquez un numéro de téléphone valide."),
+  email: z.string().trim().email("Courriel invalide."),
+  needType: z.string().trim().min(1, "Choisissez le type de besoin."),
+  positions: z
+    .array(z.object({ metier: z.string().trim().min(1), count: z.coerce.number().int().min(1).max(500) }))
+    .min(1, "Ajoutez au moins un poste."),
+  duration: optionalText(80),
+  location: optionalText(200),
+  startDate: optionalText(20),
+  message: optionalText(2000),
+});
+
+export const newsletterSchema = z.object({
+  email: z.string().trim().email("Courriel invalide."),
+  consent: z.boolean().refine((v) => v === true, "Le consentement est requis."),
+});

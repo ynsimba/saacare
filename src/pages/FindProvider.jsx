@@ -1,456 +1,389 @@
-import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { Search, SearchX, SlidersHorizontal, X, LayoutGrid, List } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { AnimatePresence, motion } from "motion/react";
+import { SearchX, SlidersHorizontal, X, Info, ShieldCheck } from "lucide-react";
 import Seo from "../lib/Seo";
 import PageHero from "../components/ui/PageHero";
 import ProviderCard from "../components/ui/ProviderCard";
-import ProviderTable from "../components/ui/ProviderTable";
-import ProviderDrawer from "../components/ui/ProviderDrawer";
-import DomainIcon from "../components/ui/DomainIcon";
-import { domains } from "../data/domains";
-import { providers } from "../data/providers";
-import { EASE, useIsReducedMotion } from "../lib/motion";
+import RequestForm from "../components/ui/RequestForm";
+import { domains, getDomainBySlug } from "../data/domains";
+import { providers, hasPublicRating } from "../data/providers";
+import { COMMUNES, LANGUAGES, METIERS } from "../data/providerForm";
+import { FREQUENCIES } from "../data/site";
+import { EASE } from "../lib/motion";
+
+const PAGE_SIZE = 12;
+const LEVEL_WEIGHT = { "Élite": 3, "Certifié": 2, "Vérifié": 1 };
+const AVAIL_WEIGHT = { immediate: 2, week: 1, planning: 0 };
 
 const SORTS = [
-  { value: "note", label: "Mieux notés" },
   { value: "pertinence", label: "Pertinence" },
-  { value: "prix", label: "Prix croissant" },
-  { value: "experience", label: "Plus expérimentés" },
+  { value: "note", label: "Note la plus élevée" },
+  { value: "experience", label: "Expérience" },
+  { value: "dispo", label: "Disponibilité immédiate" },
 ];
 
-/** Communes déduites des données : la liste reste juste si le jeu de données évolue. */
-const COMMUNES = [...new Set(providers.map((p) => p.commune))].sort((a, b) =>
-  a.localeCompare(b, "fr")
-);
+const EXPERIENCE = [
+  { value: "moins-2", label: "Moins de 2 ans", test: (y) => y < 2 },
+  { value: "2-5", label: "2 à 5 ans", test: (y) => y >= 2 && y <= 5 },
+  { value: "plus-5", label: "Plus de 5 ans", test: (y) => y > 5 },
+];
 
-const VIEW_STORAGE_KEY = "saacare:providers-view";
+const AVAILABILITIES = [
+  { value: "immediate", label: "Immédiatement" },
+  { value: "week", label: "Sous 7 jours" },
+  { value: "planning", label: "Sur planning" },
+];
 
-/**
- * Préférence d'affichage conservée d'une visite à l'autre.
- * La liste est le mode par défaut : elle aligne note, commune et tarif, ce qui
- * rend la comparaison immédiate. La grille reste disponible d'un clic.
- */
-function readStoredView() {
-  if (typeof window === "undefined") return "list";
-  try {
-    return window.localStorage.getItem(VIEW_STORAGE_KEY) === "grid" ? "grid" : "list";
-  } catch {
-    return "list";
-  }
-}
+const GENDERS = [
+  { value: "", label: "Indifférent" },
+  { value: "F", label: "Femme" },
+  { value: "M", label: "Homme" },
+];
 
-function readSearch(search) {
-  const params = new URLSearchParams(search);
-  return {
-    domaine: params.get("domaine") ?? "",
-    commune: params.get("commune") ?? "",
-    q: params.get("q") ?? "",
-  };
+const LICENCES = ["Permis de conduire", "Véhicule personnel", "Moto"];
+const SLOTS = ["Jour", "Nuit", "Jour et nuit en relais"];
+
+const LIST_KEYS = ["commune", "niveau", "langues", "permis", "creneau"];
+
+/** Les filtres vivent dans l'adresse : chaque recherche reste partageable et indexable (§4.2). */
+function readFilters(params) {
+  const f = Object.fromEntries(params.entries());
+  LIST_KEYS.forEach((k) => {
+    f[k] = f[k] ? f[k].split(",").filter(Boolean) : [];
+  });
+  return f;
 }
 
 export default function FindProvider() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const initial = readSearch(location.search);
+  const [params, setParams] = useSearchParams();
+  const filters = useMemo(() => readFilters(params), [params]);
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const [panelOpen, setPanelOpen] = useState(false);
 
-  const [query, setQuery] = useState(initial.q);
-  const [domainSlug, setDomainSlug] = useState(initial.domaine);
-  const [commune, setCommune] = useState(initial.commune);
-  const [sort, setSort] = useState("note");
-  const [view, setView] = useState(readStoredView);
-  const [selected, setSelected] = useState(null);
-  const reduced = useIsReducedMotion();
-
-  const changeView = (next) => {
-    setView(next);
-    try {
-      window.localStorage.setItem(VIEW_STORAGE_KEY, next);
-    } catch {
-      /* Stockage indisponible (navigation privée) : la préférence reste locale à la session. */
-    }
+  const update = (key, value) => {
+    const next = new URLSearchParams(params);
+    const serialized = Array.isArray(value) ? value.join(",") : value;
+    if (serialized === "" || serialized == null) next.delete(key);
+    else next.set(key, serialized);
+    if (key === "service") next.delete("metier");
+    setParams(next, { replace: true });
   };
-
-  /* L'URL reflète la recherche pour qu'elle reste partageable et navigable. */
-  const syncUrl = (next = {}) => {
-    const state = { q: query, domaine: domainSlug, commune, ...next };
-    const params = new URLSearchParams();
-    if (state.q) params.set("q", state.q);
-    if (state.domaine) params.set("domaine", state.domaine);
-    if (state.commune) params.set("commune", state.commune);
-    const qs = params.toString();
-    navigate(qs ? `${location.pathname}?${qs}` : location.pathname, { replace: true });
+  const toggle = (key, value) => {
+    const list = filters[key];
+    update(key, list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
   };
+  const reset = () => setParams(new URLSearchParams(), { replace: true });
+
+  useEffect(() => setVisible(PAGE_SIZE), [params]);
+
+  const domain = getDomainBySlug(filters.service);
+  const metiers = METIERS.filter((m) => !filters.service || m.pole === filters.service);
+  const metierLabel = METIERS.find((m) => m.value === filters.metier)?.label;
 
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    let list = providers.filter((p) => {
-      const matchDomain = !domainSlug || p.domainSlug === domainSlug;
-      const matchCommune = !commune || p.commune === commune;
-      const matchQuery =
-        !q ||
-        p.name.toLowerCase().includes(q) ||
-        p.role.toLowerCase().includes(q) ||
-        p.commune.toLowerCase().includes(q);
-      return matchDomain && matchCommune && matchQuery;
+    const minRating = Number(filters.note) || 0;
+    const exp = EXPERIENCE.find((e) => e.value === filters.experience);
+    const selectedCommunes = new Set(filters.commune);
+
+    const list = providers.filter((p) => {
+      if (filters.service && p.domainSlug !== filters.service) return false;
+      if (metierLabel && !p.metier.toLowerCase().startsWith(metierLabel.toLowerCase())) return false;
+      if (selectedCommunes.size && !p.zones.some((z) => selectedCommunes.has(z))) return false;
+      if (filters.niveau.length && !filters.niveau.includes(p.level)) return false;
+      if (minRating && (!hasPublicRating(p) || p.rating < minRating)) return false;
+      if (exp && !exp.test(p.experience)) return false;
+      if (filters.langues.length && !filters.langues.every((l) => p.languages.includes(l))) return false;
+      if (filters.dispo && p.availability !== filters.dispo) return false;
+      if (filters.genre && p.gender !== filters.genre) return false;
+      if (filters.permis.length && !filters.permis.every((x) => (p.licence ?? []).includes(x))) return false;
+      if (filters.creneau.length && !filters.creneau.some((s) => p.slots.includes(s))) return false;
+      return true;
     });
 
-    if (sort === "note") list = [...list].sort((a, b) => b.rating - a.rating);
-    if (sort === "prix") list = [...list].sort((a, b) => a.priceFrom - b.priceFrom);
-    if (sort === "experience") list = [...list].sort((a, b) => b.experience - a.experience);
-    if (sort === "pertinence") {
-      list = [...list].sort((a, b) =>
-        b.topRated === a.topRated ? b.rating - a.rating : b.topRated ? 1 : -1
-      );
-    }
-    return list;
-  }, [query, domainSlug, commune, sort]);
+    const rating = (p) => (hasPublicRating(p) ? p.rating : 0);
+    const communeMatch = (p) => (selectedCommunes.has(p.commune) ? 1 : 0);
+    const sorters = {
+      pertinence: (a, b) =>
+        LEVEL_WEIGHT[b.level] * 2 + rating(b) + communeMatch(b) + AVAIL_WEIGHT[b.availability] -
+        (LEVEL_WEIGHT[a.level] * 2 + rating(a) + communeMatch(a) + AVAIL_WEIGHT[a.availability]),
+      note: (a, b) => rating(b) - rating(a),
+      experience: (a, b) => b.experience - a.experience,
+      dispo: (a, b) => AVAIL_WEIGHT[b.availability] - AVAIL_WEIGHT[a.availability],
+    };
+    return [...list].sort(sorters[filters.tri] ?? sorters.pertinence);
+  }, [filters, metierLabel]);
 
-  const applyDomain = (slug) => {
-    setDomainSlug(slug);
-    syncUrl({ domaine: slug });
-  };
+  const activeCount = [...params.keys()].filter((k) => k !== "tri" && k !== "frequence").length;
 
-  const resetFilters = () => {
-    setQuery("");
-    setDomainSlug("");
-    setCommune("");
-    setSort("note");
-    navigate(location.pathname, { replace: true });
-  };
+  const filterPanel = (
+    <div className="flex flex-col gap-6">
+      <Group label="Service">
+        <select value={filters.service ?? ""} onChange={(e) => update("service", e.target.value)} className={selectClass} aria-label="Pôle">
+          <option value="">Tous les pôles</option>
+          {domains.map((d) => (
+            <option key={d.slug} value={d.slug}>
+              {d.name}
+              {d.available ? "" : ` (${d.phase})`}
+            </option>
+          ))}
+        </select>
+        <select value={filters.metier ?? ""} onChange={(e) => update("metier", e.target.value)} className={`${selectClass} mt-2`} aria-label="Métier">
+          <option value="">Tous les métiers</option>
+          {metiers.map((m) => (
+            <option key={m.value} value={m.value}>
+              {m.label}
+            </option>
+          ))}
+        </select>
+      </Group>
 
-  const activeDomain = domains.find((d) => d.slug === domainSlug);
-  const hasFilters = Boolean(query.trim() || domainSlug || commune);
+      <Group label="Langues parlées">
+        <Chips options={LANGUAGES.map((l) => ({ value: l, label: l }))} selected={filters.langues} onToggle={(v) => toggle("langues", v)} />
+      </Group>
+
+      <Group label="Communes">
+        <div className="grid max-h-44 grid-cols-2 gap-x-2 overflow-y-auto rounded-lg border border-ink-900/10 bg-white p-2">
+          {COMMUNES.map((c) => (
+            <Check key={c} label={c} checked={filters.commune.includes(c)} onChange={() => toggle("commune", c)} />
+          ))}
+        </div>
+      </Group>
+
+      <Group label="Fréquence">
+        <Segmented name="frequence" options={[{ value: "", label: "Toutes" }, ...FREQUENCIES]} value={filters.frequence ?? ""} onChange={(v) => update("frequence", v)} />
+        <p className="mt-1.5 text-xs text-ink-900/65">Elle détermine le contrat proposé lors de la confirmation.</p>
+      </Group>
+
+      <Group label="Niveau de certification">
+        {["Vérifié", "Certifié", "Élite"].map((l) => (
+          <Check key={l} label={l} checked={filters.niveau.includes(l)} onChange={() => toggle("niveau", l)} />
+        ))}
+      </Group>
+
+      <Group label={`Note minimale : ${filters.note ? `${Number(filters.note).toFixed(1)} / 5` : "toutes"}`}>
+        <input type="range" min="3" max="5" step="0.1" value={filters.note || 3} onChange={(e) => update("note", e.target.value === "3" ? "" : e.target.value)} className="w-full accent-[#01433D]" aria-label="Note minimale" />
+        <p className="text-xs text-ink-900/65">Les profils de moins de 3 évaluations sont exclus de ce filtre.</p>
+      </Group>
+
+      <Group label="Expérience">
+        <Segmented name="experience" options={[{ value: "", label: "Toutes" }, ...EXPERIENCE]} value={filters.experience ?? ""} onChange={(v) => update("experience", v)} />
+      </Group>
+
+      <Group label="Disponibilité">
+        <Segmented name="dispo" options={[{ value: "", label: "Toutes" }, ...AVAILABILITIES]} value={filters.dispo ?? ""} onChange={(v) => update("dispo", v)} />
+      </Group>
+
+      <Group label="Genre du prestataire">
+        <Segmented name="genre" options={GENDERS} value={filters.genre ?? ""} onChange={(v) => update("genre", v)} />
+      </Group>
+
+      <Group label="Créneau d'intervention">
+        {SLOTS.map((s) => (
+          <Check key={s} label={s} checked={filters.creneau.includes(s)} onChange={() => toggle("creneau", s)} />
+        ))}
+      </Group>
+
+      <Group label="Permis et véhicule">
+        {LICENCES.map((l) => (
+          <Check key={l} label={l} checked={filters.permis.includes(l)} onChange={() => toggle("permis", l)} />
+        ))}
+      </Group>
+    </div>
+  );
 
   return (
     <>
       <Seo
-        title="Trouver un prestataire"
-        description="Recherchez un prestataire vérifié par domaine, commune et disponibilité à Kinshasa : garde d'enfants, chauffeur, soutien scolaire, services à domicile."
-        path="/trouver-un-prestataire"
+        title={domain ? `${domain.name} — prestataires vérifiés à Kinshasa` : "Trouver un prestataire"}
+        description="Recherchez un agent vérifié à Kinshasa par service, commune, langue, niveau de certification et disponibilité. Profils anonymisés, sans inscription."
+        path={`/prestataires${params.toString() ? `?${params}` : ""}`}
       />
 
       <PageHero
-        eyebrow="Recherche"
+        eyebrow="Recherche sans inscription"
         title="Trouver un prestataire"
-        subtitle={
-          activeDomain
-            ? `Prestataires ${activeDomain.shortName} vérifiés, disponibles à Kinshasa.`
-            : "Parcourez nos prestataires vérifiés dans les quatre domaines SaaCare."
-        }
+        subtitle={domain ? `Agents ${domain.shortName} vérifiés, à Kinshasa.` : "Des profils vérifiés et anonymisés. La mise en relation passe toujours par un chargé de clientèle SaaCare."}
         breadcrumb={[{ label: "Accueil", to: "/" }, { label: "Trouver un prestataire" }]}
         compact
       />
 
       <section className="bg-paper-100 pb-16 pt-8 sm:pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* ---------------- Barre de recherche ---------------- */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              syncUrl();
-              e.currentTarget.querySelector("input")?.blur();
-            }}
-            role="search"
-            aria-label="Rechercher un prestataire"
-            className="rounded-lg border border-ink-900/8 bg-white p-3 shadow-soft sm:p-4"
-          >
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-              {/* Recherche libre */}
-              <div className="flex flex-1 items-center gap-2.5 rounded-md border border-ink-900/10 bg-paper-100/70 px-3.5 transition-[border-color,background-color,box-shadow] duration-300 focus-within:border-teal-600/40 focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(159,26,74,0.10)]">
-                <Search className="size-4 shrink-0 text-ink-900/35" aria-hidden="true" />
-                <label className="sr-only" htmlFor="search-query">
-                  Rechercher par nom ou ville
-                </label>
-                <input
-                  id="search-query"
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Rechercher par nom, ville…"
-                  className="w-full border-0 bg-transparent py-3 text-sm text-ink-900 outline-none placeholder:text-ink-900/40 [&::-webkit-search-cancel-button]:hidden"
-                />
-                {query && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setQuery("");
-                      syncUrl({ q: "" });
-                    }}
-                    aria-label="Effacer la recherche"
-                    className="grid size-9 shrink-0 place-items-center rounded-full bg-ink-900/8 text-ink-900/50 transition-colors hover:bg-ink-900/15 hover:text-ink-900"
-                  >
-                    <X className="size-3" aria-hidden="true" />
-                  </button>
-                )}
-              </div>
+          <p className="mb-6 flex items-start gap-2.5 rounded-xl bg-sky px-4 py-3 text-sm text-ink-900">
+            <Info className="mt-0.5 size-4 shrink-0 text-teal-700" aria-hidden="true" />
+            Profils de démonstration, en attendant l'ouverture du registre. Aucun nom ni aucune coordonnée d'agent n'est jamais publié.
+          </p>
 
-              {/* Sélecteurs */}
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:flex lg:shrink-0">
-                <SelectFilter
-                  id="filter-domain"
-                  label="Domaine"
-                  value={domainSlug}
-                  onChange={(v) => {
-                    setDomainSlug(v);
-                    syncUrl({ domaine: v });
-                  }}
-                >
-                  <option value="">Tous les domaines</option>
-                  {domains.map((d) => (
-                    <option key={d.slug} value={d.slug}>
-                      {d.shortName}
-                    </option>
-                  ))}
-                </SelectFilter>
-
-                <SelectFilter
-                  id="filter-commune"
-                  label="Commune"
-                  value={commune}
-                  onChange={(v) => {
-                    setCommune(v);
-                    syncUrl({ commune: v });
-                  }}
-                >
-                  <option value="">Toutes les communes</option>
-                  {COMMUNES.map((c) => (
-                    <option key={c} value={c}>
-                      {c.replace(", Kinshasa", "")}
-                    </option>
-                  ))}
-                </SelectFilter>
-
-                <SelectFilter id="filter-sort" label="Trier par" value={sort} onChange={setSort}>
-                  {SORTS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </SelectFilter>
-              </div>
-
-              <motion.button
-                type="submit"
-                whileHover={reduced ? undefined : { scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                className="shine relative inline-flex w-full shrink-0 items-center justify-center gap-2 overflow-hidden rounded-md bg-teal-600 px-6 py-3.5 text-sm font-semibold text-white shadow-soft transition-colors duration-300 hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 sm:w-auto"
-              >
-                <SlidersHorizontal className="relative z-10 size-4 lg:hidden" aria-hidden="true" />
-                <span className="relative z-10">Filtrer</span>
-              </motion.button>
-            </div>
-          </form>
-
-          {/* ---------------- Compteur + onglets de domaine ---------------- */}
-          <div className="mt-8 flex flex-col gap-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-900/70" aria-live="polite">
-                <span>
-                  <span className="font-semibold text-ink-900">{results.length}</span> prestataire
-                  {results.length > 1 ? "s" : ""} trouvé{results.length > 1 ? "s" : ""}
-                </span>
-                {hasFilters && (
-                  <button
-                    type="button"
-                    onClick={resetFilters}
-                    className="inline-flex min-h-10 items-center gap-1 rounded-md px-3 py-2 text-sm font-semibold text-teal-700 transition-colors hover:bg-teal-50 hover:text-teal-800"
-                  >
-                    <X className="size-3.5" aria-hidden="true" />
-                    Réinitialiser
-                  </button>
-                )}
-              </p>
-
-              {/* Bascule grille / liste — visible partout, y compris mobile */}
-              <div
-                className="flex shrink-0 items-center gap-1 rounded-lg border border-ink-900/8 bg-paper-100/80 p-1"
-                role="group"
-                aria-label="Mode d'affichage"
-              >
-                <ViewToggle
-                  active={view === "grid"}
-                  onClick={() => changeView("grid")}
-                  label="Affichage en grille"
-                >
-                  <LayoutGrid className="size-4" aria-hidden="true" />
-                </ViewToggle>
-                <ViewToggle
-                  active={view === "list"}
-                  onClick={() => changeView("list")}
-                  label="Affichage en liste"
-                >
-                  <List className="size-4" aria-hidden="true" />
-                </ViewToggle>
-              </div>
-            </div>
-
-            <div
-              className="min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]"
-              role="group"
-              aria-label="Filtrer par domaine"
-            >
-              <LayoutGroup id="domain-filter">
-                <div className="inline-flex min-w-min gap-1 rounded-lg border border-ink-900/8 bg-paper-100/80 p-1">
-                  <DomainChip active={domainSlug === ""} onClick={() => applyDomain("")}>
-                    Tous
-                  </DomainChip>
-                  {domains.map((d) => (
-                    <DomainChip
-                      key={d.slug}
-                      active={domainSlug === d.slug}
-                      onClick={() => applyDomain(d.slug)}
-                      icon={<DomainIcon name={d.icon} className="size-3.5" />}
-                    >
-                      {d.shortName}
-                    </DomainChip>
-                  ))}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[18rem_1fr]">
+            {/* ---------------- Filtres ---------------- */}
+            <aside className="hidden lg:block" aria-label="Filtres">
+              <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-ink-900/8 bg-white p-5 shadow-soft">
+                <div className="mb-5 flex items-center justify-between">
+                  <h2 className="font-display text-lg font-bold text-ink-900">Filtres</h2>
+                  {activeCount > 0 && (
+                    <button type="button" onClick={reset} className="text-sm font-semibold text-teal-700 hover:underline">
+                      Tout effacer
+                    </button>
+                  )}
                 </div>
-              </LayoutGroup>
-            </div>
-          </div>
+                {filterPanel}
+              </div>
+            </aside>
 
-          {/* ---------------- Résultats ---------------- */}
-          <div className="mt-6">
-            <AnimatePresence mode="wait">
-              {results.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.45, ease: EASE }}
-                  className="flex flex-col items-center gap-5 rounded-lg border border-ink-900/6 bg-paper-200/50 px-6 py-20 text-center"
-                >
-                  <motion.span
-                    animate={reduced ? undefined : { y: [0, -6, 0] }}
-                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                    className="grid size-16 place-items-center rounded-full bg-white shadow-soft"
-                  >
-                    <SearchX className="size-8 text-ink-900/30" aria-hidden="true" />
-                  </motion.span>
-                  <div>
-                    <p className="font-display text-2xl font-semibold text-teal-700">
-                      Aucun prestataire trouvé
-                    </p>
-                    <p className="mx-auto mt-2 max-w-md text-ink-900/60">
-                      Essayez d'élargir vos critères ou parcourez tous nos professionnels vérifiés.
-                    </p>
-                  </div>
-                  <motion.button
-                    type="button"
-                    onClick={resetFilters}
-                    whileHover={reduced ? undefined : { scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="mt-1 rounded-md bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-soft transition-colors duration-300 hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-                  >
-                    Voir tous les prestataires
-                  </motion.button>
-                </motion.div>
-              ) : view === "list" ? (
-                <motion.div
-                  key={`list-${domainSlug}-${commune}-${sort}-${query}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <ProviderTable
-                    providers={results}
-                    sort={sort}
-                    onSort={setSort}
-                    onSelect={setSelected}
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={`grid-${domainSlug}-${commune}-${sort}-${query}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
-                >
-                  {results.map((p, i) => (
-                    <ProviderCard key={p.id} provider={p} index={i} />
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm text-ink-900/80" aria-live="polite">
+                  <span className="font-semibold text-ink-900">{results.length}</span> profil{results.length > 1 ? "s" : ""} trouvé{results.length > 1 ? "s" : ""}
+                </p>
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => setPanelOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-ink-900/10 bg-white px-4 text-sm font-semibold text-ink-900 lg:hidden">
+                    <SlidersHorizontal className="size-4" aria-hidden="true" />
+                    Filtres{activeCount ? ` (${activeCount})` : ""}
+                  </button>
+                  <label htmlFor="sort" className="sr-only">
+                    Trier par
+                  </label>
+                  <select id="sort" value={filters.tri ?? "pertinence"} onChange={(e) => update("tri", e.target.value === "pertinence" ? "" : e.target.value)} className={`${selectClass} min-h-11 w-auto`}>
+                    {SORTS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                {results.length === 0 ? (
+                  <EmptyState domainSlug={filters.service} hasCommune={filters.commune.length > 0} onWiden={() => update("commune", [])} onReset={reset} />
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                      {results.slice(0, visible).map((p, i) => (
+                        <ProviderCard key={p.reference} provider={p} index={i} />
+                      ))}
+                    </div>
+                    {visible < results.length && (
+                      <div className="mt-8 flex justify-center">
+                        <button type="button" onClick={() => setVisible((v) => v + PAGE_SIZE)} className="min-h-12 rounded-lg border border-teal-600 bg-white px-6 text-sm font-semibold text-teal-700 hover:bg-teal-50">
+                          Afficher {Math.min(PAGE_SIZE, results.length - visible)} profils de plus
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <p className="mt-10 flex items-start gap-2.5 text-sm text-ink-900/75">
+                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-teal-600" aria-hidden="true" />
+                Tous les profils ont passé les 7 contrôles du protocole SaaTrust. Le filtre de genre est documenté dans nos conditions générales.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Détail du prestataire, ouvert au clic sur une ligne */}
-      <ProviderDrawer provider={selected} onClose={() => setSelected(null)} />
+      {/* ---------------- Panneau de filtres mobile ---------------- */}
+      <AnimatePresence>
+        {panelOpen && (
+          <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Filtres">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPanelOpen(false)} className="absolute inset-0 bg-ink-950/50" aria-hidden="true" />
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ duration: 0.4, ease: EASE }} className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-3xl bg-white">
+              <div className="flex items-center justify-between border-b border-ink-900/8 px-5 py-4">
+                <h2 className="font-display text-lg font-bold text-ink-900">Filtres</h2>
+                <button type="button" onClick={() => setPanelOpen(false)} aria-label="Fermer les filtres" className="grid size-11 place-items-center rounded-full hover:bg-ink-900/5">
+                  <X className="size-5" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-5 py-5">{filterPanel}</div>
+              <div className="flex gap-3 border-t border-ink-900/8 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <button type="button" onClick={reset} className="min-h-12 flex-1 rounded-lg border border-ink-900/15 text-sm font-semibold text-ink-900">
+                  Effacer
+                </button>
+                <button type="button" onClick={() => setPanelOpen(false)} className="min-h-12 flex-[2] rounded-lg bg-teal-600 text-sm font-semibold text-white">
+                  Voir {results.length} profil{results.length > 1 ? "s" : ""}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
 
-/* ---------------------------------------------------------------- */
+const selectClass =
+  "w-full cursor-pointer rounded-lg border border-ink-900/15 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-teal-600";
 
-/** Bouton de bascule grille / liste. */
-function ViewToggle({ children, active, onClick, label }) {
+function Group({ label, children }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      aria-label={label}
-      title={label}
-      className={`grid size-10 place-items-center rounded-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 ${
-        active ? "bg-white text-teal-700 shadow-soft" : "text-ink-900/45 hover:bg-white/70 hover:text-ink-900"
-      }`}
-    >
+    <fieldset>
+      <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-navy-600">{label}</legend>
       {children}
-    </button>
+    </fieldset>
   );
 }
 
-/** Sélecteur compact de la barre de filtres. Le libellé reste accessible. */
-function SelectFilter({ id, label, value, onChange, children }) {
+function Check({ label, checked, onChange }) {
   return (
-    <div className="relative">
-      <label className="sr-only" htmlFor={id}>
-        {label}
-      </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full cursor-pointer rounded-md border border-ink-900/10 bg-white py-3 pl-3.5 pr-9 text-sm text-ink-900 outline-none transition-[border-color,box-shadow] duration-300 hover:border-ink-900/20 focus:border-teal-600/40 focus:shadow-[0_0_0_3px_rgba(159,26,74,0.10)] lg:w-auto"
-      >
-        {children}
-      </select>
+    <label className="flex min-h-9 cursor-pointer items-center gap-2.5 text-sm text-ink-900">
+      <input type="checkbox" checked={checked} onChange={onChange} className="size-4 shrink-0 accent-[#01433D]" />
+      {label}
+    </label>
+  );
+}
+
+function Chips({ options, selected, onToggle }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {options.map((o) => {
+        const active = selected.includes(o.value);
+        return (
+          <button key={o.value} type="button" aria-pressed={active} onClick={() => onToggle(o.value)} className={`min-h-9 rounded-full border px-3 text-xs font-medium transition-colors ${active ? "border-teal-600 bg-teal-600 text-white" : "border-ink-900/15 bg-white text-ink-900 hover:border-teal-600/50"}`}>
+            {o.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
 
-/** Onglet de domaine avec pastille active partagée (effet de glissement). */
-function DomainChip({ children, icon, active, onClick }) {
+function Segmented({ name, options, value, onChange }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={[
-        "relative z-0 inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-md px-3.5 py-2.5 text-sm font-medium",
-        "transition-colors duration-200",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500",
-        active
-          ? "text-white"
-          : "text-ink-900/60 hover:bg-white hover:text-ink-900 hover:shadow-sm active:bg-white active:text-ink-900",
-      ].join(" ")}
-    >
-      {active && (
-        <motion.span
-          layoutId="domain-chip-pill"
-          className="absolute inset-0 -z-10 rounded-md bg-teal-600 shadow-soft"
-          transition={{ type: "spring", stiffness: 420, damping: 34 }}
-        />
-      )}
-      <span className={active ? "text-white" : "text-current"}>{icon}</span>
-      <span className="relative">{children}</span>
-    </button>
+    <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={name}>
+      {options.map((o) => (
+        <button key={o.value || "all"} type="button" role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)} className={`min-h-9 rounded-lg border px-3 text-xs font-medium transition-colors ${value === o.value ? "border-teal-600 bg-teal-50 text-teal-700" : "border-ink-900/15 bg-white text-ink-900 hover:border-teal-600/50"}`}>
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Aucun résultat : élargir aux communes voisines, ou être prévenu (§4.2). */
+function EmptyState({ domainSlug, hasCommune, onWiden, onReset }) {
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="flex flex-col items-start gap-4 rounded-2xl border border-ink-900/8 bg-white p-6">
+        <SearchX className="size-8 text-navy-500" aria-hidden="true" />
+        <p className="font-display text-xl font-bold text-ink-900">Aucun profil ne correspond, pour l'instant</p>
+        <p className="text-sm leading-relaxed text-ink-900/75">Élargissez la recherche, ou laissez vos coordonnées : nous vous prévenons dès qu'un agent vérifié correspond.</p>
+        <div className="flex flex-wrap gap-3">
+          {hasCommune && (
+            <button type="button" onClick={onWiden} className="min-h-11 rounded-lg bg-teal-600 px-4 text-sm font-semibold text-white">
+              Élargir aux communes voisines
+            </button>
+          )}
+          <button type="button" onClick={onReset} className="min-h-11 rounded-lg border border-teal-600 px-4 text-sm font-semibold text-teal-700">
+            Effacer les filtres
+          </button>
+        </div>
+      </div>
+      <div className="rounded-2xl border border-ink-900/8 bg-white p-6">
+        <p className="font-display text-lg font-bold text-ink-900">Prévenez-moi quand un profil correspond</p>
+        <RequestForm domainSlug={domainSlug ?? ""} className="mt-4" />
+      </div>
+    </div>
   );
 }

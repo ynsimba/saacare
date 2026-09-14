@@ -1,106 +1,157 @@
+/**
+ * Textes légaux — modèles à faire relire par un avocat congolais avant publication
+ * (cahier des charges, annexe A). Les numéros manquants sont signalés « en cours ».
+ */
 export const legalPages = {
   "mentions-legales": {
     title: "Mentions légales",
-    updated: "Août 2026",
+    updated: "Septembre 2026",
     sections: [
       {
-        heading: "Éditeur de la plateforme",
+        heading: "Éditeur du site",
         body: [
-          "La plateforme SaaCare est éditée par SaaCare RDC, société en cours de constitution, dont le siège social est situé à Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa, Congo-Kinshasa.",
+          "Le site saacare.cd est édité par SAACARE SARL, société à responsabilité limitée de droit OHADA en cours de constitution, dont le siège pilote est situé Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa, République Démocratique du Congo.",
+          "RCCM : en cours d'immatriculation. Identification nationale : en cours. NIF : en cours.",
           "Contact : contact@saacare.com — +243 816 483 538.",
         ],
       },
       {
+        heading: "Agrément",
+        body: [
+          "SaaCare exerce l'activité de service privé de placement encadrée par les articles 303 à 307 du Code du travail et par l'arrêté ministériel n° 047/CAB.VPM/METPS/2015, modifié en octobre 2025. Numéro d'autorisation de fonctionnement : en cours d'obtention auprès de l'ONEM et du Ministère de l'Emploi et du Travail.",
+          "Affiliations : CNSS, INPP et ONEM (numéros communiqués dès leur délivrance).",
+        ],
+      },
+      {
         heading: "Directeur de la publication",
-        body: ["La direction de la publication est assurée par la direction générale de SaaCare RDC."],
+        body: ["Yves Nsimba Buwalala, en qualité de dirigeant de SaaCare."],
       },
       {
         heading: "Hébergement",
-        body: ["La plateforme est hébergée par un prestataire cloud tiers, dont les coordonnées complètes sont disponibles sur demande auprès de contact@saacare.com."],
+        body: [
+          "Le site est hébergé par un prestataire tiers dont les coordonnées et la localisation des données sont communiquées sur demande à contact@saacare.com.",
+        ],
       },
       {
         heading: "Propriété intellectuelle",
-        body: ["L'ensemble des éléments de la plateforme SaaCare (textes, logo, charte graphique, base de données des prestataires) est protégé par le droit de la propriété intellectuelle et reste la propriété exclusive de SaaCare RDC, sauf mention contraire."],
+        body: [
+          "La marque SaaCare, son logo, sa charte graphique, les textes du site et le registre des agents sont la propriété exclusive de SaaCare. Toute reproduction sans autorisation écrite est interdite.",
+        ],
       },
     ],
   },
   cgu: {
-    title: "Conditions générales d'utilisation",
-    updated: "Août 2026",
+    title: "Conditions générales d'utilisation et de service",
+    updated: "Septembre 2026",
     sections: [
       {
         heading: "Objet",
-        body: ["Les présentes conditions générales d'utilisation (CGU) régissent l'accès et l'utilisation de la plateforme SaaCare par les clients et les prestataires, qu'ils disposent ou non d'un compte."],
-      },
-      {
-        heading: "Accès à la plateforme",
         body: [
-          "L'accès à la recherche de prestataires est libre. La réservation d'un prestataire, le dépôt d'une candidature et l'accès aux espaces client et prestataire nécessitent la création d'un compte.",
-          "L'utilisateur s'engage à fournir des informations exactes lors de son inscription et à les maintenir à jour.",
+          "Les présentes conditions régissent l'utilisation du site SaaCare et les services de mise en relation, de placement et de mise à disposition de personnel proposés par SaaCare.",
         ],
       },
       {
-        heading: "Rôle de SaaCare",
-        body: ["SaaCare agit comme tiers de confiance entre les clients et les prestataires : elle sélectionne, vérifie et affecte les prestataires, et sécurise le paiement jusqu'à validation de la prestation. SaaCare n'est pas l'employeur des prestataires indépendants référencés sur la plateforme."],
-      },
-      {
-        heading: "Obligations de l'utilisateur",
-        body: ["Chaque utilisateur s'engage à utiliser la plateforme de bonne foi, à ne pas contourner le circuit de paiement sécurisé, et à respecter les autres utilisateurs et prestataires."],
-      },
-      {
-        heading: "Suspension et résiliation",
-        body: ["SaaCare se réserve le droit de suspendre ou de résilier l'accès d'un utilisateur en cas de manquement grave aux présentes CGU, notamment en cas de fraude ou de comportement mettant en danger la sécurité d'un tiers."],
-      },
-    ],
-  },
-  cgv: {
-    title: "Conditions générales de vente",
-    updated: "Août 2026",
-    sections: [
-      {
-        heading: "Champ d'application",
-        body: ["Les présentes conditions générales de vente (CGV) s'appliquent à toute réservation d'un prestataire effectuée via la plateforme SaaCare, qu'il s'agisse d'une mission ponctuelle ou d'une mise à disposition longue durée."],
-      },
-      {
-        heading: "Prix et paiement",
+        heading: "Fonctionnement du service",
         body: [
-          "Le montant affiché avant réservation comprend la part revenant au prestataire et la commission SaaCare. Le règlement s'effectue par Mobile Money ou carte bancaire au moment de la réservation.",
-          "Les fonds sont conservés par SaaCare (séquestre) et ne sont reversés au prestataire qu'après validation de la prestation par le client, ou à l'expiration du délai de validation automatique.",
+          "Le visiteur recherche librement des profils anonymisés et dépose une demande. Un membre de l'équipe SaaCare qualifie la demande, confirme la disponibilité de l'agent et rappelle le client. Aucune réservation ni aucun paiement n'est effectué en ligne à ce stade.",
+          "Les coordonnées d'un agent ne sont jamais publiées sur le site. Elles sont communiquées par un chargé de clientèle après validation de la mission.",
         ],
       },
       {
-        heading: "Annulation",
-        body: ["Les conditions d'annulation et de remboursement varient selon le délai de prévenance et le type de contrat (ponctuel ou longue durée). Elles sont communiquées avant toute confirmation de paiement."],
+        heading: "Les trois régimes de service",
+        body: [
+          "Mission : l'agent intervient comme prestataire indépendant inscrit au registre SaaCare, dans la limite de 80 heures par mois chez un même client. Au-delà, la relation bascule vers un placement ou une mise à disposition.",
+          "Placement : le client devient l'employeur de l'agent. SaaCare perçoit des frais de placement et garantit un remplacement gratuit si le contrat est rompu dans les 90 jours.",
+          "Mise à disposition : SaaCare est l'employeur déclaré de l'agent, avec un contrat de travail écrit remis avant le début de la mission.",
+        ],
       },
       {
-        heading: "Réclamations et litiges",
-        body: ["Toute contestation relative à une prestation doit être signalée depuis l'espace client dans le délai de validation. SaaCare examine chaque litige avant tout reversement au prestataire."],
+        heading: "Engagements de SaaCare",
+        body: [
+          "SaaCare applique à chaque agent le protocole SaaTrust en sept étapes, remplace sous 24 heures ouvrées un agent jugé non conforme, et assure une visite qualité à J+7.",
+          "SaaCare ne demande aucun frais, direct ou indirect, aux demandeurs d'emploi. SaaCare ne place aucune personne âgée de moins de 18 ans.",
+        ],
+      },
+      {
+        heading: "Filtre sur le genre du prestataire",
+        body: [
+          "Pour la garde d'enfants et l'accompagnement des personnes âgées, le client peut indiquer une préférence de genre. Ce filtre répond à une attente légitime liée à l'intimité du foyer ; il n'a aucune incidence sur l'admission des candidats au registre, qui respecte le principe de non-discrimination prévu à l'article 4 du Code du travail.",
+        ],
+      },
+      {
+        heading: "Non-contournement",
+        body: [
+          "Le client s'engage à ne pas contracter directement avec un agent présenté par SaaCare en dehors de la plateforme pendant la durée prévue au contrat. Hors plateforme, les garanties, l'assurance et le remplacement ne s'appliquent plus.",
+        ],
+      },
+      {
+        heading: "Avis et évaluations",
+        body: [
+          "Les avis sont publiés après modération, avec le prénom et la commune du client uniquement. L'agent dispose d'un droit de réponse.",
+        ],
+      },
+      {
+        heading: "Suspension",
+        body: [
+          "SaaCare peut suspendre un agent ou refuser une demande en cas de fraude, de comportement mettant en danger un tiers, ou de manquement aux présentes conditions.",
+        ],
       },
     ],
   },
   confidentialite: {
     title: "Politique de confidentialité",
-    updated: "Août 2026",
+    updated: "Septembre 2026",
     sections: [
       {
-        heading: "Données collectées",
-        body: ["SaaCare collecte les données nécessaires à la mise en relation et à la sécurisation des paiements : identité, coordonnées, historique de réservation et, pour les prestataires, pièces justificatives dans le cadre de la vérification."],
+        heading: "Responsable du traitement",
+        body: [
+          "SaaCare traite vos données personnelles conformément au cadre congolais du numérique. Point de contact : contact@saacare.com.",
+        ],
       },
       {
-        heading: "Données relatives aux enfants",
-        body: ["Dans le cadre du service Saa Kids Care, les informations relatives aux enfants font l'objet d'un traitement renforcé, avec consentement parental explicite et accès strictement limité aux personnes habilitées."],
+        heading: "Données collectées et finalités",
+        body: [
+          "Demandes clients : prénom, téléphone, courriel facultatif, adresse d'intervention et besoin, pour qualifier la demande et vous rappeler.",
+          "Candidatures : identité, coordonnées, adresse et point de repère, expériences, garants, pièces d'identité et photographie, pour mener le protocole de vérification SaaTrust.",
+          "Aucun champ n'est collecté sans usage identifié. Le formulaire de candidature est revu chaque année.",
+        ],
       },
       {
-        heading: "Finalités du traitement",
-        body: ["Les données sont utilisées pour la mise en relation, la vérification des prestataires, le traitement des paiements, la prévention de la fraude et l'amélioration de la qualité de service."],
+        heading: "Consentements",
+        body: [
+          "Des cases distinctes et jamais pré-cochées recueillent votre accord pour : le traitement de votre dossier, la publication d'un profil anonymisé, et l'envoi de communications commerciales. Le consentement à la publication est révocable à tout moment.",
+        ],
       },
       {
-        heading: "Conservation et sécurité",
-        body: ["Les données sont conservées pour la durée nécessaire aux finalités décrites ci-dessus, puis supprimées ou anonymisées. Des mesures de chiffrement et de contrôle d'accès (RBAC) protègent les données sensibles, notamment les pièces d'identité."],
+        heading: "Ce qui n'est jamais publié",
+        body: [
+          "Nom de famille, téléphone, courriel, adresse précise, numéro de pièce d'identité, photographie non traitée, identité des garants, casier judiciaire, informations de santé, employeurs précédents, rémunération et situation familiale.",
+        ],
+      },
+      {
+        heading: "Durées de conservation",
+        body: [
+          "Candidature refusée : 24 mois. Prestataire inactif : 5 ans après la dernière mission. Demande client non convertie : 24 mois. Journaux techniques : 12 mois.",
+        ],
+      },
+      {
+        heading: "Sécurité",
+        body: [
+          "Les pièces d'identité et les dossiers de vérification sont chiffrés, stockés hors de la racine web et servis uniquement par des liens signés à durée de vie courte. Chaque consultation d'un dossier sensible est journalisée.",
+        ],
+      },
+      {
+        heading: "Sous-traitants",
+        body: [
+          "L'hébergeur, la passerelle SMS et le service de courriel sont liés à SaaCare par un contrat écrit précisant la localisation des données.",
+        ],
       },
       {
         heading: "Vos droits",
-        body: ["Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Toute demande peut être adressée à contact@saacare.com."],
+        body: [
+          "Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Écrivez à contact@saacare.com : nous répondons sous 30 jours.",
+          "En cas de violation de données, une procédure d'alerte interne est déclenchée sous 24 heures.",
+        ],
       },
     ],
   },

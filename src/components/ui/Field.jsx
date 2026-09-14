@@ -53,7 +53,7 @@ export default function Field({
       "peer w-full rounded-lg border border-ink-900/10 bg-paper-100 px-3.5 text-sm text-ink-900 outline-none",
       "transition-[border-color,background-color,box-shadow] duration-300",
       "placeholder:text-transparent",
-      "focus:border-teal-600/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(159,26,74,0.12)]",
+      "focus:border-teal-600/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(1,67,61,0.12)]",
       isTextarea ? "min-h-[140px] resize-y pb-3 pt-7" : "h-14 pb-2 pt-6",
       isSelect ? "cursor-pointer appearance-none pr-10" : "",
     ].join(" "),
@@ -115,8 +115,8 @@ function FloatingLabel({ htmlFor, floating, textarea = false, children }) {
       initial={false}
       animate={
         floating
-          ? { top: 10, scale: 1, color: "rgba(3, 41, 76, 0.55)" }
-          : { top: textarea ? 22 : 22, scale: 1.05, color: "rgba(3, 41, 76, 0.45)" }
+          ? { top: 10, scale: 1, color: "rgba(16,42,42, 0.55)" }
+          : { top: textarea ? 22 : 22, scale: 1.05, color: "rgba(16,42,42, 0.45)" }
       }
       transition={{ duration: 0.22, ease: EASE }}
       className="pointer-events-none absolute left-3.5 origin-left text-[0.68rem] font-semibold uppercase tracking-[0.12em]"
@@ -267,7 +267,7 @@ function CustomSelectField({
           className={[
             "flex h-14 w-full items-center rounded-lg border bg-paper-100 px-3.5 pt-5 text-left text-sm outline-none transition-[border-color,background-color,box-shadow] duration-300",
             open || focused
-              ? "border-teal-600/40 bg-white shadow-[0_0_0_3px_rgba(159,26,74,0.12)]"
+              ? "border-teal-600/40 bg-white shadow-[0_0_0_3px_rgba(1,67,61,0.12)]"
               : "border-ink-900/10",
           ].join(" ")}
         >

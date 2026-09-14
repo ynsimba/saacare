@@ -20,7 +20,7 @@ function navForRole(role) {
   }
   return [
     { to: "/espace-client", label: "Tableau de bord", icon: LayoutDashboard, end: true },
-    { to: "/trouver-un-prestataire", label: "Trouver un prestataire", icon: Search },
+    { to: "/prestataires", label: "Trouver un prestataire", icon: Search },
     { to: "/espace/profil", label: "Mon profil", icon: UserRound },
   ];
 }
@@ -40,19 +40,7 @@ export default function DashboardLayout() {
       <header className="sticky top-0 z-40 border-b border-ink-900/8 bg-white/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to={homeForRole(user?.role)} className="flex items-center gap-2.5">
-            <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="30" fill="#03294c" />
-              <circle cx="32" cy="32" r="18" fill="#12877F" />
-              <path
-                d="M23 32.5 L29 38.5 L41 25"
-                fill="none"
-                stroke="#ffffff"
-                strokeWidth="4.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="font-display text-lg font-semibold text-ink-900">SaaCare</span>
+            <img src="/logo.png" alt="SaaCare" width={1400} height={322} className="h-9 w-auto" />
             <span className="hidden rounded-md bg-teal-50 px-2 py-0.5 font-mono text-[0.65rem] font-semibold uppercase tracking-wide text-teal-700 sm:inline">
               Espace
             </span>

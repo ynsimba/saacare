@@ -1,113 +1,284 @@
+/**
+ * Contenus éditoriaux. Voix de marque (charte §16) : phrases courtes, verbes
+ * d'action, bénéfice concret avant la preuve ; « nous, vous, ensemble ».
+ * Témoignages : prénom, commune et service uniquement (cahier des charges §2.2.1).
+ * À remplacer par des témoignages réels, avec autorisation écrite de diffusion.
+ */
+
 export const testimonials = [
   {
-    name: "Aline Okito",
-    role: "Mère de deux enfants — Gombe",
-    quote:
-      "J'ai pu vérifier moi-même les références de la nounou avant sa première visite. C'est la première fois que je me sens vraiment sereine en confiant mes enfants.",
+    name: "Aline",
+    role: "Gombe",
     domain: "Saa Kids Care",
-    initials: "AO",
+    initials: "A",
+    quote:
+      "On m'a expliqué chaque contrôle avant de me présenter la nounou. Pour la première fois, je laisse mes enfants sans inquiétude.",
   },
   {
-    name: "Christian Bemba",
-    role: "Directeur commercial — Limete",
+    name: "Nadège",
+    role: "Limete",
+    domain: "Saa Walet",
+    initials: "N",
     quote:
-      "Le chauffeur arrive toujours à l'heure annoncée et je reçois une notification dès qu'il est en route. Un vrai gain de sérénité pour mes déplacements professionnels.",
+      "Ma mère était loin. L'accompagnante a pris le relais la nuit pendant deux semaines. J'ai pu me reposer, et elle savait exactement ce qu'elle pouvait faire ou non.",
+  },
+  {
+    name: "Didier",
+    role: "Gombe",
     domain: "Saa Driver",
-    initials: "CB",
-  },
-  {
-    name: "Marie-Claire Ndaya",
-    role: "Mère d'une lycéenne — Lemba",
+    initials: "D",
     quote:
-      "Le compte-rendu après chaque séance me permet de suivre les progrès de ma fille sans avoir à courir après le répétiteur. Simple et transparent.",
-    domain: "Saa Tutora",
-    initials: "MN",
-  },
-  {
-    name: "Olivier Punga",
-    role: "Propriétaire — Ngaliema",
-    quote:
-      "Devis avec photos, montant validé avant intervention, paiement débloqué seulement après mon accord : exactement le cadre qui manquait sur ce marché.",
-    domain: "Saa Home Service",
-    initials: "OP",
+      "Un chauffeur ponctuel, un contrat clair, et un interlocuteur qui répond. Quand il a été malade, le remplaçant était là le lendemain.",
   },
 ];
 
+/** Parcours client en quatre étapes (cahier des charges §3.1). */
 export const processSteps = [
   {
     number: "01",
-    title: "Trouvez",
-    description: "Recherchez le service dont vous avez besoin et parcourez les profils des prestataires vérifiés disponibles.",
+    title: "Cherchez",
+    description:
+      "Sans inscription. Filtrez par service, commune et fréquence, puis consultez des profils vérifiés et anonymisés.",
     icon: "Search",
   },
   {
     number: "02",
-    title: "Réservez",
-    description: "Choisissez la date, l'heure et la durée — journée, semaine, mois ou durée indéterminée — et confirmez votre demande.",
-    icon: "CalendarCheck",
+    title: "Déposez votre demande",
+    description:
+      "Un formulaire court : votre besoin, votre adresse, la date et la fréquence. Vous recevez aussitôt un numéro de demande.",
+    icon: "ClipboardList",
   },
   {
     number: "03",
-    title: "Validez & payez",
-    description: "Confirmez le montant indicatif puis réglez en toute sécurité via Mobile Money ou carte. Les fonds sont protégés jusqu'à validation.",
-    icon: "ShieldCheck",
+    title: "Nous confirmons",
+    description:
+      "Un chargé de clientèle vous rappelle, confirme la disponibilité de l'agent et prépare le contrat adapté à votre besoin.",
+    icon: "PhoneCall",
   },
   {
     number: "04",
-    title: "Le prestataire intervient",
-    description: "Un prestataire certifié et vérifié par notre équipe se déplace chez vous pour réaliser la prestation convenue.",
-    icon: "UserCheck",
+    title: "Nous restons à vos côtés",
+    description:
+      "L'agent intervient. Un superviseur passe à J+7, vous notez la mission, et nous remplaçons l'agent sous 24 h si besoin.",
+    icon: "ShieldCheck",
+  },
+];
+
+/** Le protocole SaaTrust en sept étapes (plan d'affaires §19, cahier des charges §2.2.3). */
+export const saatrustSteps = [
+  {
+    number: "01",
+    title: "Identité",
+    icon: "IdCard",
+    control: "Carte d'électeur ou passeport, contrôle de cohérence, photographie prise sur place.",
+    proof: "Copie certifiée et photo horodatée.",
+    refusal: "Identité non vérifiable, ou âge inférieur à 18 ans.",
+  },
+  {
+    number: "02",
+    title: "Domicile",
+    icon: "MapPinHouse",
+    control: "Visite physique du lieu de résidence et attestation du chef de quartier ou de l'autorité locale.",
+    proof: "Attestation, coordonnées GPS et photo de l'habitation.",
+    refusal: "Domicile introuvable ou attestation impossible à obtenir.",
+  },
+  {
+    number: "03",
+    title: "Antécédents",
+    icon: "FileSearch",
+    control: "Extrait de casier judiciaire ou attestation de bonne conduite.",
+    proof: "Document original numérisé.",
+    refusal: "Antécédents judiciaires bloquants.",
+  },
+  {
+    number: "04",
+    title: "Garants",
+    icon: "Users",
+    control: "Deux garants indépendants et joignables, dont un hors de la famille, appelés et enregistrés.",
+    proof: "Fiche d'entretien signée.",
+    refusal: "Aucun garant joignable.",
   },
   {
     number: "05",
-    title: "Évaluez & profitez",
-    description: "Validez la prestation dans la plateforme, ce qui libère le paiement, puis laissez un avis pour la communauté.",
-    icon: "Star",
+    title: "Références",
+    icon: "BriefcaseBusiness",
+    control: "Appel d'au moins un ancien employeur lorsqu'il existe, avec une grille d'évaluation standardisée.",
+    proof: "Compte rendu daté.",
+    refusal: "Non bloquant pour une première expérience ; incohérences dans le dossier.",
   },
+  {
+    number: "06",
+    title: "Compétence",
+    icon: "ClipboardCheck",
+    control: "Épreuve pratique par métier : conduite sur parcours, test de cuisine, mise en situation de garde, diagnostic technique.",
+    proof: "Grille notée et signée par l'évaluateur.",
+    refusal: "Test pratique non concluant.",
+  },
+  {
+    number: "07",
+    title: "Aptitude",
+    icon: "Stethoscope",
+    control: "Visite médicale d'aptitude auprès d'un centre partenaire.",
+    proof: "Certificat d'aptitude.",
+    refusal: "Inaptitude au poste.",
+  },
+];
+
+export const certificationLevels = [
+  {
+    name: "Vérifié",
+    criteria: "Les 7 contrôles du protocole SaaTrust sont validés, pièces à l'appui.",
+  },
+  {
+    name: "Certifié",
+    criteria: "Vérifié, avec une formation Saa Academy validée dans son métier.",
+  },
+  {
+    name: "Élite",
+    criteria: "Au moins 200 heures effectuées, avec une note moyenne supérieure à 4,6 sur 5.",
+  },
+];
+
+/** Engagements de service (plan d'affaires §22). */
+export const guarantees = [
+  {
+    icon: "RefreshCcw",
+    title: "Remplacement sous 24 heures",
+    detail: "Tout agent en mission jugé non conforme est remplacé sous 24 heures ouvrées.",
+  },
+  {
+    icon: "CalendarCheck",
+    title: "Garantie placement de 90 jours",
+    detail: "Si le contrat d'un agent placé est rompu dans les 90 jours, nous le remplaçons gratuitement, quel que soit le motif.",
+  },
+  {
+    icon: "ShieldCheck",
+    title: "Assurance responsabilité civile",
+    detail: "Les dommages matériels causés chez vous sont couverts par une police souscrite auprès d'un assureur congolais.",
+  },
+  {
+    icon: "Lock",
+    title: "Garantie vol",
+    detail: "Une franchise et un plafond définis au contrat, sous réserve du dépôt d'une plainte.",
+  },
+  {
+    icon: "UserCheck",
+    title: "Visite qualité",
+    detail: "Un superviseur passe à J+7, puis chaque mois pour les contrats permanents (J+2 pour Saa Walet).",
+  },
+  {
+    icon: "Scale",
+    title: "Notation croisée et médiation",
+    detail: "Client et agent se notent après chaque mission. En cas de litige, notre équipe qualité intervient.",
+  },
+];
+
+/**
+ * Engagements chiffrés affichés en bandeau. Les compteurs d'activité (agents
+ * vérifiés, missions, note moyenne, communes) seront alimentés par
+ * GET /api/stats/public — jamais saisis à la main (cahier des charges, annexe A).
+ */
+export const commitments = [
+  { value: 7, label: "contrôles avant toute mise en relation" },
+  { value: 15, suffix: " %", label: "des candidats admis au registre, environ" },
+  { value: 24, suffix: " h", label: "pour remplacer un agent non conforme" },
+  { value: 0, label: "frais demandé aux agents, sans exception" },
 ];
 
 export const faqCategories = [
   {
-    category: "Réservation",
+    category: "Demander un service",
     items: [
       {
-        q: "Comment réserver un prestataire sur SaaCare ?",
-        a: "Recherchez le domaine dont vous avez besoin, consultez les profils disponibles, puis choisissez une date, une heure et une durée. Vous recevez un devis avant de payer.",
+        q: "Faut-il créer un compte pour chercher un prestataire ?",
+        a: "Non. La recherche est libre. Vous consultez des profils vérifiés et anonymisés, puis vous déposez une demande avec votre prénom et votre téléphone.",
       },
       {
-        q: "Puis-je choisir moi-même le prestataire ?",
-        a: "Vous pouvez consulter les profils et exprimer une préférence. L'équipe SaaCare confirme la disponibilité et affecte le prestataire vérifié le plus adapté à votre demande.",
+        q: "Comment se passe la mise en relation ?",
+        a: "Un chargé de clientèle SaaCare qualifie votre demande, confirme la disponibilité de l'agent et vous rappelle. Les coordonnées de l'agent vous sont communiquées une fois la mission validée.",
       },
       {
-        q: "Quels types de contrats sont possibles ?",
-        a: "Une mission ponctuelle (journée), une mise à disposition à la semaine ou au mois, ou un contrat à durée indéterminée selon vos besoins.",
+        q: "Pourquoi les profils sont-ils anonymisés ?",
+        a: "Pour protéger les agents : ni nom de famille, ni téléphone, ni adresse ne sont publiés. Chaque profil porte une référence, par exemple SAA-KC-0412.",
+      },
+      {
+        q: "Puis-je demander une femme pour garder mes enfants ?",
+        a: "Oui. Le filtre « genre du prestataire » est proposé pour la garde d'enfants et l'accompagnement des personnes âgées.",
       },
     ],
   },
   {
-    category: "Paiement & sécurité",
+    category: "Tarifs et contrats",
     items: [
       {
-        q: "Comment fonctionne le paiement sécurisé ?",
-        a: "Le montant est réglé au moment de la réservation via Mobile Money ou carte bancaire, puis conservé par SaaCare. Il n'est reversé au prestataire qu'après votre validation de la prestation.",
+        q: "Les tarifs sont-ils publics ?",
+        a: "Non. Chaque devis est établi selon le besoin, la durée et le niveau de l'agent. Votre chargé de clientèle confirme le montant avant toute intervention.",
       },
       {
-        q: "Que se passe-t-il si je ne suis pas satisfait ?",
-        a: "Vous pouvez ouvrir un litige directement depuis votre espace client. Notre équipe qualité examine chaque situation avant tout reversement au prestataire.",
+        q: "Quels types de contrats proposez-vous ?",
+        a: "La mission, pour les interventions courtes. Le placement, pour un poste permanent dont vous êtes l'employeur. La mise à disposition, où SaaCare est l'employeur déclaré de l'agent.",
+      },
+      {
+        q: "Qu'est-ce que SaaPaie ?",
+        a: "Une option pour les postes placés : contrat écrit, bulletin de paie, affiliation CNSS, calcul de l'IPR et suivi des congés. Le montant est précisé au devis.",
       },
     ],
   },
   {
-    category: "Prestataires",
+    category: "Confiance et sécurité",
     items: [
       {
-        q: "Comment les prestataires sont-ils vérifiés ?",
-        a: "Chaque prestataire passe par une vérification d'identité, un contrôle des antécédents et des références, un entretien avec notre équipe qualité, puis une formation obligatoire propre à son domaine.",
+        q: "Comment les agents sont-ils vérifiés ?",
+        a: "Par le protocole SaaTrust en 7 étapes : identité, domicile, antécédents, garants, références, test pratique et aptitude médicale. Sur 100 candidatures, environ 15 agents sont admis.",
       },
       {
-        q: "Comment devenir prestataire SaaCare ?",
-        a: "Déposez votre candidature en ligne avec vos pièces justificatives. Notre équipe vous contacte pour un entretien, puis pour la formation avant activation de votre profil.",
+        q: "Puis-je vérifier moi-même un agent ?",
+        a: "Oui. Chaque agent porte un sceau SaaTrust numéroté. Saisissez ce numéro sur la page « Vérifier un agent » pour connaître son statut.",
+      },
+      {
+        q: "Que se passe-t-il si l'agent ne convient pas ?",
+        a: "Signalez-le à votre chargé de clientèle. Nous remplaçons l'agent sous 24 heures ouvrées.",
       },
     ],
   },
+  {
+    category: "Devenir prestataire",
+    items: [
+      {
+        q: "Combien coûte la candidature ?",
+        a: "Rien. SaaCare ne demande aucun frais aux agents, ni à l'inscription, ni à la formation, ni sur les missions. Toute demande d'argent au nom de SaaCare est une fraude.",
+      },
+      {
+        q: "Quelles pièces faut-il fournir ?",
+        a: "Une pièce d'identité (recto et verso), une photo de votre visage et, si vous en avez, vos certificats. Vous pouvez tout photographier avec votre téléphone.",
+      },
+      {
+        q: "Combien de temps dure la sélection ?",
+        a: "Les vérifications se font sous 7 jours ouvrés après l'entretien. Vous suivez l'avancement de votre dossier par SMS.",
+      },
+    ],
+  },
+  {
+    category: "Entreprises et diaspora",
+    items: [
+      {
+        q: "Mon entreprise peut-elle externaliser son personnel ?",
+        a: "Oui. En mise à disposition, SaaCare est l'employeur déclaré : CNSS, INPP, ONEM et IPR sont gérés, vous recevez une facture unique avec les pièces sociales.",
+      },
+      {
+        q: "Je vis à l'étranger. Puis-je payer pour ma famille à Kinshasa ?",
+        a: "Oui. L'offre diaspora accepte le paiement en devises, une adresse de facturation étrangère et un contact local distinct, avec un rapport de visite mensuel.",
+      },
+    ],
+  },
+];
+
+/** Les six questions de l'accueil. */
+export const homeFaq = [
+  faqCategories[0].items[0],
+  faqCategories[0].items[1],
+  faqCategories[2].items[0],
+  faqCategories[1].items[0],
+  faqCategories[2].items[2],
+  faqCategories[3].items[0],
 ];

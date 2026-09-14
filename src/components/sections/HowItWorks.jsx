@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
-import { Lock } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import SectionHeading from "../ui/SectionHeading";
 import ProcessIcon from "../ui/ProcessIcon";
 import StepVisual from "./StepVisual";
@@ -46,11 +46,6 @@ export default function HowItWorks({ compact = false }) {
       className="relative overflow-hidden bg-paper-100 py-20 sm:py-28"
       aria-labelledby="how-it-works-heading"
     >
-      {/* Fonds : trame fine + halo de marque */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5] [background-image:linear-gradient(rgba(3,41,76,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(3,41,76,0.045)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:radial-gradient(75%_60%_at_50%_40%,#000,transparent)]"
-        aria-hidden="true"
-      />
       <div
         className="pointer-events-none absolute -left-40 top-1/4 -z-10 size-[32rem] rounded-full bg-teal-100/50 blur-3xl"
         aria-hidden="true"
@@ -63,8 +58,8 @@ export default function HowItWorks({ compact = false }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Le parcours"
-          title={<span id="how-it-works-heading">Cinq étapes pour une expérience sereine</span>}
-          subtitle="Du besoin exprimé à la prestation validée, chaque étape est pensée pour vous rassurer — et pour garantir au prestataire un paiement juste."
+          title={<span id="how-it-works-heading">Quatre étapes, un seul interlocuteur</span>}
+          subtitle="Vous cherchez, vous demandez, nous confirmons. Et nous restons présents après le début de la mission."
         />
 
         <div className="mt-14 grid grid-cols-1 items-start gap-10 lg:mt-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16">
@@ -94,13 +89,13 @@ export default function HowItWorks({ compact = false }) {
                       <motion.span
                         animate={{
                           scale: isActive ? 1 : 0.86,
-                          backgroundColor: isActive || isPast ? "#9f1a4a" : "#ffffff",
-                          color: isActive || isPast ? "#ffffff" : "#33497a",
+                          backgroundColor: isActive || isPast ? "#01433D" : "#ffffff",
+                          color: isActive || isPast ? "#ffffff" : "#657574",
                         }}
                         transition={{ duration: 0.45, ease: EASE }}
                         className={`flex size-11 items-center justify-center rounded-2xl border transition-shadow duration-500 ${
                           isActive
-                            ? "border-teal-600 shadow-[0_14px_32px_-12px_rgba(159,26,74,0.85)]"
+                            ? "border-teal-600 shadow-[0_14px_32px_-12px_rgba(1,67,61,0.85)]"
                             : "border-ink-900/10"
                         }`}
                       >
@@ -126,7 +121,7 @@ export default function HowItWorks({ compact = false }) {
                           {step.number}
                         </span>
                         <span
-                          className={`font-display text-lg font-semibold leading-snug transition-colors duration-500 sm:text-xl ${
+                          className={`font-display text-lg font-bold leading-snug transition-colors duration-500 sm:text-xl ${
                             isActive ? "text-ink-900" : "text-ink-900/45 group-hover:text-ink-900/75"
                           }`}
                         >
@@ -180,7 +175,7 @@ export default function HowItWorks({ compact = false }) {
 
           {!compact && (
             <Reveal variant="up" className="mt-8 pl-[3.75rem]">
-              <Button to="/trouver-un-prestataire" withArrow magnetic>
+              <Button to="/prestataires" withArrow magnetic>
                 Démarrer une recherche
               </Button>
             </Reveal>
@@ -226,12 +221,12 @@ export default function HowItWorks({ compact = false }) {
                 className="absolute -bottom-5 left-4 flex items-center gap-2.5 rounded-2xl border border-ink-900/8 bg-white px-4 py-3 shadow-lifted sm:left-8"
               >
                 <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gold-100 text-gold-700">
-                  <Lock className="size-4" aria-hidden="true" />
+                  <RefreshCcw className="size-4" aria-hidden="true" />
                 </span>
                 <span>
-                  <span className="block text-xs font-semibold text-ink-900">Paiement protégé</span>
+                  <span className="block text-xs font-semibold text-ink-900">Remplacement sous 24 h</span>
                   <span className="block text-[0.68rem] text-ink-900/50">
-                    Libéré après votre validation
+                    Si l'agent ne vous convient pas
                   </span>
                 </span>
               </motion.div>

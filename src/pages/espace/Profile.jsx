@@ -107,7 +107,7 @@ export default function Profile() {
           </span>
           <div className="min-w-0">
             <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-teal-700">Compte</p>
-            <h1 className="mt-2 font-display text-3xl font-semibold text-ink-900">Mon profil</h1>
+            <h1 className="mt-2 font-display text-3xl font-bold text-ink-900">Mon profil</h1>
             <p className="mt-1 text-sm text-ink-900/55">Informations et sécurité de votre compte SaaCare.</p>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function Profile() {
         onSubmit={onSaveProfile}
         className="mt-6 rounded-2xl border border-ink-900/8 bg-white p-6 sm:p-8"
       >
-        <h2 className="font-display text-xl font-semibold text-ink-900">Informations personnelles</h2>
+        <h2 className="font-display text-xl font-bold text-ink-900">Informations personnelles</h2>
         <p className="mt-1 text-sm text-ink-900/55">Ces informations apparaissent dans votre espace SaaCare.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -215,7 +215,7 @@ export default function Profile() {
         onSubmit={onChangePassword}
         className="mt-6 rounded-2xl border border-ink-900/8 bg-white p-6 sm:p-8"
       >
-        <h2 className="font-display text-xl font-semibold text-ink-900">Sécurité</h2>
+        <h2 className="font-display text-xl font-bold text-ink-900">Sécurité</h2>
         <p className="mt-1 text-sm text-ink-900/55">Changez votre mot de passe pour sécuriser votre compte.</p>
 
         <div className="mt-6 flex max-w-lg flex-col gap-4">

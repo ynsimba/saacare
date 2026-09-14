@@ -18,7 +18,7 @@ const CRITERIA = [
     icon: ShieldCheck,
     label: "Vérification du professionnel",
     without: "Bouche-à-oreille, aucun contrôle d'identité ni d'antécédents.",
-    with: "Identité, antécédents et références contrôlés avant toute mise en relation.",
+    with: "Protocole SaaTrust en 7 étapes : identité, domicile, antécédents, garants, références, test pratique, aptitude.",
   },
   {
     icon: Clock,
@@ -30,13 +30,13 @@ const CRITERIA = [
     icon: Activity,
     label: "Qualité dans la durée",
     without: "Impossible de savoir si le professionnel reste fiable dans le temps.",
-    with: "Notes, ponctualité et taux de complétion suivis en continu.",
+    with: "Visite qualité à J+7, notation croisée et revérification tous les 12 mois.",
   },
   {
     icon: Lock,
-    label: "Paiement",
-    without: "Payé d'avance, sans garantie si la prestation n'est pas réalisée.",
-    with: "Fonds protégés, libérés uniquement après votre validation.",
+    label: "Contrat et garanties",
+    without: "Aucun contrat écrit, aucune assurance, aucun remplacement.",
+    with: "Un contrat adapté, une assurance responsabilité civile et un remplacement sous 24 h.",
   },
   {
     icon: Headset,
@@ -68,7 +68,7 @@ export default function WhyChoose() {
               <Eyebrow>Pourquoi SaaCare</Eyebrow>
               <h2
                 id="why-choose-heading"
-                className="mt-5 text-balance font-display text-3xl font-semibold leading-[1.15] tracking-[-0.015em] text-ink-900 sm:text-4xl"
+                className="mt-5 text-balance font-display text-3xl font-bold leading-[1.15] tracking-[-0.015em] text-ink-900 sm:text-4xl"
               >
                 Aucune famille ne devrait prendre de risque en{" "}
                 <span className="relative inline-block">
@@ -81,7 +81,7 @@ export default function WhyChoose() {
               </h2>
               <p className="mt-5 text-pretty text-base leading-relaxed text-ink-900/65">
                 En RDC, la majorité des services à domicile restent non encadrés. Voici,
-                concrètement, ce que change le passage par une plateforme.
+                concrètement, ce que change le passage par SaaCare.
               </p>
             </Reveal>
 
@@ -107,7 +107,7 @@ export default function WhyChoose() {
                 className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-b from-navy-800 via-navy-900 to-ink-950"
                 aria-hidden="true"
               >
-                <div className="absolute inset-0 bg-[radial-gradient(80%_50%_at_50%_0%,rgba(159,26,74,0.28),transparent)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(80%_50%_at_50%_0%,rgba(1,67,61,0.28),transparent)]" />
               </div>
 
               {/* En-têtes de colonnes */}
@@ -153,7 +153,7 @@ export default function WhyChoose() {
                         >
                           <Icon className="size-5" aria-hidden="true" strokeWidth={1.75} />
                         </span>
-                        <span className="font-display text-[1.05rem] font-semibold leading-snug text-ink-900">
+                        <span className="font-display text-[1.05rem] font-bold leading-snug text-ink-900">
                           {row.label}
                         </span>
                       </span>
@@ -203,7 +203,7 @@ export default function WhyChoose() {
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-teal-50 text-teal-700">
                       <Icon className="size-5" aria-hidden="true" strokeWidth={1.75} />
                     </span>
-                    <h3 className="font-display text-base font-semibold text-ink-900">{row.label}</h3>
+                    <h3 className="font-display text-base font-bold text-ink-900">{row.label}</h3>
                   </div>
 
                   <div className="flex items-start gap-3 p-5">

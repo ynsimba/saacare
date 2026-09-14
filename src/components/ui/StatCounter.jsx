@@ -33,7 +33,7 @@ export default function StatCounter({ value, suffix = "", label, decimals = 0, c
       transition={{ duration: 0.7, ease: EASE }}
       className={className}
     >
-      <div className="flex items-baseline gap-1 font-display text-4xl font-semibold text-white sm:text-5xl">
+      <div className="flex items-baseline gap-1 font-display text-4xl font-bold text-white sm:text-5xl">
         <motion.span>{rounded}</motion.span>
         <span className="text-teal-300">{suffix}</span>
       </div>

@@ -44,7 +44,7 @@ export default function LegalPage({ slug }) {
           <div className="flex flex-col gap-10">
             {page.sections.map((section, index) => (
               <Reveal key={section.heading} variant="up" id={`section-${index}`} className="scroll-mt-28">
-                <h2 className="font-display text-xl font-semibold text-ink-900">{section.heading}</h2>
+                <h2 className="font-display text-xl font-bold text-ink-900">{section.heading}</h2>
                 <div className="mt-3 flex flex-col gap-3">
                   {section.body.map((paragraph, i) => (
                     <p key={i} className="leading-relaxed text-ink-900/70">

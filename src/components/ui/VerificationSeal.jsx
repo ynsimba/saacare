@@ -30,8 +30,8 @@ export default function VerificationSeal({ size = 220, label = "SAACARE · PREST
         <defs>
           <path id={textPathId} d={`M ${r},${r} m -${r - 10},0 a ${r - 10},${r - 10} 0 1,1 ${(r - 10) * 2},0 a ${r - 10},${r - 10} 0 1,1 -${(r - 10) * 2},0`} />
         </defs>
-        <circle cx={r} cy={r} r={r - 3} fill="none" stroke="#c93268" strokeWidth="1.5" strokeDasharray="3 5" />
-        <text fill="#8c1743" fontSize="10.5" fontFamily="IBM Plex Mono, monospace" letterSpacing="2.5">
+        <circle cx={r} cy={r} r={r - 3} fill="none" stroke="#EE5518" strokeWidth="1.5" strokeDasharray="3 5" />
+        <text fill="#01433D" fontSize="10.5" fontFamily="Poppins, sans-serif" letterSpacing="2.5">
           <textPath href={`#${textPathId}`} startOffset="0%">
             {label.repeat(2)}
           </textPath>

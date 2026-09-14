@@ -1,79 +1,98 @@
 @import "tailwindcss";
 
 /* ============================================================
-   TOKENS DE MARQUE SAACARE
+   TOKENS DE MARQUE SAACARE — Charte graphique v1.0 (septembre 2026)
 
-   Palette officielle : #9f1a4a · #03294c · #ffffff · #000000
+   Palette officielle
+     Vert SaaCare  #01433D  confiance — texte, navigation, action principale
+     Orange SaaCare #EE5518 action — accents, repères, chiffres, grands titres
+     Encre         #102A2A  texte courant
+     Menthe        #DDEFEA  cartes et surfaces
+     Pêche         #FCE2D6  surfaces chaudes
+     Crème         #FFF8F3  fond de lecture longue
+     Ciel          #DDECF0  surfaces froides
+     Gris ardoise  #657574  légendes
 
-   Les noms de jetons (teal, gold, coral…) sont conservés : ils sont
-   employés dans une soixantaine de fichiers et désignent des ROLES, pas
-   des teintes. Seules leurs valeurs changent ici, ce qui reskinne toute
-   la plateforme d'un seul endroit.
+   Règle opérationnelle : le vert ou l'encre portent le texte courant.
+   L'orange signale, attire et active ; il ne remplace jamais une couleur de
+   texte accessible (blanc sur orange = 3,4:1, réservé aux textes ≥ 18 pt gras).
 
-     teal-*   → BORDEAUX #9f1a4a — accent principal, vérification
-     coral-*  → bordeaux profond — appels à l'action
-     gold-*   → bordeaux clair — sceau, distinctions, mise en avant
-     navy-*   → BLEU NUIT #03294c — autorité, fonds sombres
-     ink-*    → NOIR #000000 — texte et fonds les plus profonds
-     paper-*  → BLANC #ffffff et gris neutres
+   Les noms de jetons historiques (teal, navy, gold, coral…) sont conservés :
+   ils désignent des RÔLES utilisés dans toute la base de code.
+     teal-*   → VERT SAACARE — accent principal, vérification
+     navy-*   → vert profond / encre — autorité, fonds sombres
+     coral-*  → ORANGE SAACARE — appels à l'attention
+     gold-*   → orange — sceau, distinctions, notes
+     ink-*    → ENCRE — texte
+     paper-*  → blanc, crème et gris doux
    ============================================================ */
 @theme {
-  --font-display: "Fraunces", "Georgia", serif;
-  --font-sans: "Manrope", "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+  /* Montserrat pour les titres, Poppins pour le texte, l'interface et les données */
+  --font-display: "Montserrat", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Poppins", "Segoe UI", system-ui, sans-serif;
 
-  --color-ink-950: #000000;
-  --color-ink-900: #0a0f16;
+  --color-ink-950: #0a1e1e;
+  --color-ink-900: #102a2a;
 
-  --color-navy-900: #021b33;
-  --color-navy-800: #03294c;
-  --color-navy-700: #073a66;
-  --color-navy-600: #0d4e85;
-  --color-navy-500: #1c6399;
+  --color-navy-900: #012f2b;
+  --color-navy-800: #01433d;
+  --color-navy-700: #1b4744;
+  --color-navy-600: #365f5c;
+  --color-navy-500: #657574;
 
-  /* Accent principal — bordeaux de marque */
-  --color-teal-800: #5f1030;
-  --color-teal-700: #7d143d;
-  --color-teal-600: #9f1a4a;
-  --color-teal-500: #b8285b;
-  --color-teal-400: #cf4a77;
-  --color-teal-300: #e08aa6;
-  --color-teal-200: #eec2d1;
-  --color-teal-100: #f7e3ea;
-  --color-teal-50: #fdf3f6;
+  /* Vert SaaCare */
+  --color-teal-800: #002e29;
+  --color-teal-700: #013832;
+  --color-teal-600: #01433d;
+  --color-teal-500: #0e5a52;
+  --color-teal-400: #3d8478;
+  --color-teal-300: #a3d4c8;
+  --color-teal-200: #c6e5dc;
+  --color-teal-100: #ddefea;
+  --color-teal-50: #eef7f4;
 
-  /* Sceau et distinctions — bordeaux clair */
-  --color-gold-800: #6d1235;
-  --color-gold-700: #8c1743;
-  --color-gold-600: #ae2456;
-  --color-gold-500: #c93268;
-  --color-gold-200: #f0c8d6;
-  --color-gold-100: #f9e7ee;
+  /* Orange SaaCare — sceau, distinctions, notes */
+  --color-gold-800: #8a2f0b;
+  --color-gold-700: #b13e0f;
+  --color-gold-600: #d64a13;
+  --color-gold-500: #ee5518;
+  --color-gold-200: #fce2d6;
+  --color-gold-100: #fff1ea;
 
-  /* Appels à l'action — bordeaux profond */
-  --color-coral-800: #59102d;
-  --color-coral-700: #74143b;
-  --color-coral-600: #8d1845;
-  --color-coral-500: #9f1a4a;
-  --color-coral-100: #f6e0e8;
+  /* Orange SaaCare — points d'attention */
+  --color-coral-800: #8a2f0b;
+  --color-coral-700: #b13e0f;
+  --color-coral-600: #d64a13;
+  --color-coral-500: #ee5518;
+  --color-coral-100: #fce2d6;
 
   --color-paper-50: #ffffff;
-  --color-paper-100: #f6f7f9;
-  --color-paper-200: #eaedf1;
-  --color-paper-300: #dbe0e6;
+  --color-paper-100: #fff8f3;
+  --color-paper-200: #f3f5f4;
+  --color-paper-300: #e2e8e6;
 
-  --shadow-soft: 0 1px 2px rgba(3, 41, 76, 0.05), 0 8px 24px -8px rgba(3, 41, 76, 0.14);
-  --shadow-lifted: 0 20px 45px -18px rgba(3, 41, 76, 0.38);
+  /* Couleurs nommées de la charte, pour les nouveaux composants */
+  --color-brand-green: #01433d;
+  --color-brand-orange: #ee5518;
+  --color-mint: #ddefea;
+  --color-peach: #fce2d6;
+  --color-cream: #fff8f3;
+  --color-sky: #ddecf0;
+  --color-slate: #657574;
 
-  /* ---- Rayons : angles resserrés, plus sobres ---- */
-  --radius-xs: 1px;
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 6px;
-  --radius-2xl: 8px;
-  --radius-3xl: 10px;
-  --radius-4xl: 12px;
+  --shadow-soft: 0 1px 2px rgba(16, 42, 42, 0.05), 0 8px 24px -8px rgba(16, 42, 42, 0.12);
+  --shadow-lifted: 0 20px 45px -18px rgba(1, 67, 61, 0.34);
+
+  /* Rayons : 8 px UI, 16 px cartes, 24 px blocs éditoriaux */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -102,18 +121,15 @@
   0% { transform: scale(0.9); opacity: 0.55; }
   80%, 100% { transform: scale(1.6); opacity: 0; }
 }
-/* Zoom lent façon « Ken Burns » sur les visuels du hero */
 @keyframes ken-burns {
   0%   { transform: scale(1.06) translate3d(0, 0, 0); }
   100% { transform: scale(1.18) translate3d(-1.5%, -1.5%, 0); }
 }
-/* Halos colorés en mouvement lent derrière le hero */
 @keyframes aurora {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
   33%      { transform: translate3d(6%, -8%, 0) scale(1.14); }
   66%      { transform: translate3d(-7%, 5%, 0) scale(0.92); }
 }
-/* Balayage lumineux (boutons, bordures, skeletons) */
 @keyframes shimmer {
   from { transform: translateX(-120%); }
   to   { transform: translateX(220%); }
@@ -139,13 +155,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ------------------------------------------------------------
-   Aucun défilement horizontal, jamais.
-   `clip` plutôt que `hidden` : il coupe le débordement sans créer
-   de conteneur de défilement, donc `position: sticky` (barre de
-   filtres, colonnes latérales) et l'ancrage `scroll-margin`
-   continuent de fonctionner normalement.
-   ------------------------------------------------------------ */
+/* Aucun défilement horizontal : `clip` préserve `position: sticky`. */
 html,
 body {
   overflow-x: clip;
@@ -169,19 +179,24 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Titres : Montserrat en casse phrase, interlettrage normal (charte §08) */
+h1, h2 {
+  font-family: var(--font-display);
+}
+
 ::selection {
   background-color: var(--color-gold-200);
   color: var(--color-ink-900);
 }
 
-/* Focus visible cohérent sur toute la plateforme (accessibilité clavier) */
+/* Focus visible cohérent (accessibilité clavier) — double anneau lisible sur tous les fonds */
 :focus-visible {
   outline: 2.5px solid var(--color-gold-500);
   outline-offset: 3px;
   border-radius: 2px;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.55);
 }
 
-/* Lien d'évitement (skip link) */
 .skip-link {
   position: absolute;
   left: 1rem;
@@ -193,48 +208,59 @@ body {
   top: 1rem;
 }
 
-/* Barre de défilement discrète */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--color-paper-100); }
 ::-webkit-scrollbar-thumb {
   background: var(--color-navy-600);
-  border-radius: 2px;
+  border-radius: 8px;
   border: 2.5px solid var(--color-paper-100);
 }
 
-/* Texture "papier" très subtile pour éviter le blanc plat */
 .bg-grain {
   background-image: radial-gradient(var(--color-navy-700) 0.5px, transparent 0.5px);
   background-size: 18px 18px;
 }
 
-/* Anneau de "tampon vérifié" réutilisé comme signature graphique */
 .seal-ring {
   border: 1.5px dashed var(--color-gold-500);
   border-radius: 9999px;
 }
 
 /* ============================================================
-   SURFACES & EFFETS MODERNES
+   LANGAGE GRAPHIQUE DÉRIVÉ DU SYMBOLE (charte §10)
    ============================================================ */
 
-/* Verre dépoli clair — cartes posées sur du contenu clair */
+/* Chevron : progression, parcours, orientation — frise en zigzag arrondi */
+.pattern-chevron {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='32' viewBox='0 0 96 32'%3E%3Cpath d='M4 26 L28 6 L52 26 L76 6 L100 26' fill='none' stroke='%23FCE2D6' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 96px 32px;
+}
+
+/* Rayonnement : accueil, collectif — motif officiel en filigrane */
+.pattern-rays {
+  background-image: url("/motif.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* ============================================================
+   SURFACES & EFFETS
+   ============================================================ */
 .glass {
-  background: color-mix(in srgb, var(--color-paper-50) 72%, transparent);
+  background: color-mix(in srgb, var(--color-paper-50) 80%, transparent);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border: 1px solid rgba(3, 41, 76, 0.07);
+  border: 1px solid rgba(16, 42, 42, 0.07);
 }
 
-/* Verre dépoli sombre — cartes posées sur le hero immersif */
 .glass-dark {
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(1, 31, 28, 0.45);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* Bordure dégradée animée (cadre du champ de recherche du hero) */
 .gradient-border {
   position: relative;
   isolation: isolate;
@@ -247,9 +273,9 @@ body {
   padding: 1px;
   background: linear-gradient(
     120deg,
-    rgba(159, 26, 74, 0.7),
-    rgba(3, 41, 76, 0.55),
-    rgba(159, 26, 74, 0.7)
+    rgba(238, 85, 24, 0.75),
+    rgba(221, 239, 234, 0.45),
+    rgba(238, 85, 24, 0.75)
   );
   background-size: 300% 300%;
   animation: gradient-pan 9s ease infinite;
@@ -261,14 +287,13 @@ body {
   z-index: -1;
 }
 
-/* Texte en dégradé de marque — nuances claires du bordeaux, pour rester
-   parfaitement lisible sur les fonds sombres du hero. */
+/* Accent de titre sur fond sombre : pêche → orange clair, lisible sur le vert */
 .text-gradient {
   background-image: linear-gradient(
     100deg,
-    var(--color-teal-300),
-    var(--color-teal-200) 45%,
-    var(--color-teal-300) 80%
+    #ffd2bd,
+    #fce2d6 45%,
+    #ffb895 80%
   );
   background-size: 220% auto;
   animation: gradient-pan 8s ease infinite;
@@ -277,18 +302,16 @@ body {
   color: transparent;
 }
 
-/* Grain photographique très léger posé sur les visuels sombres */
 .noise-overlay::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.12;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
-/* Halo coloré flouté (aurora) */
 .aurora-blob {
   position: absolute;
   border-radius: 9999px;
@@ -297,7 +320,6 @@ body {
   pointer-events: none;
 }
 
-/* Balayage lumineux au survol — s'applique à un enfant .shine-sweep */
 .shine::after {
   content: "";
   position: absolute;
@@ -306,7 +328,7 @@ body {
   background: linear-gradient(
     100deg,
     transparent 30%,
-    rgba(255, 255, 255, 0.42) 50%,
+    rgba(255, 255, 255, 0.35) 50%,
     transparent 70%
   );
   transform: translateX(-120%);
@@ -317,13 +339,11 @@ body {
   animation: shimmer 0.9s var(--ease-out-expo);
 }
 
-/* Masque de fondu latéral pour les bandeaux défilants */
 .fade-edges {
   -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
 }
 
-/* Soulignement animé pour les liens de navigation */
 .link-underline {
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 0% 1.5px;

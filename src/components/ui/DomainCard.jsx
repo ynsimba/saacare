@@ -40,7 +40,14 @@ export default function DomainCard({ domain, index = 0 }) {
           >
             <DomainIcon name={domain.icon} className="size-7" />
           </div>
-          <h3 className="font-display text-xl font-semibold text-ink-900">{domain.name}</h3>
+          <h3 className="flex flex-wrap items-center gap-2 font-display text-xl font-bold text-ink-900">
+            {domain.name}
+            {!domain.available && (
+              <span className="rounded-full bg-paper-200 px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wide text-navy-600">
+                {domain.phase}
+              </span>
+            )}
+          </h3>
           <p className="mt-2 text-sm leading-relaxed text-ink-900/65">{domain.tagline}</p>
         </div>
 
@@ -59,7 +66,7 @@ export default function DomainCard({ domain, index = 0 }) {
 
         {/* Zone cliquable couvrant toute la carte */}
         <Link
-          to={`/domaines/${domain.slug}`}
+          to={`/solutions/${domain.slug}`}
           className="absolute inset-0 rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
         >
           <span className="sr-only">Découvrir {domain.name}</span>
