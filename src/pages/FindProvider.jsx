@@ -44,7 +44,7 @@ const GENDERS = [
 const LICENCES = ["Permis de conduire", "Véhicule personnel", "Moto"];
 const SLOTS = ["Jour", "Nuit", "Jour et nuit en relais"];
 
-const LIST_KEYS = ["commune", "niveau", "langues", "permis", "creneau"];
+const LIST_KEYS = ["niveau", "langues", "permis", "creneau"];
 
 /** Les filtres vivent dans l'adresse : chaque recherche reste partageable et indexable (§4.2). */
 function readFilters(params) {
@@ -84,12 +84,12 @@ export default function FindProvider() {
   const results = useMemo(() => {
     const minRating = Number(filters.note) || 0;
     const exp = EXPERIENCE.find((e) => e.value === filters.experience);
-    const selectedCommunes = new Set(filters.commune);
+    const selectedCommune = filters.commune || "";
 
     const list = providers.filter((p) => {
       if (filters.service && p.domainSlug !== filters.service) return false;
       if (metierLabel && !p.metier.toLowerCase().startsWith(metierLabel.toLowerCase())) return false;
-      if (selectedCommunes.size && !p.zones.some((z) => selectedCommunes.has(z))) return false;
+      if (selectedCommune && !p.zones.includes(selectedCommune)) return false;
       if (filters.niveau.length && !filters.niveau.includes(p.level)) return false;
       if (minRating && (!hasPublicRating(p) || p.rating < minRating)) return false;
       if (exp && !exp.test(p.experience)) return false;
@@ -102,7 +102,7 @@ export default function FindProvider() {
     });
 
     const rating = (p) => (hasPublicRating(p) ? p.rating : 0);
-    const communeMatch = (p) => (selectedCommunes.has(p.commune) ? 1 : 0);
+    const communeMatch = (p) => (selectedCommune && p.commune === selectedCommune ? 1 : 0);
     const sorters = {
       pertinence: (a, b) =>
         LEVEL_WEIGHT[b.level] * 2 + rating(b) + communeMatch(b) + AVAIL_WEIGHT[b.availability] -
@@ -143,11 +143,19 @@ export default function FindProvider() {
       </Group>
 
       <Group label="Communes">
-        <div className="grid max-h-44 grid-cols-2 gap-x-2 overflow-y-auto rounded-lg border border-ink-900/10 bg-white p-2">
+        <select
+          value={filters.commune ?? ""}
+          onChange={(e) => update("commune", e.target.value)}
+          className={selectClass}
+          aria-label="Commune"
+        >
+          <option value="">Toutes les communes</option>
           {COMMUNES.map((c) => (
-            <Check key={c} label={c} checked={filters.commune.includes(c)} onChange={() => toggle("commune", c)} />
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
-        </div>
+        </select>
       </Group>
 
       <Group label="Fréquence">
@@ -256,7 +264,7 @@ export default function FindProvider() {
 
               <div className="mt-6">
                 {results.length === 0 ? (
-                  <EmptyState domainSlug={filters.service} hasCommune={filters.commune.length > 0} onWiden={() => update("commune", [])} onReset={reset} />
+                  <EmptyState domainSlug={filters.service} hasCommune={Boolean(filters.commune)} onWiden={() => update("commune", "")} onReset={reset} />
                 ) : (
                   <>
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
