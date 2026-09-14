@@ -130,21 +130,8 @@ export default function Hero() {
       >
         <div>
           <motion.div variants={container} initial="hidden" animate="show" className="max-w-2xl">
-            {/* Pastille d'annonce */}
-            <motion.div variants={item}>
-              <span className="glass-dark inline-flex max-w-full flex-wrap items-center gap-x-2.5 gap-y-1 rounded-full py-1.5 pl-1.5 pr-4 text-xs font-medium text-paper-100/90">
-                <span className="relative flex size-6 shrink-0 items-center justify-center rounded-full bg-teal-500/20">
-                  <span className="absolute inline-flex size-2 rounded-full bg-teal-400 animate-pulse-ring" aria-hidden="true" />
-                  <span className="relative inline-flex size-2 rounded-full bg-teal-400" aria-hidden="true" />
-                </span>
-                <span className="font-mono uppercase tracking-[0.16em]">Kinshasa · RDC</span>
-                <span className="hidden h-3 w-px bg-white/20 sm:block" aria-hidden="true" />
-                <span className="hidden text-paper-100/70 sm:inline">Services vérifiés à domicile</span>
-              </span>
-            </motion.div>
-
             {/* Titre */}
-            <h1 className="mt-6 text-balance font-display text-[2.25rem] font-bold leading-[1.06] tracking-[-0.02em] text-paper-50 sm:mt-7 sm:text-6xl sm:leading-[1.04] lg:text-[4.15rem]">
+            <h1 className="text-balance font-display text-[2.25rem] font-bold leading-[1.06] tracking-[-0.02em] text-paper-50 sm:text-6xl sm:leading-[1.04] lg:text-[4.15rem]">
               <AnimatedText text="Des professionnels" as="span" className="block" delay={0.35} />
               <AnimatedText text="de confiance," as="span" className="block" delay={0.5} />
               <span className="mt-1 block">

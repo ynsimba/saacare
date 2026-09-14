@@ -8,19 +8,7 @@ export default function AccordionItem({ question, answer, defaultOpen = false })
   const id = useId();
 
   return (
-    <div
-      className={`group relative rounded-2xl border transition-colors duration-500 ${
-        open ? "border-teal-200 bg-teal-50/40" : "border-transparent hover:bg-ink-900/3"
-      }`}
-    >
-      {/* Liseré vertical qui apparaît sur l'élément ouvert */}
-      <motion.span
-        aria-hidden="true"
-        initial={false}
-        animate={{ scaleY: open ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: EASE }}
-        className="absolute left-0 top-4 h-[calc(100%-2rem)] w-0.5 origin-top rounded-full bg-teal-600"
-      />
+    <div className="group">
       <h3>
         <button
           type="button"
@@ -28,22 +16,22 @@ export default function AccordionItem({ question, answer, defaultOpen = false })
           aria-expanded={open}
           aria-controls={`accordion-panel-${id}`}
           onClick={() => setOpen((o) => !o)}
-          className="flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-gold-500 sm:px-5"
+          className="flex w-full items-start justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-ink-900/[0.02] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-gold-500 sm:px-6 sm:py-5"
         >
           <span
-            className={`font-medium transition-colors duration-300 ${
-              open ? "text-teal-800" : "text-ink-900 group-hover:text-ink-950"
+            className={`text-[0.95rem] font-medium leading-snug transition-colors duration-300 sm:text-base ${
+              open ? "text-teal-800" : "text-ink-900"
             }`}
           >
             {question}
           </span>
           <motion.span
             animate={{ rotate: open ? 135 : 0, backgroundColor: open ? "#01433D" : "#DDEFEA" }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="flex size-7 shrink-0 items-center justify-center rounded-full"
+            transition={{ duration: 0.35, ease: EASE }}
+            className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full"
           >
             <Plus
-              className={`size-4 transition-colors duration-300 ${open ? "text-white" : "text-teal-700"}`}
+              className={`size-3.5 transition-colors duration-300 ${open ? "text-white" : "text-teal-700"}`}
               aria-hidden="true"
             />
           </motion.span>
@@ -58,18 +46,12 @@ export default function AccordionItem({ question, answer, defaultOpen = false })
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ height: { duration: 0.42, ease: EASE }, opacity: { duration: 0.28 } }}
+            transition={{ height: { duration: 0.38, ease: EASE }, opacity: { duration: 0.24 } }}
             className="overflow-hidden"
           >
-            <motion.p
-              initial={{ y: -8 }}
-              animate={{ y: 0 }}
-              exit={{ y: -8 }}
-              transition={{ duration: 0.42, ease: EASE }}
-              className="px-4 pb-5 pr-10 text-sm leading-relaxed text-ink-900/65 sm:px-5"
-            >
+            <p className="max-w-2xl px-5 pb-5 text-sm leading-relaxed text-ink-900/65 sm:px-6 sm:pb-6">
               {answer}
-            </motion.p>
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
