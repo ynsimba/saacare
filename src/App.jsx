@@ -9,6 +9,7 @@ import PageTransition from "./components/layout/PageTransition";
 import Cursor from "./components/layout/Cursor";
 import BackToTop from "./components/layout/BackToTop";
 import MobileCallBar from "./components/layout/MobileCallBar";
+import SupportCTA from "./components/layout/SupportCTA";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -99,6 +100,7 @@ export default function App() {
       <Cursor />
       {!isEspace && <Navbar />}
       {!isEspace && <BackToTop />}
+      {!isEspace && <SupportCTA />}
       <ScrollToTop />
 
       {isEspace ? (
