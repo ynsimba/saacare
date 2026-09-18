@@ -134,9 +134,7 @@ export default function DomainsGrid() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 6 }}
                 transition={{ duration: 0.28, ease: EASE }}
-                className={`w-64 overflow-hidden rounded-2xl p-5 shadow-lifted ${
-                  THEME[activeDomain.theme].bg
-                }`}
+                className="w-64 overflow-hidden rounded-2xl bg-teal-600 p-5 shadow-lifted"
               >
                 <div className="flex items-center gap-2.5 text-white">
                   <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/15">
@@ -177,7 +175,7 @@ export default function DomainsGrid() {
 }
 
 function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
-  const theme = THEME[domain.theme];
+  const theme = THEME.teal;
 
   return (
     <RevealItem as="li" variant="up" className="border-b border-ink-900/10">

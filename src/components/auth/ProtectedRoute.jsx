@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { homeForRole, useAuth } from "../../lib/auth";
 
-export default function ProtectedRoute({ children, roles }) {
+export default function ProtectedRoute({ children, roles, superAdmin = false }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -15,11 +15,15 @@ export default function ProtectedRoute({ children, roles }) {
   }
 
   if (!user) {
-    return <Navigate to="/connexion" replace state={{ from: location.pathname }} />;
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
   if (roles?.length && !roles.includes(user.role)) {
     return <Navigate to={homeForRole(user.role)} replace />;
+  }
+
+  if (superAdmin && !user.isSuperAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   return children;

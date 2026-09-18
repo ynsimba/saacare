@@ -6,16 +6,18 @@
   "description": "SaaCare — plateforme de mise en relation avec des professionnels de confiance à domicile (RDC).",
   "scripts": {
     "dev": "vite",
-    "dev:api": "npm --prefix backend run dev",
+    "dev:api": "cd backend && php artisan serve --host=127.0.0.1 --port=8001",
+    "dev:api:artisan": "cd backend && php artisan serve --host=127.0.0.1 --port=8001",
     "dev:all": "concurrently -k -n web,api -c teal,coral \"npm run dev\" \"npm run dev:api\"",
     "build": "vite build",
     "preview": "vite preview",
-    "db:migrate": "npm --prefix backend run db:migrate",
-    "db:seed": "npm --prefix backend run db:seed"
+    "db:migrate": "cd backend && php artisan migrate",
+    "db:seed": "cd backend && php artisan db:seed"
   },
   "dependencies": {
     "@fontsource/montserrat": "^5.3.0",
     "@fontsource/poppins": "^5.3.0",
+    "@fontsource/urbanist": "^5.3.0",
     "lucide-react": "^1.30.0",
     "motion": "^13.0.0",
     "react": "^19.2.8",

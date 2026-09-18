@@ -56,37 +56,65 @@ export const domains = [
     ],
   },
   {
-    slug: "walet",
-    name: "Saa Walet",
-    shortName: "Walet",
+    slug: "wale",
+    name: "Saa Walé",
+    shortName: "Walé",
     icon: "HeartHandshake",
     theme: "coral",
     phase: "Disponible",
     available: true,
-    tagline: "Une accompagnante à vos côtés après la naissance",
+    tagline: "Accompagnement post-partum inspiré de la tradition du Walé",
     description:
-      "Accompagnement post-natal à domicile : aide à la mère, soutien pratique auprès du nouveau-né, relais de nuit et tenue du foyer pendant le repos maternel.",
-    heroStat: { value: "8 h", label: "journée d'accompagnement type" },
+      "L'accompagnante Walé accompagne la mère durant la période suivant l'accouchement, en lui offrant un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé.",
+    heroStat: { value: "Post-partum", label: "accompagnement à domicile ou en séjour" },
     services: [
-      "Accompagnement de jour",
-      "Relais de nuit",
-      "Semaine jour et nuit",
-      "Quarantaine traditionnelle",
+      "Walé à domicile",
+      "Walé séjour",
+      "Walé bien-être",
+      "Option diaspora",
     ],
     offers: [
-      { name: "Journée", description: "Soutien à la mère et aide pratique au nouveau-né.", duration: "8 heures, 1 jour", price: "Sur devis" },
-      { name: "Nuit", description: "Relais de nuit pour permettre le repos de la mère.", duration: "10 heures, de 20 h à 6 h", price: "Sur devis" },
-      { name: "Semaine de jour", description: "Une présence chaque jour de la première semaine.", duration: "8 h par jour, 7 jours", price: "Sur devis" },
-      { name: "Semaine jour et nuit", description: "Deux accompagnantes en relais.", duration: "7 jours", price: "Sur devis" },
-      { name: "Quinzaine", description: "Deux semaines d'accompagnement de jour.", duration: "8 h par jour, 14 jours", price: "Sur devis" },
-      { name: "Quarantaine", description: "Selon la tradition des quarante jours.", duration: "Demi-journée, 40 jours", price: "Sur devis" },
-      { name: "Option diaspora", description: "Compte rendu quotidien écrit et vocal au payeur à l'étranger.", duration: "Selon la formule", price: "Sur devis" },
+      {
+        name: "Walé à domicile",
+        description: "L'accompagnante vient chez la maman pendant la durée convenue, pour un cadre de repos et de soutien au quotidien.",
+        duration: "Selon le nombre de jours convenu",
+        price: "Sur devis",
+      },
+      {
+        name: "Walé séjour",
+        description: "La maman vient dans un espace spécialement aménagé pour sa période de repos post-partum.",
+        duration: "Séjour selon la formule",
+        price: "Sur devis",
+      },
+      {
+        name: "Walé bien-être",
+        description: "Massages, soins corporels, alimentation et repos — dans un cadre non médical.",
+        duration: "Séances ou forfait",
+        price: "Sur devis",
+      },
+      {
+        name: "Option diaspora",
+        description: "Compte rendu quotidien écrit et vocal adressé au payeur à l'étranger.",
+        duration: "Selon la formule",
+        price: "Sur devis",
+      },
     ],
     formulas: [
-      { name: "À la journée", detail: "8 heures de présence.", price: "Sur devis" },
-      { name: "La nuit", detail: "De 20 h à 6 h.", price: "Sur devis" },
-      { name: "À la semaine", detail: "De jour, ou jour et nuit en relais.", price: "Sur devis" },
-      { name: "Quarantaine", detail: "Demi-journée pendant 40 jours.", price: "Sur devis" },
+      {
+        name: "Walé à domicile",
+        detail: "L'accompagnante vient chez la maman pendant X jours.",
+        price: "Sur devis",
+      },
+      {
+        name: "Walé séjour",
+        detail: "La maman vient dans un espace aménagé pour sa période de repos.",
+        price: "Sur devis",
+      },
+      {
+        name: "Walé bien-être",
+        detail: "Massages, soins corporels, alimentation et repos, hors actes médicaux.",
+        price: "Sur devis",
+      },
     ],
     selection: [
       "Protocole SaaTrust complet, plus trois contrôles propres au pôle",
@@ -97,29 +125,56 @@ export const domains = [
       "Recertification annuelle et visite de contrôle à J+2",
     ],
     safety:
-      "L'accompagnante ne pose jamais de geste de soin. Au moindre signe inhabituel, elle prévient la famille, le professionnel de santé et la permanence SaaCare.",
+      "L'accompagnante Walé n'effectue aucun acte médical. Au moindre signe inhabituel, elle prévient la famille, le professionnel de santé et la permanence SaaCare.",
     guarantees: [
       { title: "Remplacement sous 24 h", detail: "Une accompagnante jugée non conforme est remplacée sous 24 heures ouvrées." },
       { title: "Assurance renforcée", detail: "Une couverture dédiée au pôle, en plus de la responsabilité civile." },
       { title: "Supervision renforcée", detail: "Visite de contrôle à J+2 pour toute mission de plus de sept jours, superviseur joignable la nuit." },
     ],
     scope: {
+      intro:
+        "L'accompagnante Walé accompagne la mère durant la période suivant l'accouchement, en lui offrant un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé.",
       does: [
-        { domain: "Soutien à la mère", detail: "Préparation des repas adaptés, aide à la toilette et à l'habillage, entretien du linge, tenue du logement, courses, gestion des visites, veille de nuit pour permettre le repos." },
-        { domain: "Aide pratique au nouveau-né", detail: "Change, habillage, aide au bain donné par la mère, portage, bercement, mise en place du couchage, stérilisation et préparation du matériel." },
-        { domain: "Soutien à l'allaitement", detail: "Installation confortable, aide au positionnement, rappel des rythmes, encouragement — sans aucun geste sur le sein ni sur l'enfant qui relèverait d'un professionnel de santé." },
-        { domain: "Relais de nuit", detail: "Prise en charge des réveils autres que les tétées, surveillance du sommeil, réveil de la mère au bon moment." },
-        { domain: "Soutien de l'aîné", detail: "Occupation et rassurement des autres enfants du foyer pendant la convalescence." },
-        { domain: "Repères et alerte", detail: "Observation attentive, carnet de suivi quotidien, et alerte immédiate de la famille et du professionnel de santé référent en cas de signe inhabituel." },
+        {
+          domain: "Repos et adaptation",
+          detail: "Accompagner la mère dans son repos et son adaptation après l'accouchement.",
+        },
+        {
+          domain: "Soins de bien-être",
+          detail: "Assurer des soins de bien-être et du confort du corps selon les pratiques traditionnelles encadrées.",
+        },
+        {
+          domain: "Massages et soins corporels",
+          detail: "Réaliser, lorsque cela est approprié, des massages et soins corporels non médicaux.",
+        },
+        {
+          domain: "Alimentation post-partum",
+          detail: "Préparer ou organiser des repas adaptés à la période post-partum, selon les habitudes et recommandations de la famille.",
+        },
+        {
+          domain: "Aide au quotidien",
+          detail: "Aider dans certaines tâches quotidiennes afin de permettre à la mère de se consacrer à sa récupération et à son bébé.",
+        },
+        {
+          domain: "Soutien émotionnel",
+          detail: "Apporter une présence, une écoute et un soutien émotionnel à la jeune mère.",
+        },
+        {
+          domain: "Reprise progressive",
+          detail: "Accompagner progressivement la mère vers la reprise de ses activités quotidiennes.",
+        },
+        {
+          domain: "Complémentarité médicale",
+          detail: "Travailler en complémentarité avec les professionnels de santé lorsque cela est nécessaire.",
+        },
       ],
       never: [
-        "Aucun acte de soin : pas d'examen de la mère, pas de prise de tension, pas de soins de cicatrice de césarienne ou d'épisiotomie, pas de soins du cordon ombilical.",
-        "Aucun médicament : ni administration, ni recommandation, ni achat, y compris pour un antidouleur courant ou une tisane.",
-        "Aucune manœuvre sur le corps de la mère ou de l'enfant : pas de massage abdominal ou utérin, pas de bandage serré du ventre, pas d'étirement ou de manipulation du nourrisson, pas de bain à température non contrôlée.",
-        "Aucune pratique traditionnelle appliquée au cordon, à la peau ou aux yeux du nouveau-né, ni aucun produit posé sur une plaie.",
+        "Aucun acte médical : pas d'examen de la mère, pas de prise de tension, pas de soins de cicatrice, pas de soins du cordon ombilical.",
+        "Aucun médicament : ni administration, ni recommandation, ni achat, y compris pour un antidouleur courant.",
+        "Aucune manœuvre médicale sur le corps de la mère ou de l'enfant.",
         "Aucun conseil médical, aucun diagnostic, aucune interprétation d'un symptôme : elle décrit ce qu'elle observe, elle ne conclut jamais.",
         "Aucune décision à la place de la mère : le choix du mode d'alimentation, du rythme et des visites appartient à la famille.",
-        "Aucune photographie, aucune diffusion d'information sur la famille, y compris à des proches : confidentialité absolue, inscrite au contrat.",
+        "Aucune photographie, aucune diffusion d'information sur la famille : confidentialité absolue, inscrite au contrat.",
       ],
       alert:
         "Face à une situation inhabituelle, l'accompagnante réagit toujours de la même façon : elle prévient la famille, appelle le professionnel de santé ou la maternité qui a suivi l'accouchement, et prévient la permanence SaaCare. Elle n'évalue pas la gravité, elle ne temporise pas.",
@@ -127,9 +182,26 @@ export const domains = [
     earlyBooking:
       "Réservez dès le 3e trimestre, avec la date prévue de l'accouchement. Un acompte de 50 % confirme la réservation ; nous ajustons les dates si bébé arrive plus tôt ou plus tard.",
     faq: [
-      { q: "Quand faut-il réserver ?", a: "Dès le 3e trimestre de grossesse, idéalement au 7e ou 8e mois. Un acompte de 50 % confirme la réservation." },
-      { q: "L'accompagnante remplace-t-elle une sage-femme ?", a: "Non. Elle n'effectue aucun acte de soin et ne donne aucun conseil médical. Elle aide la mère au quotidien et alerte immédiatement le professionnel de santé en cas de doute." },
-      { q: "Je vis à l'étranger, puis-je réserver pour ma sœur ?", a: "Oui. L'option diaspora ajoute un compte rendu quotidien, écrit et vocal, adressé au payeur (+ 15 %)." },
+      {
+        q: "Qu'est-ce que Saa Walé ?",
+        a: "C'est l'accompagnement post-partum : une accompagnante Walé soutient la mère après l'accouchement, dans un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé — sans jamais remplacer un professionnel de santé.",
+      },
+      {
+        q: "Quelle est la différence entre Walé à domicile, séjour et bien-être ?",
+        a: "Walé à domicile : l'accompagnante vient chez la maman. Walé séjour : la maman vient dans un espace aménagé pour son repos. Walé bien-être : massages, soins corporels, alimentation et repos, dans un cadre non médical.",
+      },
+      {
+        q: "Quand faut-il réserver ?",
+        a: "Dès le 3e trimestre de grossesse, idéalement au 7e ou 8e mois. Un acompte de 50 % confirme la réservation.",
+      },
+      {
+        q: "L'accompagnante remplace-t-elle une sage-femme ?",
+        a: "Non. Elle n'effectue aucun acte médical et ne donne aucun conseil médical. Elle aide la mère au quotidien et alerte immédiatement le professionnel de santé en cas de doute.",
+      },
+      {
+        q: "Je vis à l'étranger, puis-je réserver pour ma sœur ?",
+        a: "Oui. L'option diaspora ajoute un compte rendu quotidien, écrit et vocal, adressé au payeur.",
+      },
     ],
   },
   {
@@ -317,7 +389,7 @@ export const domains = [
     ],
     offers: [
       { name: "Socle SaaCare", description: "Savoir-être, hygiène, sécurité domestique, premiers secours. Condition d'entrée au registre.", duration: "1 journée", price: "Sur devis" },
-      { name: "Spécialisations métier", description: "Post-natal (5 jours), garde de nourrisson, cuisine, repassage, nettoyage de bureaux, conduite défensive, accompagnement des aînés.", duration: "2 à 5 jours", price: "Sur devis" },
+      { name: "Spécialisations métier", description: "Accompagnement Walé (5 jours), garde de nourrisson, cuisine, repassage, nettoyage de bureaux, conduite défensive, accompagnement des aînés.", duration: "2 à 5 jours", price: "Sur devis" },
       { name: "Cycles certifiants", description: "Auto-école, coiffure, maquillage, bureautique, développement web et mobile, préparation aux examens.", duration: "1 à 6 mois", price: "Sur devis" },
     ],
     formulas: [
@@ -333,7 +405,7 @@ export const domains = [
     safety: "Formations d'abord en partenariat avec des centres existants.",
     guarantees: [
       { title: "Débouché", detail: "Les diplômés rejoignent le registre SaaCare au niveau Certifié." },
-      { title: "Formateurs qualifiés", detail: "Modules conçus avec des professionnels, dont une sage-femme pour le post-natal." },
+      { title: "Formateurs qualifiés", detail: "Modules conçus avec des professionnels, dont une sage-femme pour l'accompagnement Walé." },
       { title: "Certificat", detail: "Un certificat délivré à chaque cycle validé." },
     ],
     faq: [

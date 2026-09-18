@@ -1,5 +1,4 @@
 import { motion } from "motion/react";
-import { Check } from "lucide-react";
 import { useIsReducedMotion } from "../../lib/motion";
 
 /**
@@ -14,11 +13,6 @@ export default function VerificationSeal({ size = 220, label = "SAACARE · PREST
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }} aria-hidden="true">
-      {/* Anneau de pulsation */}
-      {!reduced && (
-        <span className="absolute inset-0 rounded-full bg-teal-500/25 animate-pulse-ring" />
-      )}
-
       <motion.svg
         viewBox={`0 0 ${size} ${size}`}
         width={size}

@@ -99,7 +99,7 @@ export default function SaaTrust() {
             <Reveal variant="fade" className="mt-6 flex items-start gap-3 rounded-2xl bg-peach p-5 text-sm leading-relaxed text-ink-900">
               <HeartHandshake className="mt-0.5 size-5 shrink-0 text-coral-700" aria-hidden="true" />
               <span>
-                <strong>Saa Walet ajoute trois contrôles bloquants</strong> : expérience de la maternité, entretien sur la
+                <strong>Saa Walé ajoute trois contrôles bloquants</strong> : expérience de la maternité, entretien sur la
                 confidentialité, et visite médicale renforcée avec mise à jour vaccinale. La formation de 5 jours est
                 obligatoire avant toute première mission.
               </span>

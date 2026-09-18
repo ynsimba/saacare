@@ -1,39 +1,83 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import {
   LayoutDashboard,
-  Search,
-  UserRound,
+  Navigation,
   LogOut,
-  Briefcase,
-  FileText,
-  Home,
+  ClipboardCheck,
+  Users,
+  Clock,
+  Wallet,
+  Star,
+  Bell,
+  CalendarDays,
+  CreditCard,
+  Settings,
+  BarChart3,
+  Package,
+  UserCog,
+  ScrollText,
+  Calculator,
+  LineChart,
+  Database,
+  Tags,
 } from "lucide-react";
 import { homeForRole, useAuth } from "../../lib/auth";
+import ClientProfileShell from "./ClientProfileShell";
+import PrestataireProfileShell from "./PrestataireProfileShell";
+import AdminShell from "../admin/AdminShell";
+import { ProviderTripTrackingProvider } from "../tracking/ProviderTripTracking";
+import { CLIENT_NAV, PRESTATAIRE_NAV, SpaceNav } from "./SpaceNav";
 
-function navForRole(role) {
-  if (role === "PROVIDER" || role === "ADMIN") {
+export { CLIENT_NAV, PRESTATAIRE_NAV, SpaceNav };
+
+const SOON = { soon: true };
+
+const SUPER_ADMIN_NAV = [
+  { to: "/admin/utilisateurs", label: "Utilisateurs", icon: UserCog, match: "users" },
+  { to: "/admin/journal-connexions", label: "Journal connexions", icon: ScrollText, end: true },
+  { to: "/admin/comptabilite", label: "Comptabilité", icon: Calculator, end: true },
+  { to: "/admin/statistiques", label: "Statistiques", icon: LineChart, end: true },
+  { to: "/admin/donnees", label: "Données", icon: Database, end: true },
+];
+
+function navForUser(user) {
+  if (user?.role === "admin") {
+    const links = [
+      { to: "/admin/dashboard", label: "Tableau de bord", icon: LayoutDashboard, end: true },
+      { to: "/admin/prestataires", label: "Prestataires", icon: Users, match: "providers" },
+      { to: "/admin/prestataires/validation", label: "Validation", icon: ClipboardCheck, end: true },
+      { to: "/admin/missions", label: "Missions actives", icon: Navigation, match: "missions" },
+      { to: "/admin/clients", label: "Clients", icon: Users, match: "clients" },
+      { to: "/admin/commandes", label: "Commandes", icon: Package, match: "orders" },
+      { to: "/admin/paiements", label: "Paiements", icon: CreditCard, end: true },
+      { to: "/admin/tarifs", label: "Grille tarifaire", icon: Tags, end: true },
+      { to: "/admin/parametres", label: "Paramètres", icon: Settings, end: true },
+      { to: "/admin/rapports", label: "Rapports", icon: BarChart3, end: true },
+    ];
+    if (user.isSuperAdmin) links.push(...SUPER_ADMIN_NAV);
+    return links;
+  }
+  if (user?.role === "prestataire") {
     return [
-      { to: "/espace-prestataire", label: "Tableau de bord", icon: LayoutDashboard, end: true },
-      { to: "/espace-prestataire/candidature", label: "Ma candidature", icon: FileText },
-      { to: "/espace/profil", label: "Mon profil", icon: UserRound },
+      ...PRESTATAIRE_NAV,
+      { to: "/prestataire/disponibilite", label: "Disponibilité", icon: Clock, ...SOON },
+      { to: "/prestataire/planning", label: "Planning", icon: CalendarDays, ...SOON },
+      { to: "/prestataire/gains", label: "Gains", icon: Wallet, ...SOON },
+      { to: "/prestataire/avis", label: "Avis", icon: Star, ...SOON },
+      { to: "/prestataire/notifications", label: "Notifications", icon: Bell, ...SOON },
     ];
   }
-  return [
-    { to: "/espace-client", label: "Tableau de bord", icon: LayoutDashboard, end: true },
-    { to: "/prestataires", label: "Trouver un prestataire", icon: Search },
-    { to: "/espace/profil", label: "Mon profil", icon: UserRound },
-  ];
+  return CLIENT_NAV;
 }
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth();
-  const links = navForRole(user?.role);
-  const initials = (user?.fullName || "?")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("");
+  const links = navForUser(user);
+  const isClient = user?.role === "client";
+  const isPrestataire = user?.role === "prestataire";
+  const useProfileShell = isClient || isPrestataire;
+
+  if (user?.role === "admin") return <AdminShell links={links} />;
 
   return (
     <div className="min-h-screen bg-paper-100">
@@ -47,24 +91,6 @@ export default function DashboardLayout() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <Link
-              to="/"
-              className="hidden items-center gap-1.5 text-sm font-medium text-ink-900/60 transition-colors hover:text-ink-900 sm:inline-flex"
-            >
-              <Home className="size-4" aria-hidden="true" />
-              Site public
-            </Link>
-            <div className="flex items-center gap-2 rounded-lg border border-ink-900/8 bg-paper-100/80 px-2.5 py-1.5">
-              <span className="grid size-8 place-items-center rounded-md bg-navy-700 font-mono text-xs font-semibold text-white">
-                {initials}
-              </span>
-              <span className="hidden min-w-0 sm:block">
-                <span className="block truncate text-sm font-semibold text-ink-900">{user?.fullName}</span>
-                <span className="block font-mono text-[0.65rem] uppercase tracking-wide text-ink-900/45">
-                  {user?.role === "PROVIDER" ? "Prestataire" : user?.role === "ADMIN" ? "Admin" : "Client"}
-                </span>
-              </span>
-            </div>
             <button
               type="button"
               onClick={logout}
@@ -77,42 +103,29 @@ export default function DashboardLayout() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[220px_1fr]">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <nav aria-label="Navigation de l’espace" className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible">
-            {links.map(({ to, label, icon: Icon, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  `inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-navy-700 text-white"
-                      : "border border-ink-900/8 bg-white text-ink-900/70 hover:border-ink-900/15 hover:text-ink-900"
-                  }`
-                }
-              >
-                <Icon className="size-4" aria-hidden="true" />
-                {label}
-              </NavLink>
-            ))}
-            {user?.role === "CLIENT" && (
-              <NavLink
-                to="/devenir-prestataire"
-                className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-dashed border-teal-300 bg-teal-50/50 px-3 py-2.5 text-sm font-medium text-teal-800 transition-colors hover:bg-teal-50"
-              >
-                <Briefcase className="size-4" aria-hidden="true" />
-                Devenir prestataire
-              </NavLink>
+      {useProfileShell ? (
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          {isClient ? <ClientProfileShell /> : <PrestataireProfileShell />}
+          <main className="mt-6 min-w-0">
+            {isPrestataire ? (
+              <ProviderTripTrackingProvider>
+                <Outlet />
+              </ProviderTripTrackingProvider>
+            ) : (
+              <Outlet />
             )}
-          </nav>
-        </aside>
-
-        <main className="min-w-0">
-          <Outlet />
-        </main>
-      </div>
+          </main>
+        </div>
+      ) : (
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[220px_1fr]">
+          <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+            <SpaceNav links={links} className="lg:flex-col lg:overflow-visible" />
+          </aside>
+          <main className="min-w-0">
+            <Outlet />
+          </main>
+        </div>
+      )}
     </div>
   );
 }

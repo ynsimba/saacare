@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { SearchX, SlidersHorizontal, X, Info, ShieldCheck } from "lucide-react";
+import { Search, SearchX, SlidersHorizontal, X, Info, ShieldCheck } from "lucide-react";
 import Seo from "../lib/Seo";
 import PageHero from "../components/ui/PageHero";
 import ProviderCard from "../components/ui/ProviderCard";
 import RequestForm from "../components/ui/RequestForm";
 import { domains, getDomainBySlug } from "../data/domains";
-import { providers, hasPublicRating } from "../data/providers";
-import { COMMUNES, LANGUAGES, METIERS } from "../data/providerForm";
-import { FREQUENCIES } from "../data/site";
+import { hasPublicRating, AVAILABILITY, LEVELS, pickOnePerDomain } from "../data/providers";
+import { COMMUNES, LANGUAGES, METIERS, DRIVING, EXPERIENCE_RANGES, GENDERS } from "../data/providerForm";
+import { api } from "../lib/api";
 import { EASE } from "../lib/motion";
 
 const PAGE_SIZE = 12;
@@ -23,28 +24,27 @@ const SORTS = [
   { value: "dispo", label: "Disponibilité immédiate" },
 ];
 
-const EXPERIENCE = [
-  { value: "moins-2", label: "Moins de 2 ans", test: (y) => y < 2 },
-  { value: "2-5", label: "2 à 5 ans", test: (y) => y >= 2 && y <= 5 },
-  { value: "plus-5", label: "Plus de 5 ans", test: (y) => y > 5 },
-];
+const EXPERIENCE_TESTS = {
+  "moins-2": (y) => y < 2,
+  "2-5": (y) => y >= 2 && y <= 5,
+  "plus-5": (y) => y > 5,
+};
 
-const AVAILABILITIES = [
+const AVAILABILITY_FILTERS = [
   { value: "immediate", label: "Immédiatement" },
   { value: "week", label: "Sous 7 jours" },
   { value: "planning", label: "Sur planning" },
 ];
 
-const GENDERS = [
-  { value: "", label: "Indifférent" },
-  { value: "F", label: "Femme" },
-  { value: "M", label: "Homme" },
-];
-
-const LICENCES = ["Permis de conduire", "Véhicule personnel", "Moto"];
+const GENDER_FILTERS = [{ value: "", label: "Indifférent" }, ...GENDERS];
+const LEVEL_FILTERS = Object.keys(LEVELS);
 const SLOTS = ["Jour", "Nuit", "Jour et nuit en relais"];
 
 const LIST_KEYS = ["niveau", "langues", "permis", "creneau"];
+
+/** Comparaison insensible à la casse et aux accents : « prive » trouve « privé ». */
+const norm = (value) =>
+  String(value).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 /** Les filtres vivent dans l'adresse : chaque recherche reste partageable et indexable (§4.2). */
 function readFilters(params) {
@@ -55,11 +55,60 @@ function readFilters(params) {
   return f;
 }
 
+/** Tout ce sur quoi porte la recherche libre — jamais une donnée nominative. */
+function haystack(provider) {
+  const domain = getDomainBySlug(provider.domainSlug);
+  return norm(
+    [
+      provider.metier,
+      provider.reference,
+      provider.commune,
+      provider.level,
+      domain?.name,
+      domain?.shortName,
+      ...provider.zones,
+      ...(provider.skills || []),
+      ...(provider.languages || []),
+      ...(provider.slots || []),
+      ...(provider.licence ?? []),
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
+}
+
 export default function FindProvider() {
   const [params, setParams] = useSearchParams();
   const filters = useMemo(() => readFilters(params), [params]);
+  const urlQuery = params.get("q") ?? "";
+  const [query, setQuery] = useState(urlQuery);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [providers, setProviders] = useState([]);
+  const [loadError, setLoadError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    api
+      .providers()
+      .then((data) => {
+        if (!cancelled) {
+          setProviders(data.items || []);
+          setLoadError("");
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) setLoadError(err.message || "Impossible de charger le registre.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const update = (key, value) => {
     const next = new URLSearchParams(params);
@@ -73,9 +122,36 @@ export default function FindProvider() {
     const list = filters[key];
     update(key, list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
   };
-  const reset = () => setParams(new URLSearchParams(), { replace: true });
+  const reset = () => {
+    setQuery("");
+    setParams(new URLSearchParams(), { replace: true });
+  };
 
-  useEffect(() => setVisible(PAGE_SIZE), [params]);
+  // La recherche libre filtre à la frappe, et n'est écrite dans l'adresse qu'une fois la saisie posée.
+  useEffect(() => setQuery(urlQuery), [urlQuery]);
+  useEffect(() => {
+    if (query.trim() === urlQuery) return undefined;
+    const timer = setTimeout(() => update("q", query.trim()), 350);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, urlQuery]);
+
+  useEffect(() => setVisible(PAGE_SIZE), [params, query]);
+
+  // Le tiroir mobile se ferme au clavier, et la page dessous ne défile plus.
+  useEffect(() => {
+    if (!panelOpen) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setPanelOpen(false);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [panelOpen]);
 
   const domain = getDomainBySlug(filters.service);
   const metiers = METIERS.filter((m) => !filters.service || m.pole === filters.service);
@@ -83,21 +159,26 @@ export default function FindProvider() {
 
   const results = useMemo(() => {
     const minRating = Number(filters.note) || 0;
-    const exp = EXPERIENCE.find((e) => e.value === filters.experience);
+    const expTest = EXPERIENCE_TESTS[filters.experience];
     const selectedCommune = filters.commune || "";
+    const terms = norm(query).split(/\s+/).filter(Boolean);
 
     const list = providers.filter((p) => {
+      if (terms.length) {
+        const text = haystack(p);
+        if (!terms.every((t) => text.includes(t))) return false;
+      }
       if (filters.service && p.domainSlug !== filters.service) return false;
-      if (metierLabel && !p.metier.toLowerCase().startsWith(metierLabel.toLowerCase())) return false;
-      if (selectedCommune && !p.zones.includes(selectedCommune)) return false;
+      if (metierLabel && !norm(p.metier).startsWith(norm(metierLabel))) return false;
+      if (selectedCommune && !(p.zones || []).includes(selectedCommune)) return false;
       if (filters.niveau.length && !filters.niveau.includes(p.level)) return false;
       if (minRating && (!hasPublicRating(p) || p.rating < minRating)) return false;
-      if (exp && !exp.test(p.experience)) return false;
-      if (filters.langues.length && !filters.langues.every((l) => p.languages.includes(l))) return false;
+      if (expTest && !expTest(p.experience)) return false;
+      if (filters.langues.length && !filters.langues.every((l) => (p.languages || []).includes(l))) return false;
       if (filters.dispo && p.availability !== filters.dispo) return false;
       if (filters.genre && p.gender !== filters.genre) return false;
       if (filters.permis.length && !filters.permis.every((x) => (p.licence ?? []).includes(x))) return false;
-      if (filters.creneau.length && !filters.creneau.some((s) => p.slots.includes(s))) return false;
+      if (filters.creneau.length && !filters.creneau.some((s) => (p.slots || []).includes(s))) return false;
       return true;
     });
 
@@ -111,10 +192,41 @@ export default function FindProvider() {
       experience: (a, b) => b.experience - a.experience,
       dispo: (a, b) => AVAIL_WEIGHT[b.availability] - AVAIL_WEIGHT[a.availability],
     };
-    return [...list].sort(sorters[filters.tri] ?? sorters.pertinence);
-  }, [filters, metierLabel]);
+    const sorted = [...list].sort(sorters[filters.tri] ?? sorters.pertinence);
+    // Une carte par pôle (sauf filtre « service » déjà ciblé sur un seul domaine).
+    return filters.service ? sorted : pickOnePerDomain(sorted);
+  }, [filters, metierLabel, query, providers]);
 
-  const activeCount = [...params.keys()].filter((k) => k !== "tri" && k !== "frequence").length;
+  /** Rappel de ce qui est actif, retirable une pastille à la fois. */
+  const chips = [
+    query.trim() && { key: "q", label: `« ${query.trim()} »`, clear: () => setQuery("") },
+    domain && { key: "service", label: domain.name, clear: () => update("service", "") },
+    metierLabel && { key: "metier", label: metierLabel, clear: () => update("metier", "") },
+    filters.commune && { key: "commune", label: filters.commune, clear: () => update("commune", "") },
+    filters.dispo && {
+      key: "dispo",
+      label: AVAILABILITY[filters.dispo],
+      clear: () => update("dispo", ""),
+    },
+    filters.experience && {
+      key: "experience",
+      label: EXPERIENCE_RANGES.find((e) => e.value === filters.experience)?.label,
+      clear: () => update("experience", ""),
+    },
+    filters.genre && {
+      key: "genre",
+      label: GENDERS.find((g) => g.value === filters.genre)?.label,
+      clear: () => update("genre", ""),
+    },
+    filters.note && {
+      key: "note",
+      label: `Note ≥ ${Number(filters.note).toFixed(1)}`,
+      clear: () => update("note", ""),
+    },
+    ...LIST_KEYS.flatMap((key) =>
+      filters[key].map((value) => ({ key: `${key}-${value}`, label: value, clear: () => toggle(key, value) })),
+    ),
+  ].filter(Boolean);
 
   const filterPanel = (
     <div className="flex flex-col gap-6">
@@ -124,7 +236,6 @@ export default function FindProvider() {
           {domains.map((d) => (
             <option key={d.slug} value={d.slug}>
               {d.name}
-              {d.available ? "" : ` (${d.phase})`}
             </option>
           ))}
         </select>
@@ -138,17 +249,8 @@ export default function FindProvider() {
         </select>
       </Group>
 
-      <Group label="Langues parlées">
-        <Chips options={LANGUAGES.map((l) => ({ value: l, label: l }))} selected={filters.langues} onToggle={(v) => toggle("langues", v)} />
-      </Group>
-
-      <Group label="Communes">
-        <select
-          value={filters.commune ?? ""}
-          onChange={(e) => update("commune", e.target.value)}
-          className={selectClass}
-          aria-label="Commune"
-        >
+      <Group label="Commune d'intervention">
+        <select value={filters.commune ?? ""} onChange={(e) => update("commune", e.target.value)} className={selectClass} aria-label="Commune">
           <option value="">Toutes les communes</option>
           {COMMUNES.map((c) => (
             <option key={c} value={c}>
@@ -158,32 +260,36 @@ export default function FindProvider() {
         </select>
       </Group>
 
-      <Group label="Fréquence">
-        <Segmented name="frequence" options={[{ value: "", label: "Toutes" }, ...FREQUENCIES]} value={filters.frequence ?? ""} onChange={(v) => update("frequence", v)} />
-        <p className="mt-1.5 text-xs text-ink-900/65">Elle détermine le contrat proposé lors de la confirmation.</p>
+      <Group label="Langues parlées">
+        <Chips options={LANGUAGES.map((l) => ({ value: l, label: l }))} selected={filters.langues} onToggle={(v) => toggle("langues", v)} />
       </Group>
 
       <Group label="Niveau de certification">
-        {["Vérifié", "Certifié", "Élite"].map((l) => (
-          <Check key={l} label={l} checked={filters.niveau.includes(l)} onChange={() => toggle("niveau", l)} />
+        {LEVEL_FILTERS.map((l) => (
+          <Check key={l} label={l} hint={LEVELS[l]} checked={filters.niveau.includes(l)} onChange={() => toggle("niveau", l)} />
         ))}
       </Group>
 
       <Group label={`Note minimale : ${filters.note ? `${Number(filters.note).toFixed(1)} / 5` : "toutes"}`}>
-        <input type="range" min="3" max="5" step="0.1" value={filters.note || 3} onChange={(e) => update("note", e.target.value === "3" ? "" : e.target.value)} className="w-full accent-[#01433D]" aria-label="Note minimale" />
+        <input
+          type="range"
+          min="3"
+          max="5"
+          step="0.1"
+          value={filters.note || 3}
+          onChange={(e) => update("note", e.target.value === "3" ? "" : e.target.value)}
+          className="w-full accent-[#01433D]"
+          aria-label="Note minimale"
+        />
         <p className="text-xs text-ink-900/65">Les profils de moins de 3 évaluations sont exclus de ce filtre.</p>
       </Group>
 
       <Group label="Expérience">
-        <Segmented name="experience" options={[{ value: "", label: "Toutes" }, ...EXPERIENCE]} value={filters.experience ?? ""} onChange={(v) => update("experience", v)} />
+        <Segmented name="Expérience" options={[{ value: "", label: "Toutes" }, ...EXPERIENCE_RANGES]} value={filters.experience ?? ""} onChange={(v) => update("experience", v)} />
       </Group>
 
       <Group label="Disponibilité">
-        <Segmented name="dispo" options={[{ value: "", label: "Toutes" }, ...AVAILABILITIES]} value={filters.dispo ?? ""} onChange={(v) => update("dispo", v)} />
-      </Group>
-
-      <Group label="Genre du prestataire">
-        <Segmented name="genre" options={GENDERS} value={filters.genre ?? ""} onChange={(v) => update("genre", v)} />
+        <Segmented name="Disponibilité" options={[{ value: "", label: "Toutes" }, ...AVAILABILITY_FILTERS]} value={filters.dispo ?? ""} onChange={(v) => update("dispo", v)} />
       </Group>
 
       <Group label="Créneau d'intervention">
@@ -192,8 +298,12 @@ export default function FindProvider() {
         ))}
       </Group>
 
+      <Group label="Genre du prestataire">
+        <Segmented name="Genre du prestataire" options={GENDER_FILTERS} value={filters.genre ?? ""} onChange={(v) => update("genre", v)} />
+      </Group>
+
       <Group label="Permis et véhicule">
-        {LICENCES.map((l) => (
+        {DRIVING.map((l) => (
           <Check key={l} label={l} checked={filters.permis.includes(l)} onChange={() => toggle("permis", l)} />
         ))}
       </Group>
@@ -211,14 +321,66 @@ export default function FindProvider() {
       <PageHero
         eyebrow="Recherche sans inscription"
         title="Trouver un prestataire"
-        subtitle={domain ? `Agents ${domain.shortName} vérifiés, à Kinshasa.` : "Des profils vérifiés et anonymisés. La mise en relation passe toujours par un chargé de clientèle SaaCare."}
+        subtitle={
+          domain
+            ? `Agents ${domain.shortName} vérifiés, à Kinshasa.`
+            : "Des profils vérifiés et anonymisés. La mise en relation passe toujours par un chargé de clientèle SaaCare."
+        }
         breadcrumb={[{ label: "Accueil", to: "/" }, { label: "Trouver un prestataire" }]}
         compact
       />
 
       <section className="bg-paper-100 pb-16 pt-8 sm:pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-6 flex items-start gap-2.5 rounded-xl bg-sky px-4 py-3 text-sm text-ink-900">
+          {/* ---------------- Barre de recherche ---------------- */}
+          <form
+            role="search"
+            onSubmit={(e) => e.preventDefault()}
+            className="flex flex-col gap-3 rounded-2xl border border-ink-900/8 bg-white p-4 shadow-soft md:flex-row md:items-center"
+          >
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-navy-500" aria-hidden="true" />
+              <label htmlFor="provider-search" className="sr-only">
+                Rechercher un métier, une compétence ou une commune
+              </label>
+              <input
+                id="provider-search"
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Métier, compétence, commune ou référence…"
+                className="min-h-12 w-full rounded-lg border border-ink-900/15 bg-white pl-10 pr-3 text-sm text-ink-900 outline-none focus:border-teal-600"
+              />
+            </div>
+            <select
+              value={filters.service ?? ""}
+              onChange={(e) => update("service", e.target.value)}
+              className={`${selectClass} min-h-12 md:w-56`}
+              aria-label="Pôle de services"
+            >
+              <option value="">Tous les pôles</option>
+              {domains.map((d) => (
+                <option key={d.slug} value={d.slug}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={filters.commune ?? ""}
+              onChange={(e) => update("commune", e.target.value)}
+              className={`${selectClass} min-h-12 md:w-48`}
+              aria-label="Commune d'intervention"
+            >
+              <option value="">Toutes les communes</option>
+              {COMMUNES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </form>
+
+          <p className="my-6 flex items-start gap-2.5 rounded-xl bg-sky px-4 py-3 text-sm text-ink-900">
             <Info className="mt-0.5 size-4 shrink-0 text-teal-700" aria-hidden="true" />
             Profils de démonstration, en attendant l'ouverture du registre. Aucun nom ni aucune coordonnée d'agent n'est jamais publié.
           </p>
@@ -229,7 +391,7 @@ export default function FindProvider() {
               <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-ink-900/8 bg-white p-5 shadow-soft">
                 <div className="mb-5 flex items-center justify-between">
                   <h2 className="font-display text-lg font-bold text-ink-900">Filtres</h2>
-                  {activeCount > 0 && (
+                  {chips.length > 0 && (
                     <button type="button" onClick={reset} className="text-sm font-semibold text-teal-700 hover:underline">
                       Tout effacer
                     </button>
@@ -245,14 +407,23 @@ export default function FindProvider() {
                   <span className="font-semibold text-ink-900">{results.length}</span> profil{results.length > 1 ? "s" : ""} trouvé{results.length > 1 ? "s" : ""}
                 </p>
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => setPanelOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-ink-900/10 bg-white px-4 text-sm font-semibold text-ink-900 lg:hidden">
+                  <button
+                    type="button"
+                    onClick={() => setPanelOpen(true)}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-ink-900/10 bg-white px-4 text-sm font-semibold text-ink-900 lg:hidden"
+                  >
                     <SlidersHorizontal className="size-4" aria-hidden="true" />
-                    Filtres{activeCount ? ` (${activeCount})` : ""}
+                    Filtres{chips.length ? ` (${chips.length})` : ""}
                   </button>
                   <label htmlFor="sort" className="sr-only">
                     Trier par
                   </label>
-                  <select id="sort" value={filters.tri ?? "pertinence"} onChange={(e) => update("tri", e.target.value === "pertinence" ? "" : e.target.value)} className={`${selectClass} min-h-11 w-auto`}>
+                  <select
+                    id="sort"
+                    value={filters.tri ?? "pertinence"}
+                    onChange={(e) => update("tri", e.target.value === "pertinence" ? "" : e.target.value)}
+                    className={`${selectClass} min-h-11 w-auto`}
+                  >
                     {SORTS.map((s) => (
                       <option key={s.value} value={s.value}>
                         {s.label}
@@ -262,19 +433,60 @@ export default function FindProvider() {
                 </div>
               </div>
 
+              {chips.length > 0 && (
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {chips.map((chip) => (
+                    <li key={chip.key}>
+                      <button
+                        type="button"
+                        onClick={chip.clear}
+                        className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-teal-600/30 bg-teal-50 px-3 text-xs font-medium text-teal-800 transition-colors hover:border-teal-600"
+                      >
+                        {chip.label}
+                        <X className="size-3.5" aria-hidden="true" />
+                        <span className="sr-only">Retirer ce filtre</span>
+                      </button>
+                    </li>
+                  ))}
+                  <li>
+                    <button type="button" onClick={reset} className="min-h-9 px-2 text-xs font-semibold text-teal-700 hover:underline">
+                      Tout effacer
+                    </button>
+                  </li>
+                </ul>
+              )}
+
               <div className="mt-6">
-                {results.length === 0 ? (
-                  <EmptyState domainSlug={filters.service} hasCommune={Boolean(filters.commune)} onWiden={() => update("commune", "")} onReset={reset} />
+                {loadError && (
+                  <p className="mb-4 rounded-lg border border-coral-500/30 bg-coral-100/60 px-3 py-2 text-sm text-coral-800" role="alert">
+                    {loadError}
+                  </p>
+                )}
+                {loading ? (
+                  <p className="rounded-xl border border-dashed border-ink-900/15 px-4 py-10 text-center text-sm text-ink-900/50">
+                    Chargement du registre…
+                  </p>
+                ) : results.length === 0 ? (
+                  <EmptyState
+                    domainSlug={filters.service}
+                    hasCommune={Boolean(filters.commune)}
+                    onWiden={() => update("commune", "")}
+                    onReset={reset}
+                  />
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {results.slice(0, visible).map((p, i) => (
                         <ProviderCard key={p.reference} provider={p} index={i} />
                       ))}
                     </div>
                     {visible < results.length && (
                       <div className="mt-8 flex justify-center">
-                        <button type="button" onClick={() => setVisible((v) => v + PAGE_SIZE)} className="min-h-12 rounded-lg border border-teal-600 bg-white px-6 text-sm font-semibold text-teal-700 hover:bg-teal-50">
+                        <button
+                          type="button"
+                          onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                          className="min-h-12 rounded-lg border border-teal-600 bg-white px-6 text-sm font-semibold text-teal-700 hover:bg-teal-50"
+                        >
                           Afficher {Math.min(PAGE_SIZE, results.length - visible)} profils de plus
                         </button>
                       </div>
@@ -292,31 +504,54 @@ export default function FindProvider() {
         </div>
       </section>
 
-      {/* ---------------- Panneau de filtres mobile ---------------- */}
-      <AnimatePresence>
-        {panelOpen && (
-          <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Filtres">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPanelOpen(false)} className="absolute inset-0 bg-ink-950/50" aria-hidden="true" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ duration: 0.4, ease: EASE }} className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-3xl bg-white">
-              <div className="flex items-center justify-between border-b border-ink-900/8 px-5 py-4">
-                <h2 className="font-display text-lg font-bold text-ink-900">Filtres</h2>
-                <button type="button" onClick={() => setPanelOpen(false)} aria-label="Fermer les filtres" className="grid size-11 place-items-center rounded-full hover:bg-ink-900/5">
-                  <X className="size-5" aria-hidden="true" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto px-5 py-5">{filterPanel}</div>
-              <div className="flex gap-3 border-t border-ink-900/8 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                <button type="button" onClick={reset} className="min-h-12 flex-1 rounded-lg border border-ink-900/15 text-sm font-semibold text-ink-900">
-                  Effacer
-                </button>
-                <button type="button" onClick={() => setPanelOpen(false)} className="min-h-12 flex-[2] rounded-lg bg-teal-600 text-sm font-semibold text-white">
-                  Voir {results.length} profil{results.length > 1 ? "s" : ""}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* ---------------- Panneau de filtres mobile ----------------
+          Porté dans <body> : la page est enveloppée d'un filtre de transition,
+          qui ferait sinon de `fixed` un positionnement relatif à la page. */}
+      {createPortal(
+        <AnimatePresence>
+          {panelOpen && (
+            <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Filtres">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setPanelOpen(false)}
+                className="absolute inset-0 bg-ink-950/50"
+                aria-hidden="true"
+              />
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ duration: 0.4, ease: EASE }}
+                className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-3xl bg-white"
+              >
+                <div className="flex items-center justify-between border-b border-ink-900/8 px-5 py-4">
+                  <h2 className="font-display text-lg font-bold text-ink-900">Filtres</h2>
+                  <button
+                    type="button"
+                    onClick={() => setPanelOpen(false)}
+                    aria-label="Fermer les filtres"
+                    className="grid size-11 place-items-center rounded-full hover:bg-ink-900/5"
+                  >
+                    <X className="size-5" aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto px-5 py-5">{filterPanel}</div>
+                <div className="flex gap-3 border-t border-ink-900/8 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                  <button type="button" onClick={reset} className="min-h-12 flex-1 rounded-lg border border-ink-900/15 text-sm font-semibold text-ink-900">
+                    Effacer
+                  </button>
+                  <button type="button" onClick={() => setPanelOpen(false)} className="min-h-12 flex-[2] rounded-lg bg-teal-600 text-sm font-semibold text-white">
+                    Voir {results.length} profil{results.length > 1 ? "s" : ""}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
   );
 }
@@ -333,9 +568,9 @@ function Group({ label, children }) {
   );
 }
 
-function Check({ label, checked, onChange }) {
+function Check({ label, hint, checked, onChange }) {
   return (
-    <label className="flex min-h-9 cursor-pointer items-center gap-2.5 text-sm text-ink-900">
+    <label className="flex min-h-9 cursor-pointer items-center gap-2.5 text-sm text-ink-900" title={hint}>
       <input type="checkbox" checked={checked} onChange={onChange} className="size-4 shrink-0 accent-[#01433D]" />
       {label}
     </label>
@@ -348,7 +583,13 @@ function Chips({ options, selected, onToggle }) {
       {options.map((o) => {
         const active = selected.includes(o.value);
         return (
-          <button key={o.value} type="button" aria-pressed={active} onClick={() => onToggle(o.value)} className={`min-h-9 rounded-full border px-3 text-xs font-medium transition-colors ${active ? "border-teal-600 bg-teal-600 text-white" : "border-ink-900/15 bg-white text-ink-900 hover:border-teal-600/50"}`}>
+          <button
+            key={o.value}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onToggle(o.value)}
+            className={`min-h-9 rounded-full border px-3 text-xs font-medium transition-colors ${active ? "border-teal-600 bg-teal-600 text-white" : "border-ink-900/15 bg-white text-ink-900 hover:border-teal-600/50"}`}
+          >
             {o.label}
           </button>
         );
@@ -361,7 +602,14 @@ function Segmented({ name, options, value, onChange }) {
   return (
     <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={name}>
       {options.map((o) => (
-        <button key={o.value || "all"} type="button" role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)} className={`min-h-9 rounded-lg border px-3 text-xs font-medium transition-colors ${value === o.value ? "border-teal-600 bg-teal-50 text-teal-700" : "border-ink-900/15 bg-white text-ink-900 hover:border-teal-600/50"}`}>
+        <button
+          key={o.value || "all"}
+          type="button"
+          role="radio"
+          aria-checked={value === o.value}
+          onClick={() => onChange(o.value)}
+          className={`min-h-9 rounded-lg border px-3 text-xs font-medium transition-colors ${value === o.value ? "border-teal-600 bg-teal-50 text-teal-700" : "border-ink-900/15 bg-white text-ink-900 hover:border-teal-600/50"}`}
+        >
           {o.label}
         </button>
       ))}
@@ -376,7 +624,9 @@ function EmptyState({ domainSlug, hasCommune, onWiden, onReset }) {
       <div className="flex flex-col items-start gap-4 rounded-2xl border border-ink-900/8 bg-white p-6">
         <SearchX className="size-8 text-navy-500" aria-hidden="true" />
         <p className="font-display text-xl font-bold text-ink-900">Aucun profil ne correspond, pour l'instant</p>
-        <p className="text-sm leading-relaxed text-ink-900/75">Élargissez la recherche, ou laissez vos coordonnées : nous vous prévenons dès qu'un agent vérifié correspond.</p>
+        <p className="text-sm leading-relaxed text-ink-900/75">
+          Élargissez la recherche, ou laissez vos coordonnées : nous vous prévenons dès qu'un agent vérifié correspond.
+        </p>
         <div className="flex flex-wrap gap-3">
           {hasCommune && (
             <button type="button" onClick={onWiden} className="min-h-11 rounded-lg bg-teal-600 px-4 text-sm font-semibold text-white">

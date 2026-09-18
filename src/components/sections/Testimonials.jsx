@@ -36,9 +36,9 @@ export default function Testimonials() {
   const active = testimonials[index];
 
   const variants = {
-    enter: (dir) => ({ opacity: 0, x: dir > 0 ? 48 : -48, filter: "blur(6px)" }),
-    center: { opacity: 1, x: 0, filter: "blur(0px)" },
-    exit: (dir) => ({ opacity: 0, x: dir > 0 ? -48 : 48, filter: "blur(6px)" }),
+    enter: (dir) => ({ opacity: 0, x: dir > 0 ? 20 : -20 }),
+    center: { opacity: 1, x: 0 },
+    exit: (dir) => ({ opacity: 0, x: dir > 0 ? -20 : 20 }),
   };
 
   return (

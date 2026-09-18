@@ -62,7 +62,7 @@ const Button = forwardRef(function Button(
 
   const content = (
     <>
-      <span className="relative z-10">{children}</span>
+      <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
       {withArrow && (
         <span className="relative z-10 grid size-4 place-items-center overflow-hidden">
           <ArrowRight

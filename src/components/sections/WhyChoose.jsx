@@ -5,7 +5,6 @@ import { Eyebrow } from "../ui/SectionHeading";
 import Button from "../ui/Button";
 import Reveal, { Stagger, RevealItem } from "../ui/Reveal";
 import Section3D from "../ui/Section3D";
-import VerificationSeal from "../ui/VerificationSeal";
 import { EASE, useIsReducedMotion } from "../../lib/motion";
 
 /**
@@ -89,9 +88,6 @@ export default function WhyChoose() {
               <Button to="/a-propos" variant="secondary" withArrow magnetic>
                 Notre mission
               </Button>
-              <div className="hidden xl:block">
-                <VerificationSeal size={104} />
-              </div>
             </Reveal>
           </div>
 

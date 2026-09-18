@@ -35,6 +35,37 @@ export const GENDERS = [
   { value: "M", label: "Homme" },
 ];
 
+export const CIVIL_STATUSES = [
+  { value: "celibataire", label: "Célibataire" },
+  { value: "marie", label: "Marié(e)" },
+  { value: "divorce", label: "Divorcé(e)" },
+  { value: "veuf", label: "Veuf / Veuve" },
+  { value: "union-libre", label: "Union libre" },
+];
+
+export const RELIGIONS = [
+  { value: "chretien", label: "Chrétien(ne)" },
+  { value: "musulman", label: "Musulman(e)" },
+  { value: "kimbanguiste", label: "Kimbanguiste" },
+  { value: "autre", label: "Autre" },
+  { value: "aucune", label: "Aucune / préfère ne pas dire" },
+];
+
+export const ID_TYPES = [
+  { value: "carte-electeur", label: "Carte d'électeur" },
+  { value: "passeport", label: "Passeport" },
+  { value: "permis", label: "Permis de conduire" },
+];
+
+export const EMERGENCY_RELATIONS = [
+  { value: "conjoint", label: "Conjoint(e)" },
+  { value: "parent", label: "Parent" },
+  { value: "frere-soeur", label: "Frère / Sœur" },
+  { value: "enfant", label: "Enfant" },
+  { value: "ami", label: "Ami(e)" },
+  { value: "autre", label: "Autre" },
+];
+
 export const LANGUAGES = ["Français", "Lingala", "Swahili", "Tshiluba", "Kikongo", "Anglais"];
 
 export const EXPERIENCE_RANGES = [
@@ -46,7 +77,7 @@ export const EXPERIENCE_RANGES = [
 /** Métiers recherchés, rattachés à leur pôle, avec les compétences cochables. */
 export const METIERS = [
   { value: "nounou", label: "Nounou", pole: "kids-care", skills: ["Garde de nourrisson", "Garde de nuit", "Sortie d'école", "Aide aux devoirs", "Préparation des repas de l'enfant", "Éveil et jeux"] },
-  { value: "accompagnante-post-natale", label: "Accompagnante post-natale", pole: "walet", skills: ["Soutien à la mère", "Aide pratique au nouveau-né", "Relais de nuit", "Soutien à l'allaitement", "Tenue du foyer"] },
+  { value: "accompagnante-wale", label: "Accompagnante Walé", pole: "wale", skills: ["Repos post-partum", "Soins de bien-être non médicaux", "Massages corporels", "Repas adaptés", "Soutien émotionnel", "Aide au quotidien"] },
   { value: "aide-menagere", label: "Aide-ménagère", pole: "home", skills: ["Entretien courant", "Nettoyage complet", "Repassage", "Lessive", "Courses du quotidien"] },
   { value: "cuisinier", label: "Cuisinier", pole: "home", skills: ["Cuisine congolaise", "Cuisine internationale", "Pâtisserie", "Réceptions", "Gestion des courses"] },
   { value: "chauffeur", label: "Chauffeur", pole: "driver", skills: ["Conduite en ville", "Trajets aéroport", "Conduite de direction", "Conduite de nuit", "Entretien du véhicule"] },

@@ -54,7 +54,7 @@ export default function AudienceBlocks() {
               contrat, un revenu régulier et une certification qui fait progresser votre rémunération.
             </p>
             <div className="mt-auto flex flex-wrap items-center gap-4 pt-8">
-              <Button to="/devenir-prestataire/postuler" withArrow>
+              <Button to="/inscription/prestataire" withArrow>
                 Postuler gratuitement
               </Button>
               <Link to="/devenir-prestataire" className="text-sm font-semibold text-teal-700 underline-offset-4 hover:underline">

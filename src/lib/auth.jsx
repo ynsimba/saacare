@@ -4,8 +4,15 @@ import { api, clearToken, getToken, setToken } from "./api";
 const AuthContext = createContext(null);
 
 export function homeForRole(role) {
-  if (role === "PROVIDER" || role === "ADMIN") return "/espace-prestataire";
-  return "/espace-client";
+  if (role === "admin") return "/admin/dashboard";
+  if (role === "prestataire") return "/prestataire/dashboard";
+  return "/client/dashboard";
+}
+
+export function roleLabel(role) {
+  if (role === "admin") return "Admin";
+  if (role === "prestataire") return "Prestataire";
+  return "Client";
 }
 
 export function AuthProvider({ children }) {
@@ -43,6 +50,13 @@ export function AuthProvider({ children }) {
     return data.user;
   }, []);
 
+  const loginWithGoogle = useCallback(async (credential) => {
+    const data = await api.loginGoogle({ credential });
+    setToken(data.token);
+    setUser(data.user);
+    return data.user;
+  }, []);
+
   const register = useCallback(async (payload) => {
     const data = await api.register(payload);
     setToken(data.token);
@@ -50,7 +64,12 @@ export function AuthProvider({ children }) {
     return data.user;
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await api.logout();
+    } catch {
+      /* ignore */
+    }
     clearToken();
     setUser(null);
   }, []);
@@ -71,13 +90,14 @@ export function AuthProvider({ children }) {
       loading,
       isAuthenticated: Boolean(user),
       login,
+      loginWithGoogle,
       register,
       logout,
       refresh,
       updateProfile,
       changePassword,
     }),
-    [user, loading, login, register, logout, refresh, updateProfile, changePassword]
+    [user, loading, login, loginWithGoogle, register, logout, refresh, updateProfile, changePassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

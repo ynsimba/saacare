@@ -27,7 +27,7 @@ function Frame({ children, label }) {
 function StepFind() {
   const results = [
     { initials: "G", ref: "SAA-KC-0412", role: "Nounou", level: "Élite", rating: "4,9", commune: "Gombe" },
-    { initials: "E", ref: "SAA-WL-0121", role: "Accompagnante post-natale", level: "Élite", rating: "5,0", commune: "Gombe" },
+    { initials: "E", ref: "SAA-WL-0121", role: "Accompagnante Walé", level: "Élite", rating: "5,0", commune: "Gombe" },
     { initials: "R", ref: "SAA-HM-0231", role: "Aide-ménagère", level: "Vérifié", rating: "4,7", commune: "Bandalungwa" },
   ];
   return (

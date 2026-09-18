@@ -59,7 +59,7 @@ export default function BecomeProvider() {
     <>
       <Seo
         title="Devenir prestataire — candidature gratuite"
-        description="Nounou, accompagnante post-natale, aide-ménagère, cuisinier, chauffeur, électricien, plombier… Rejoignez le registre SaaCare à Kinshasa. Candidature 100 % gratuite."
+        description="Nounou, accompagnante Walé, aide-ménagère, cuisinier, chauffeur, électricien, plombier… Rejoignez le registre SaaCare à Kinshasa. Candidature 100 % gratuite."
         path="/devenir-prestataire"
       />
 
@@ -71,8 +71,8 @@ export default function BecomeProvider() {
         compact
       >
         <div className="flex flex-wrap gap-3">
-          <Button to="/devenir-prestataire/postuler" size="lg" variant="onDark" withArrow>
-            Postuler gratuitement
+          <Button to="/inscription/prestataire" size="lg" variant="onDark" withArrow>
+            Candidatez gratuitement
           </Button>
           <Button href="#deroule" size="lg" variant="glass">
             Voir le déroulé
@@ -188,7 +188,7 @@ export default function BecomeProvider() {
             </Stagger>
             <Reveal variant="up" className="mt-10 flex flex-col items-start gap-4 rounded-3xl bg-navy-800 p-6 text-paper-50 sm:flex-row sm:items-center sm:justify-between sm:p-8">
               <p className="font-display text-xl font-bold">Prêt ? Nous restons à vos côtés à chaque étape.</p>
-              <Button to="/devenir-prestataire/postuler" variant="onDark" size="lg" withArrow className="shrink-0">
+              <Button to="/inscription/prestataire" variant="onDark" size="lg" withArrow className="shrink-0">
                 Postuler gratuitement
               </Button>
             </Reveal>

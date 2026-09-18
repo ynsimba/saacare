@@ -7,7 +7,7 @@ import { THEME } from "../../lib/theme";
 import { EASE, useIsReducedMotion } from "../../lib/motion";
 
 export default function DomainCard({ domain, index = 0 }) {
-  const theme = THEME[domain.theme];
+  const theme = THEME.teal;
   const reduced = useIsReducedMotion();
 
   return (
@@ -19,7 +19,7 @@ export default function DomainCard({ domain, index = 0 }) {
       className="h-full"
     >
       <Spotlight
-        tone={domain.theme}
+        tone="teal"
         lift={8}
         className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-ink-900/8 bg-white p-7 shadow-soft transition-[box-shadow,border-color] duration-500 hover:border-ink-900/12 hover:shadow-lifted"
       >

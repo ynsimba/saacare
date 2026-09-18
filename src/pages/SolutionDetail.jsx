@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { Check, X, ShieldCheck, AlertTriangle, CalendarHeart, ArrowUpRight, Clock, Info } from "lucide-react";
 import Seo, { SITE } from "../lib/Seo";
@@ -11,21 +12,38 @@ import RequestForm from "../components/ui/RequestForm";
 import Reveal, { Stagger, RevealItem } from "../components/ui/Reveal";
 import Section3D from "../components/ui/Section3D";
 import { getDomainBySlug, domains } from "../data/domains";
-import { getProvidersByDomain } from "../data/providers";
+import { api } from "../lib/api";
 import { THEME } from "../lib/theme";
 
 /**
  * Gabarit unique des pages de pôle (cahier des charges §2.2.2), décliné sept fois
- * par le contenu. Saa Walet ajoute, juste sous le bandeau, le bloc « ce qu'elle
+ * par le contenu. Saa Walé ajoute, juste sous le bandeau, le bloc « ce qu'elle
  * fait et ne fait jamais » et la réservation anticipée.
  */
 export default function SolutionDetail() {
   const { slug } = useParams();
   const domain = getDomainBySlug(slug);
+  const [profiles, setProfiles] = useState([]);
+
+  useEffect(() => {
+    if (!domain) return undefined;
+    let cancelled = false;
+    api
+      .providers({ domaine: domain.slug })
+      .then((data) => {
+        if (!cancelled) setProfiles((data.items || []).slice(0, 1));
+      })
+      .catch(() => {
+        if (!cancelled) setProfiles([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, domain]);
+
   if (!domain) return <Navigate to="/404" replace />;
 
   const theme = THEME[domain.theme];
-  const profiles = getProvidersByDomain(domain.slug).slice(0, 6);
   const otherDomains = domains.filter((d) => d.slug !== domain.slug);
   const url = `${SITE}/solutions/${domain.slug}`;
 
@@ -95,7 +113,7 @@ export default function SolutionDetail() {
         </div>
       </PageHero>
 
-      {domain.scope && <WaletScope domain={domain} />}
+      {domain.scope && <WaleScope domain={domain} />}
 
       {!domain.available && (
         <div className="bg-sky">
@@ -252,18 +270,23 @@ export default function SolutionDetail() {
   );
 }
 
-/** Bloc verrouillé Saa Walet : visible dès le haut de page, jamais relégué en bas. */
-function WaletScope({ domain }) {
+/** Bloc verrouillé Saa Walé : visible dès le haut de page, jamais relégué en bas. */
+function WaleScope({ domain }) {
   return (
     <section className="bg-white py-14 sm:py-16" aria-labelledby="scope-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2 id="scope-heading" className="max-w-3xl font-display text-2xl font-bold text-ink-900 sm:text-3xl">
-          Ce que notre accompagnante fait, et ce qu'elle ne fait jamais
+          Ce que notre accompagnante Walé fait, et ce qu'elle ne fait jamais
         </h2>
+        {domain.scope.intro && (
+          <p className="mt-4 max-w-3xl text-pretty text-base leading-relaxed text-ink-900/75 sm:text-lg">
+            {domain.scope.intro}
+          </p>
+        )}
         <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
           <div className="rounded-3xl bg-mint p-6 sm:p-8">
             <p className="flex items-center gap-2 font-display text-lg font-bold text-teal-700">
-              <Check className="size-5" strokeWidth={3} aria-hidden="true" /> Ce qu'elle fait
+              <Check className="size-5" strokeWidth={3} aria-hidden="true" /> Son rôle consiste notamment à
             </p>
             <dl className="mt-5 flex flex-col gap-4">
               {domain.scope.does.map((row) => (

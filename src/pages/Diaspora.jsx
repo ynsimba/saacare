@@ -18,7 +18,7 @@ const USES = [
   { icon: HeartHandshake, title: "Un parent âgé", text: "Présence à domicile, courses, rendez-vous et démarches administratives." },
   { icon: Baby, title: "Un neveu, une nièce", text: "Une nounou vérifiée pour votre frère ou votre sœur à Kinshasa." },
   { icon: House, title: "Une maison inoccupée", text: "Entretien régulier et petits travaux, pendant votre absence." },
-  { icon: Stethoscope, title: "Une naissance", text: "Saa Walet pour votre sœur, avec un compte rendu quotidien écrit et vocal." },
+  { icon: Stethoscope, title: "Une naissance", text: "Saa Walé pour votre sœur, avec un compte rendu quotidien écrit et vocal." },
 ];
 
 const PROOF = [
@@ -32,7 +32,7 @@ export default function Diaspora() {
     <>
       <Seo
         title="Offre diaspora — un service fiable pour votre famille à Kinshasa"
-        description="Vous vivez à l'étranger ? Aide à domicile, garde d'enfants, entretien ou accompagnement post-natal pour votre famille à Kinshasa, avec un rapport de visite mensuel."
+        description="Vous vivez à l'étranger ? Aide à domicile, garde d'enfants, entretien ou accompagnement Walé pour votre famille à Kinshasa, avec un rapport de visite mensuel."
         path="/diaspora"
       />
 

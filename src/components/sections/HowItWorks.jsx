@@ -200,10 +200,10 @@ export default function HowItWorks({ compact = false }) {
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={active}
-                      initial={reduced ? false : { opacity: 0, y: 18, filter: "blur(6px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                      exit={reduced ? undefined : { opacity: 0, y: -12, filter: "blur(4px)" }}
-                      transition={{ duration: 0.45, ease: EASE }}
+                      initial={reduced ? false : { opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduced ? undefined : { opacity: 0, y: -6 }}
+                      transition={{ duration: 0.28, ease: EASE }}
                       className="flex flex-1 flex-col"
                     >
                       <StepVisual index={active} />

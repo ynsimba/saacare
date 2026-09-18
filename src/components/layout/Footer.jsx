@@ -39,8 +39,9 @@ const COLUMNS = [
     links: [
       { to: "/contact", label: "Nous contacter" },
       { to: "/faq", label: "Centre d'aide" },
-      { to: "/connexion", label: "Espace membre" },
-      { to: "/devenir-prestataire", label: "Espace prestataire" },
+      { to: "/login", label: "Espace membre" },
+      { to: "/inscription", label: "S’inscrire" },
+      { to: "/inscription/prestataire", label: "Candidature prestataire" },
     ],
   },
   {

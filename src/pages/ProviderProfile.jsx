@@ -1,263 +1,249 @@
+import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams, Navigate, Link } from "react-router-dom";
-import { motion } from "motion/react";
-import { MapPin, Languages, BriefcaseBusiness, CheckCircle2, Clock, Award, BadgeCheck, CalendarDays, ArrowUpRight } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { MapPin, Languages, BriefcaseBusiness, Clock, ShieldCheck, ArrowUpRight, X } from "lucide-react";
 import Seo, { SITE } from "../lib/Seo";
 import Rating from "../components/ui/Rating";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
-import ProviderCard from "../components/ui/ProviderCard";
 import RequestForm from "../components/ui/RequestForm";
-import { Eyebrow } from "../components/ui/SectionHeading";
-import { providers, getProviderByReference, AVAILABILITY, LEVELS, hasPublicRating } from "../data/providers";
+import { AVAILABILITY, hasPublicRating } from "../data/providers";
 import { getDomainBySlug } from "../data/domains";
-import { saatrustSteps } from "../data/content";
+import { api } from "../lib/api";
 import { THEME } from "../lib/theme";
-import { fadeUp } from "../lib/motion";
-
-const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-const HALF_DAYS = ["Matin", "Après-midi"];
-
-/** Calendrier simplifié par demi-journées, sans aucun détail sur les clients (§4.4). */
-function weekGrid(provider) {
-  const seed = [...provider.reference].reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const base = provider.availability === "immediate" ? 0.75 : provider.availability === "week" ? 0.5 : 0.3;
-  return DAYS.map((_, d) => HALF_DAYS.map((__, h) => ((seed * (d + 3) * (h + 7)) % 100) / 100 < base));
-}
+import { EASE } from "../lib/motion";
 
 export default function ProviderProfile() {
   const { reference } = useParams();
-  const provider = getProviderByReference(reference);
-  if (!provider) return <Navigate to="/404" replace />;
+  const [provider, setProvider] = useState(null);
+  const [status, setStatus] = useState("loading");
+  const [demandeOpen, setDemandeOpen] = useState(false);
+  const titleId = useId();
+  const closeRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setStatus("loading");
+    api
+      .provider(reference)
+      .then((data) => {
+        if (cancelled) return;
+        setProvider(data.item);
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setStatus("missing");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [reference]);
+
+  useEffect(() => {
+    if (!demandeOpen) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => {
+      if (e.key === "Escape") setDemandeOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [demandeOpen]);
+
+  if (status === "missing") return <Navigate to="/404" replace />;
+  if (status === "loading" || !provider) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <p className="text-sm text-ink-900/55">Chargement du profil…</p>
+      </div>
+    );
+  }
 
   const domain = getDomainBySlug(provider.domainSlug);
-  const theme = THEME[domain.theme];
-  const metierRoot = provider.metier.split(" — ")[0];
-  const similar = providers
-    .filter((p) => p.reference !== provider.reference && p.metier.startsWith(metierRoot))
-    .sort((a, b) => (b.commune === provider.commune) - (a.commune === provider.commune))
-    .slice(0, 3);
-  const grid = weekGrid(provider);
+  const theme = THEME[domain?.theme ?? "teal"];
   const publicRating = hasPublicRating(provider);
+  const languages = provider.languages || [];
+  const zones = provider.zones || [];
+  const skills = (provider.skills || []).slice(0, 4);
+  const review = (provider.reviewsList || [])[0];
 
   return (
     <>
       <Seo
         title={`${provider.metier} vérifié à ${provider.commune} — ${provider.reference}`}
-        description={`${provider.metier} ${provider.level.toLowerCase()} SaaCare à ${provider.commune}, ${provider.experience} ans d'expérience, langues : ${provider.languages.join(", ")}. Profil anonymisé, mise en relation par SaaCare.`}
+        description={`${provider.metier} ${provider.level.toLowerCase()} SaaCare à ${provider.commune}, ${provider.experience} ans d'expérience. Profil anonymisé, mise en relation par SaaCare.`}
         path={`/prestataires/${provider.reference}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Service",
           name: `${provider.metier} — ${provider.reference}`,
           provider: { "@type": "LocalBusiness", name: "SaaCare", url: SITE },
-          areaServed: provider.zones.map((z) => ({ "@type": "Place", name: `${z}, Kinshasa` })),
+          areaServed: zones.map((z) => ({ "@type": "Place", name: `${z}, Kinshasa` })),
           ...(publicRating && {
             aggregateRating: { "@type": "AggregateRating", ratingValue: provider.rating, reviewCount: provider.reviews },
           }),
         }}
       />
 
-      {/* ---------------- En-tête ---------------- */}
-      <section className="border-b border-ink-900/8 bg-white pb-10 pt-12 sm:pt-16">
+      <section className="border-b border-ink-900/8 bg-white py-8 sm:py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Fil d'Ariane" className="mb-8 flex flex-wrap items-center gap-2 text-sm text-ink-900/70">
-            <Link to="/" className="hover:text-ink-900">Accueil</Link>
-            <span aria-hidden="true">/</span>
-            <Link to={`/prestataires?service=${domain.slug}`} className="hover:text-ink-900">{domain.name}</Link>
+          <nav aria-label="Fil d'Ariane" className="mb-5 flex flex-wrap items-center gap-2 text-sm text-ink-900/70">
+            <Link to="/prestataires" className="hover:text-ink-900">
+              Prestataires
+            </Link>
             <span aria-hidden="true">/</span>
             <span className="text-ink-900">{provider.reference}</span>
           </nav>
 
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-              <div className={`flex size-20 shrink-0 items-center justify-center rounded-3xl ${theme.bg} font-display text-3xl font-bold text-white`} aria-hidden="true">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-4">
+              <div
+                className={`grid size-16 shrink-0 place-items-center rounded-2xl ${theme.bg} font-display text-2xl font-bold text-white`}
+                aria-hidden="true"
+              >
                 {provider.initials}
               </div>
-              <div>
-                <p className="text-sm font-semibold tracking-wide text-navy-500">{provider.reference}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-2xl font-bold text-ink-900 sm:text-3xl">{provider.metier}</h1>
-                  <Badge label={provider.level} size="md" />
+              <div className="min-w-0">
+                <p className="text-xs font-semibold tracking-wide text-navy-500">{provider.reference}</p>
+                <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                  <h1 className="font-display text-xl font-bold text-ink-900 sm:text-2xl">{provider.metier}</h1>
+                  <Badge label={provider.level} size="sm" />
                 </div>
-                <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-900/80">
-                  {publicRating ? <Rating value={provider.rating} reviews={provider.reviews} size="md" /> : <span>Moins de 3 évaluations</span>}
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="size-4 text-teal-600" aria-hidden="true" />
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-900/75">
+                  {publicRating ? <Rating value={provider.rating} reviews={provider.reviews} size="sm" /> : null}
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="size-3.5 text-teal-600" aria-hidden="true" />
                     {provider.commune}
                   </span>
                 </div>
               </div>
             </div>
-            <Button href="#demande" size="lg" withArrow>
-              Demander ce prestataire
+            <Button type="button" size="md" withArrow className="w-full shrink-0 sm:w-auto" onClick={() => setDemandeOpen(true)}>
+              Demander
             </Button>
           </div>
         </div>
       </section>
 
-      <section className="bg-paper-100 py-12 sm:py-16">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_24rem] lg:px-8">
-          <div className="flex flex-col gap-6">
-            {/* Faits clés */}
-            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink-900/8 bg-ink-900/8 sm:grid-cols-4">
-              <Fact icon={BriefcaseBusiness} term="Expérience" detail={`${provider.experience} ans`} />
-              <Fact icon={Languages} term="Langues" detail={provider.languages.join(", ")} />
-              <Fact icon={Clock} term="Disponibilité" detail={AVAILABILITY[provider.availability]} />
-              <Fact icon={Award} term="Niveau" detail={provider.level} />
-            </dl>
+      <section className="bg-paper-100 py-8 sm:py-10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 sm:px-6 lg:px-8">
+          <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <Fact icon={BriefcaseBusiness} term="Expérience" detail={`${provider.experience} ans`} />
+            <Fact icon={Languages} term="Langues" detail={languages.slice(0, 2).join(", ")} />
+            <Fact icon={Clock} term="Dispo." detail={AVAILABILITY[provider.availability]} />
+            <Fact icon={ShieldCheck} term="Sceau" detail={provider.seal} />
+          </dl>
 
-            {/* Bloc vérification */}
-            <Card title="Vérification SaaTrust" eyebrow={`Sceau ${provider.seal}`}>
-              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {saatrustSteps.map((s) => (
-                  <li key={s.number} className="flex items-center gap-2.5 rounded-lg bg-paper-100 px-3 py-2.5 text-sm text-ink-900">
-                    <CheckCircle2 className="size-4 shrink-0 text-teal-600" aria-hidden="true" />
-                    <span className="flex-1">{s.title}</span>
-                    <span className="text-xs text-navy-600">{provider.verifiedAt}</span>
+          <div className="rounded-2xl border border-ink-900/8 bg-white p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-display text-base font-bold text-ink-900">SaaTrust</h2>
+              <Link
+                to={`/verifier?sceau=${provider.seal}`}
+                className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700 hover:underline"
+              >
+                Vérifier <ArrowUpRight className="size-3.5" aria-hidden="true" />
+              </Link>
+            </div>
+            <p className="mt-2 text-sm text-ink-900/70">
+              Identité, domicile et références contrôlés · revérification {provider.nextCheck}
+            </p>
+            {skills.length > 0 && (
+              <ul className="mt-3 flex flex-wrap gap-1.5">
+                {skills.map((s) => (
+                  <li key={s} className="rounded-full bg-teal-50 px-2.5 py-1 text-xs font-medium text-teal-700">
+                    {s}
                   </li>
                 ))}
               </ul>
-              <div className="mt-4 flex flex-col gap-2 border-t border-ink-900/8 pt-4 text-sm text-ink-900/80 sm:flex-row sm:items-center sm:justify-between">
-                <p>
-                  {LEVELS[provider.level]} Prochaine revérification : <strong className="text-ink-900">{provider.nextCheck}</strong>.
-                </p>
-                <Link to={`/verifier?sceau=${provider.seal}`} className="inline-flex shrink-0 items-center gap-1 font-semibold text-teal-700 hover:underline">
-                  Vérifier ce sceau <ArrowUpRight className="size-4" aria-hidden="true" />
-                </Link>
-              </div>
-            </Card>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <Card title="Compétences validées" eyebrow={`Test pratique · ${provider.verifiedAt}`}>
-                <ul className="flex flex-wrap gap-2">
-                  {provider.skills.map((s) => (
-                    <li key={s} className="rounded-full bg-teal-50 px-3 py-1.5 text-sm text-teal-700">{s}</li>
-                  ))}
-                </ul>
-              </Card>
-              <Card title="Formations" eyebrow="Saa Academy">
-                <ul className="flex flex-col gap-2">
-                  {provider.trainings.map((t) => (
-                    <li key={t} className="flex items-center gap-2 text-sm text-ink-900">
-                      <BadgeCheck className="size-4 text-gold-600" aria-hidden="true" />
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </div>
-
-            <Card title="Expérience au registre">
-              <dl className="grid grid-cols-3 gap-4 text-center">
-                {[
-                  [provider.missions, "missions réalisées"],
-                  [provider.hours, "heures cumulées"],
-                  [provider.since, "entrée au registre"],
-                ].map(([value, label]) => (
-                  <div key={label}>
-                    <dd className="font-display text-2xl font-bold text-teal-700">{value}</dd>
-                    <dt className="text-xs text-ink-900/70">{label}</dt>
-                  </div>
-                ))}
-              </dl>
-            </Card>
-
-            <Card title="Disponibilité" eyebrow="Semaine type, par demi-journée">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[26rem] border-separate border-spacing-1 text-center text-xs">
-                  <caption className="sr-only">Disponibilités par demi-journée</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col" className="sr-only">Créneau</th>
-                      {DAYS.map((d) => (
-                        <th key={d} scope="col" className="font-semibold text-navy-600">{d}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {HALF_DAYS.map((h, hi) => (
-                      <tr key={h}>
-                        <th scope="row" className="pr-2 text-left font-medium text-ink-900">{h}</th>
-                        {grid.map((day, di) => (
-                          <td key={DAYS[di]} className={`h-9 rounded-md ${day[hi] ? "bg-teal-600 text-white" : "bg-paper-200 text-ink-900/60"}`}>
-                            {day[hi] ? "Libre" : "—"}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-ink-900/70">
-                <CalendarDays className="size-3.5" aria-hidden="true" />
-                Créneaux : {provider.slots.join(", ")}. Confirmés par votre chargé de clientèle.
-              </p>
-            </Card>
-
-            <Card title="Avis clients">
-              {provider.reviewsList.length ? (
-                <ul className="flex flex-col gap-3">
-                  {provider.reviewsList.slice(0, 3).map((r) => (
-                    <li key={`${r.firstName}-${r.date}`} className="rounded-xl bg-paper-100 p-4">
-                      <p className="text-sm leading-relaxed text-ink-900">« {r.text} »</p>
-                      <p className="mt-2 text-xs font-medium text-navy-600">
-                        {r.firstName}, {r.commune} · {r.date}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-ink-900/75">Pas encore d'avis publié pour ce profil.</p>
-              )}
-            </Card>
+            )}
+            {review && (
+              <blockquote className="mt-3 border-t border-ink-900/8 pt-3 text-sm text-ink-900/80">
+                « {review.text} »
+                <footer className="mt-1 text-xs text-navy-600">
+                  {review.firstName}, {review.commune}
+                </footer>
+              </blockquote>
+            )}
           </div>
 
-          {/* Demande de mise en relation */}
-          <motion.div id="demande" variants={fadeUp} initial="hidden" animate="show" className="h-fit scroll-mt-24 rounded-2xl border border-ink-900/8 bg-white p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
-            <h2 className="font-display text-xl font-bold text-ink-900">Demander ce prestataire</h2>
-            <p className="mt-1 text-sm text-ink-900/75">Nous confirmons sa disponibilité et vous rappelons.</p>
-            <RequestForm domainSlug={provider.domainSlug} providerReference={provider.reference} detailed className="mt-5" />
-          </motion.div>
+          <Button type="button" size="md" withArrow className="w-full sm:w-fit" onClick={() => setDemandeOpen(true)}>
+            Demander ce prestataire
+          </Button>
         </div>
       </section>
 
-      {similar.length > 0 && (
-        <section className="bg-white py-16" aria-labelledby="similar-heading">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Eyebrow>Profils similaires</Eyebrow>
-            <h2 id="similar-heading" className="mt-4 font-display text-2xl font-bold text-ink-900">Autres profils {metierRoot.toLowerCase()}</h2>
-            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {similar.map((p, i) => (
-                <ProviderCard key={p.reference} provider={p} index={i} />
-              ))}
+      {createPortal(
+        <AnimatePresence>
+          {demandeOpen && (
+            <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
+              <motion.button
+                type="button"
+                aria-label="Fermer"
+                className="absolute inset-0 bg-ink-950/50 backdrop-blur-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setDemandeOpen(false)}
+              />
+              <motion.div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={titleId}
+                initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                transition={{ duration: 0.28, ease: EASE }}
+                className="relative z-10 flex max-h-[min(92vh,40rem)] w-full flex-col overflow-hidden rounded-t-2xl border border-ink-900/8 bg-white shadow-lifted sm:max-w-md sm:rounded-2xl"
+              >
+                <div className="flex shrink-0 items-start justify-between gap-3 border-b border-ink-900/8 px-4 py-3.5">
+                  <div>
+                    <h2 id={titleId} className="font-display text-base font-bold text-ink-900">
+                      Demander
+                    </h2>
+                    <p className="mt-0.5 text-xs text-ink-900/60">Disponibilité confirmée, rappel sous 24 h.</p>
+                  </div>
+                  <button
+                    ref={closeRef}
+                    type="button"
+                    onClick={() => setDemandeOpen(false)}
+                    className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-900/50 transition-colors hover:bg-paper-200 hover:text-ink-900"
+                    aria-label="Fermer la demande"
+                  >
+                    <X className="size-4" aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="overflow-y-auto px-4 py-3.5">
+                  <RequestForm
+                    domainSlug={provider.domainSlug}
+                    providerReference={provider.reference}
+                    defaultCommune={provider.commune || ""}
+                    compact
+                  />
+                </div>
+              </motion.div>
             </div>
-          </div>
-        </section>
+          )}
+        </AnimatePresence>,
+        document.body,
       )}
     </>
   );
 }
 
-function Card({ title, eyebrow, children }) {
-  return (
-    <div className="rounded-2xl border border-ink-900/8 bg-white p-5 sm:p-6">
-      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-lg font-bold text-ink-900">{title}</h2>
-        {eyebrow && <span className="text-xs font-semibold uppercase tracking-[0.12em] text-gold-700">{eyebrow}</span>}
-      </div>
-      {children}
-    </div>
-  );
-}
-
 function Fact({ icon: Icon, term, detail }) {
   return (
-    <div className="bg-white p-4">
-      <dt className="flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-navy-600">
-        <Icon className="size-3.5 shrink-0" aria-hidden="true" />
+    <div className="rounded-xl border border-ink-900/8 bg-white px-3 py-3">
+      <dt className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-navy-600">
+        <Icon className="size-3 shrink-0" aria-hidden="true" />
         {term}
       </dt>
-      <dd className="mt-1 text-sm text-ink-900">{detail}</dd>
+      <dd className="mt-1 truncate text-sm text-ink-900">{detail}</dd>
     </div>
   );
 }

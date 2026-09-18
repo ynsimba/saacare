@@ -39,7 +39,7 @@ export default function Solutions() {
     <>
       <Seo
         title="Nos solutions"
-        description="Sept pôles de services à la personne à Kinshasa : garde d'enfants, accompagnement post-natal, maison et bâtiment, chauffeurs, cours à domicile, aînés et formation."
+        description="Sept pôles de services à la personne à Kinshasa : garde d'enfants, accompagnement Walé, maison et bâtiment, chauffeurs, cours à domicile, aînés et formation."
         path="/solutions"
         jsonLd={{
           "@context": "https://schema.org",
@@ -73,7 +73,7 @@ export default function Solutions() {
             ))}
           </div>
           <Reveal variant="fade" className="mt-8 rounded-2xl bg-mint p-5 text-sm leading-relaxed text-ink-900">
-            <strong>Sept pôles, un seul registre.</strong> Kids Care, Walet, Home, Driver, Tutora, Assist et Academy
+            <strong>Sept pôles, un seul registre.</strong> Kids Care, Walé, Home, Driver, Tutora, Assist et Academy
             sont disponibles : déposez une demande, un chargé de clientèle vous rappelle.
           </Reveal>
         </div>

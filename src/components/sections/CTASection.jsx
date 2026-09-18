@@ -26,7 +26,7 @@ export default function CTASection({
       {/* Fondu simple : la mise à l'échelle est déjà portée par Section3D. */}
       <Reveal
         variant="fade"
-        duration={0.85}
+        duration={0.45}
         className="noise-overlay relative isolate mx-auto max-w-5xl overflow-hidden rounded-2xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 px-8 py-16 text-center shadow-lifted sm:px-16 sm:py-20"
       >
         {/* Halos animés */}

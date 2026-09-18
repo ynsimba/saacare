@@ -42,7 +42,7 @@ const SYMBOL = [
 ];
 
 const ROADMAP = [
-  { period: "Aujourd'hui", place: "Gombe, Ngaliema, Limete", goal: "Kids Care, Walet, Home et Driver, premiers contrats entreprises" },
+  { period: "Aujourd'hui", place: "Gombe, Ngaliema, Limete", goal: "Kids Care, Walé, Home et Driver, premiers contrats entreprises" },
   { period: "Ensuite", place: "Kinshasa entière", goal: "Ouverture de Saa Tutora et de Saa Assist" },
   { period: "Puis", place: "Lubumbashi", goal: "Deuxième ville, avec un responsable de ville dédié" },
   { period: "Plus loin", place: "Goma, Matadi, Kolwezi, Kisangani", goal: "Six villes couvertes" },

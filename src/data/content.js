@@ -17,7 +17,7 @@ export const testimonials = [
   {
     name: "Nadège",
     role: "Limete",
-    domain: "Saa Walet",
+    domain: "Saa Walé",
     initials: "N",
     quote:
       "Ma mère était loin. L'accompagnante a pris le relais la nuit pendant deux semaines. J'ai pu me reposer, et elle savait exactement ce qu'elle pouvait faire ou non.",
@@ -164,7 +164,7 @@ export const guarantees = [
   {
     icon: "UserCheck",
     title: "Visite qualité",
-    detail: "Un superviseur passe à J+7, puis chaque mois pour les contrats permanents (J+2 pour Saa Walet).",
+    detail: "Un superviseur passe à J+7, puis chaque mois pour les contrats permanents (J+2 pour Saa Walé).",
   },
   {
     icon: "Scale",

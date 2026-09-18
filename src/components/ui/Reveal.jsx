@@ -3,15 +3,15 @@ import { motion } from "motion/react";
 import { EASE, useIsReducedMotion, viewportOnce } from "../../lib/motion";
 
 /**
- * Jeux de variantes utilisés partout sur la plateforme pour les révélations au scroll.
- * Chaque entrée reste discrète : on ne déplace jamais un élément de plus de ~40 px.
+ * Jeux de variantes pour les révélations au scroll.
+ * Discrets : fondu court, déplacement minimal, sans flou.
  */
 const PRESETS = {
-  up: { hidden: { opacity: 0, y: 28 } },
-  blur: { hidden: { opacity: 0, y: 30, filter: "blur(10px)" } },
-  left: { hidden: { opacity: 0, x: -36 } },
-  right: { hidden: { opacity: 0, x: 36 } },
-  scale: { hidden: { opacity: 0, scale: 0.94 } },
+  up: { hidden: { opacity: 0, y: 12 } },
+  blur: { hidden: { opacity: 0, y: 12 } },
+  left: { hidden: { opacity: 0, y: 12 } },
+  right: { hidden: { opacity: 0, y: 12 } },
+  scale: { hidden: { opacity: 0 } },
   fade: { hidden: { opacity: 0 } },
 };
 
@@ -37,7 +37,7 @@ export default function Reveal({
   as: Component = "div",
   variant = "up",
   delay = 0,
-  duration = 0.7,
+  duration = 0.45,
   className = "",
   ...props
 }) {
@@ -70,8 +70,8 @@ export default function Reveal({
 export function Stagger({
   children,
   as: Component = "div",
-  stagger = 0.09,
-  delay = 0.05,
+  stagger = 0.05,
+  delay = 0,
   className = "",
   ...props
 }) {
@@ -101,7 +101,7 @@ export function RevealItem({
   children,
   as: Component = "div",
   variant = "up",
-  duration = 0.65,
+  duration = 0.4,
   className = "",
   ...props
 }) {

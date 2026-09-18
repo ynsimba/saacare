@@ -1,46 +1,49 @@
-# SaaCare API
-
-Backend Node.js (Express + Prisma + SQLite) pour la plateforme SaaCare.
+# SaaCare API (Laravel)
 
 ## Prérequis
 
-- Node.js 20+
-- npm
+- PHP 8.2+
+- Composer
+- MySQL via **MAMP** (phpMyAdmin : `http://localhost:8888/phpMyAdmin5/`) — port MySQL **8889**, user `root` / `root`
+- (optionnel) Docker MySQL : `docker compose up -d` puis `DB_PORT=3306`, user `saacare` / `saacare`
 
-## Installation
+## Configuration
 
 ```bash
-cd backend
 cp .env.example .env
-npm install
-npx prisma migrate dev --name init
-npm run db:seed
+php artisan key:generate
+# Vérifier DB_PORT=8889 (MAMP) et GOOGLE_CLIENT_*
+php artisan migrate --seed
+php artisan serve --port=8001
 ```
 
-## Démarrer
+Dans phpMyAdmin, la base **saacare** doit apparaître après migrate.
+## Comptes démo (mot de passe `demo1234`)
+
+| Email | Rôle |
+|-------|------|
+| admin@saacare.cd | admin |
+| client@saacare.cd | client |
+| prestataire@saacare.cd | prestataire (approved) |
+| prestataire.pending@saacare.cd | prestataire (pending) |
+
+## Comptes admin équipe (mot de passe initial `Saacare@2026`)
+
+| Email | Nom |
+|-------|-----|
+| bellezajohncy@saacare.com | Belleza Johncy |
+| sephorasoki@saacare.com | Sephora Soki |
+| yvesnsimba@saacare.com | Yves Nsimba (**super-admin**) |
+
+Modules super-admin : Utilisateurs, Journal connexions, Comptabilité, Statistiques, Données (backup / purge).
+
+## Agenda & rappels e-mail
+
+Les admins créent des rendez-vous depuis le calendrier du tableau de bord. Les rappels partent via :
 
 ```bash
-npm run dev
+php artisan schedule:work
+# ou cron : * * * * * php /path/to/artisan schedule:run
 ```
 
-API disponible sur `http://localhost:4000`.
-
-## Endpoints
-
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/health` | Santé |
-| POST | `/api/auth/register` | Inscription |
-| POST | `/api/auth/login` | Connexion (JWT) |
-| GET | `/api/auth/me` | Profil (Bearer) |
-| POST | `/api/contact` | Message contact |
-| POST | `/api/applications` | Candidature prestataire |
-| GET | `/api/providers` | Liste (`?domaine=&commune=`) |
-| GET | `/api/providers/:id` | Détail |
-
-## Comptes démo (seed)
-
-| Rôle | E-mail | Mot de passe |
-|------|--------|--------------|
-| Client | `demo@saacare.com` | `demo1234` |
-| Prestataire | `prestataire@saacare.com` | `demo1234` |
+Avec `MAIL_MAILER=log`, les e-mails sont écrits dans `storage/logs/laravel.log`. Pour la prod, configurer SMTP (`MAIL_*`).

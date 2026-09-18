@@ -7,6 +7,4 @@ dist-ssr
 .env.*
 !.env.example
 !**/.env.example
-backend/prisma/*.db
-backend/prisma/*.db-journal
 .fuse_hidden*

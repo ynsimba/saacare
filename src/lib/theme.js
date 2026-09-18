@@ -5,6 +5,7 @@
  */
 export const THEME = {
   teal: {
+    accent: "bg-teal-400",
     bg: "bg-teal-600",
     bgSoft: "bg-teal-50",
     text: "text-teal-700",
@@ -14,6 +15,7 @@ export const THEME = {
     dot: "bg-teal-500",
   },
   navy: {
+    accent: "bg-navy-600",
     bg: "bg-ink-900",
     bgSoft: "bg-sky",
     text: "text-navy-700",
@@ -23,6 +25,7 @@ export const THEME = {
     dot: "bg-navy-600",
   },
   gold: {
+    accent: "bg-gold-500",
     bg: "bg-gold-700",
     bgSoft: "bg-gold-100",
     text: "text-gold-800",
@@ -32,6 +35,7 @@ export const THEME = {
     dot: "bg-gold-500",
   },
   coral: {
+    accent: "bg-coral-500",
     bg: "bg-coral-700",
     bgSoft: "bg-coral-100",
     text: "text-coral-800",

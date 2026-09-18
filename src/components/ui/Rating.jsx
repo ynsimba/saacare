@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Star } from "lucide-react";
 import { EASE, useIsReducedMotion, viewportOnce } from "../../lib/motion";
 
-export default function Rating({ value, reviews, size = "sm" }) {
+export default function Rating({ value, reviews, size = "sm", onDark = false }) {
   const reduced = useIsReducedMotion();
   const starSize = size === "sm" ? "size-3.5" : "size-4.5";
 
@@ -34,15 +34,19 @@ export default function Rating({ value, reviews, size = "sm" }) {
           >
             <Star
               className={`${starSize} ${
-                i < Math.round(value) ? "fill-gold-500 text-gold-500" : "fill-transparent text-ink-900/20"
+                i < Math.round(value)
+                  ? "fill-gold-500 text-gold-500"
+                  : onDark
+                    ? "fill-transparent text-white/30"
+                    : "fill-transparent text-ink-900/20"
               }`}
               strokeWidth={1.5}
             />
           </motion.span>
         ))}
       </motion.div>
-      <span className="text-sm font-semibold text-ink-900">{value.toFixed(1)}</span>
-      {reviews != null && <span className="text-sm text-ink-900/65">({reviews})</span>}
+      <span className={`text-sm font-semibold ${onDark ? "text-white" : "text-ink-900"}`}>{value.toFixed(1)}</span>
+      {reviews != null && <span className={`text-sm ${onDark ? "text-white/70" : "text-ink-900/65"}`}>({reviews})</span>}
     </div>
   );
 }

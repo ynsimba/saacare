@@ -297,7 +297,7 @@ export default function Navbar() {
         <div className="hidden items-center gap-2 xl:flex">
           {!authLoading && (
             <Button
-              to={user ? espaceTo : "/connexion"}
+              to={user ? espaceTo : "/login"}
               variant={onDark ? "onDark" : "primary"}
               size="sm"
               magnetic
@@ -370,7 +370,7 @@ export default function Navbar() {
               className="fixed bottom-0 right-0 top-[calc(4rem+env(safe-area-inset-top))] z-40 w-full max-w-md overflow-y-auto border-l border-ink-900/8 bg-paper-50 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:top-[calc(5rem+env(safe-area-inset-top))] xl:hidden"
             >
               <div className="flex flex-col gap-2.5 border-b border-ink-900/8 px-4 py-5">
-                <Button to={user ? espaceTo : "/connexion"} variant="primary" size="lg" className="w-full">
+                <Button to={user ? espaceTo : "/login"} variant="primary" size="lg" className="w-full">
                   {user ? "Mon espace" : "Connexion"}
                 </Button>
               </div>

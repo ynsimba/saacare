@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, CheckCircle2, AlertTriangle, Phone } from "lucide-react";
 import Seo from "../lib/Seo";
 import PageHero from "../components/ui/PageHero";
 import Badge from "../components/ui/Badge";
-import { getProviderBySeal } from "../data/providers";
 import { saatrustSteps } from "../data/content";
 import { PHONE, PHONE_HREF } from "../data/site";
+import { api } from "../lib/api";
 import { EASE } from "../lib/motion";
 
 /**
- * Vérification publique d'un sceau SaaTrust (cahier des charges §2, GET /api/seals/{seal}).
+ * Vérification publique d'un sceau SaaTrust (cahier des charges §2, GET /api/providers/verify).
  * N'affiche que le statut et les données publiques du profil anonymisé.
  */
 export default function Verifier() {
@@ -19,8 +19,31 @@ export default function Verifier() {
   const initial = params.get("sceau") ?? "";
   const [value, setValue] = useState(initial);
   const [query, setQuery] = useState(initial);
+  const [result, setResult] = useState(null);
+  const [checking, setChecking] = useState(false);
 
-  const result = query ? getProviderBySeal(query) : null;
+  useEffect(() => {
+    if (!query) {
+      setResult(null);
+      return undefined;
+    }
+    let cancelled = false;
+    setChecking(true);
+    api
+      .verifySeal(query)
+      .then((data) => {
+        if (!cancelled) setResult(data.valid ? data.item : null);
+      })
+      .catch(() => {
+        if (!cancelled) setResult(null);
+      })
+      .finally(() => {
+        if (!cancelled) setChecking(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -67,7 +90,13 @@ export default function Verifier() {
       <section className="bg-paper-100 py-14 sm:py-20">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8" aria-live="polite">
           <AnimatePresence mode="wait">
-            {query && result && (
+            {query && checking && (
+              <motion.p key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center text-sm text-ink-900/60">
+                Vérification en cours…
+              </motion.p>
+            )}
+
+            {query && !checking && result && (
               <motion.div key={`ok-${query}`} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} className="overflow-hidden rounded-3xl border border-ink-900/8 bg-white shadow-soft">
                 <div className="flex items-center gap-3 bg-teal-600 px-6 py-4 text-white">
                   <CheckCircle2 className="size-6" aria-hidden="true" />
@@ -106,7 +135,7 @@ export default function Verifier() {
               </motion.div>
             )}
 
-            {query && !result && (
+            {query && !checking && !result && (
               <motion.div key={`ko-${query}`} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} className="rounded-3xl border-2 border-coral-500 bg-white p-6" role="alert">
                 <p className="flex items-center gap-2 font-display text-lg font-bold text-coral-800">
                   <AlertTriangle className="size-5" aria-hidden="true" />

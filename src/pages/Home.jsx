@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <>
       <Seo
-        description="Nounou, accompagnante post-natale, aide-ménagère, artisan ou chauffeur : des agents vérifiés en 7 étapes, formés et assurés à Kinshasa. Recherche sans inscription."
+        description="Nounou, accompagnante Walé, aide-ménagère, artisan ou chauffeur : des agents vérifiés en 7 étapes, formés et assurés à Kinshasa. Recherche sans inscription."
         path="/"
         jsonLd={[
           {
