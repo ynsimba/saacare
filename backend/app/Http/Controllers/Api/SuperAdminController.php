@@ -53,6 +53,59 @@ class SuperAdminController extends Controller
         return response()->json(['items' => $items]);
     }
 
+    public function createUser(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'fullName' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', Rule::in(['client', 'prestataire', 'admin'])],
+            'isSuperAdmin' => ['sometimes', 'boolean'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'commune' => ['nullable', 'string', 'max:120'],
+        ], [
+            'email.unique' => 'Un compte existe déjà avec cet e-mail.',
+            'email.email' => 'Indiquez une adresse e-mail valide.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'fullName.required' => 'Le nom complet est obligatoire.',
+            'role.required' => 'Le rôle est obligatoire.',
+            'role.in' => 'Le rôle est invalide.',
+        ]);
+
+        $role = $data['role'];
+        $isSuperAdmin = $role === 'admin' && (bool) ($data['isSuperAdmin'] ?? false);
+
+        $user = User::create([
+            'full_name' => $data['fullName'],
+            'email' => strtolower($data['email']),
+            'password' => $data['password'],
+            'role' => $role,
+            'is_super_admin' => $isSuperAdmin,
+            'phone' => $data['phone'] ?? '',
+            'commune' => $data['commune'] ?? '',
+        ]);
+
+        if ($role === 'prestataire') {
+            $parts = preg_split('/\s+/', trim($data['fullName']), 2) ?: [];
+            $first = $parts[0] ?? $data['fullName'];
+            $last = $parts[1] ?? '';
+            $initials = mb_strtoupper(
+                mb_substr($first, 0, 1).mb_substr($last !== '' ? $last : $first, 0, 1)
+            );
+
+            ProviderProfile::create([
+                'user_id' => $user->id,
+                'status' => 'pending',
+                'first_name' => $first,
+                'last_name' => $last,
+                'initials' => $initials,
+                'zones' => filled($data['commune'] ?? null) ? [$data['commune']] : [],
+            ]);
+        }
+
+        return response()->json(['item' => $this->serializeUser($user->fresh())], 201);
+    }
+
     public function updateUser(Request $request, int $id): JsonResponse
     {
         $data = $request->validate([

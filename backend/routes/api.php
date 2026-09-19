@@ -124,6 +124,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::middleware('superadmin')->group(function () {
             Route::get('/utilisateurs', [SuperAdminController::class, 'users']);
+            Route::post('/utilisateurs', [SuperAdminController::class, 'createUser']);
             Route::patch('/utilisateurs/{id}', [SuperAdminController::class, 'updateUser']);
             Route::get('/journal-connexions', [SuperAdminController::class, 'loginJournal']);
             Route::get('/comptabilite', [SuperAdminController::class, 'accounting']);

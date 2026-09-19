@@ -205,6 +205,8 @@ export const api = {
   seedAdminTariffs: () => request("/api/admin/tarifs/seed-catalog", { method: "POST", auth: true }),
 
   superAdminUsers: () => request("/api/admin/utilisateurs", { auth: true }),
+  createSuperAdminUser: (body) =>
+    request("/api/admin/utilisateurs", { method: "POST", body, auth: true }),
   updateSuperAdminUser: (id, body) =>
     request(`/api/admin/utilisateurs/${id}`, { method: "PATCH", body, auth: true }),
   superAdminLoginJournal: () => request("/api/admin/journal-connexions", { auth: true }),
