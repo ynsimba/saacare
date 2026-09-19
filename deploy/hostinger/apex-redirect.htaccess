@@ -1,0 +1,11 @@
+# À placer dans public_html de saacare.com / www.saacare.com
+# Redirige le domaine racine vers la PWA.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    RewriteRule ^(.*)$ https://app.saacare.com/$1 [L,R=301]
+</IfModule>

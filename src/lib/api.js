@@ -1,5 +1,13 @@
 const TOKEN_KEY = "saacare_token";
 
+/** Base API : vide en local (proxy Vite → :8001), `https://api.saacare.com` en prod (PWA sur app.saacare.com). */
+export const API_BASE = String(import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+
+function apiUrl(path) {
+  if (!path.startsWith("/")) return `${API_BASE}/${path}`;
+  return `${API_BASE}${path}`;
+}
+
 export function getToken() {
   try {
     return localStorage.getItem(TOKEN_KEY);
@@ -49,7 +57,7 @@ async function request(path, { method = "GET", body, auth = false, headers = {} 
     if (token) opts.headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(path, opts);
+  const res = await fetch(apiUrl(path), opts);
   const contentType = res.headers.get("content-type") || "";
   const data = contentType.includes("application/json") ? await res.json() : null;
 
@@ -205,7 +213,7 @@ export const api = {
   superAdminDataOverview: () => request("/api/admin/donnees", { auth: true }),
   superAdminExportBackup: async () => {
     const token = getToken();
-    const res = await fetch("/api/admin/donnees/backup", {
+    const res = await fetch(apiUrl("/api/admin/donnees/backup"), {
       method: "GET",
       headers: {
         Accept: "application/json",

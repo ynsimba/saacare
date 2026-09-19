@@ -4,7 +4,7 @@
  * (cahier des charges §2.1 et annexe A) : tant qu'ils manquent, le site
  * affiche « en cours » plutôt qu'un numéro inventé.
  */
-export const SITE_URL = "https://www.saacare.cd";
+export const SITE_URL = "https://app.saacare.com";
 export const TAGLINE = "Des services qui vous accompagnent";
 export const PROMISE = "Des services qui simplifient le quotidien et restent présents au bon moment.";
 export const POSITIONING =

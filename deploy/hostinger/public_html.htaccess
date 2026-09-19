@@ -1,0 +1,34 @@
+# Copie de référence — la source de vérité pour le build est `public/.htaccess`
+# (Vite la copie automatiquement dans `dist/` lors de `npm run build`).
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # HTTPS (Hostinger termine souvent SSL en proxy)
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Canonical host : app.saacare.com (évite www.app…)
+    RewriteCond %{HTTP_HOST} ^www\.app\.saacare\.com$ [NC]
+    RewriteRule ^ https://app.saacare.com%{REQUEST_URI} [L,R=301]
+
+    # Assets / fichiers réels (JS, CSS, images, manifest)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # SPA React Router — toutes les routes → index.html
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Cache assets Vite hashés
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|woff2?|png|jpg|jpeg|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "^(index\.html|site\.webmanifest)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>

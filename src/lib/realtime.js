@@ -101,7 +101,7 @@ export function subscribeToMission({ orderId, fetcher, onUpdate, onStatus }) {
         wssPort: Number(import.meta.env.VITE_PUSHER_PORT || 443),
         forceTLS: (import.meta.env.VITE_PUSHER_SCHEME || "https") === "https",
         enabledTransports: ["ws", "wss"],
-        authEndpoint: "/api/broadcasting/auth",
+        authEndpoint: `${String(import.meta.env.VITE_API_BASE || "").replace(/\/$/, "")}/api/broadcasting/auth`,
         auth: { headers: { Authorization: `Bearer ${getToken()}`, Accept: "application/json" } },
       });
 

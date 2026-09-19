@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-export const SITE = "https://www.saacare.cd";
+export const SITE = "https://app.saacare.com";
 const DEFAULT_IMAGE = `${SITE}/og-image.png`;
 const DEFAULT_TITLE = "SaaCare — Des services qui vous accompagnent · Kinshasa";
 
