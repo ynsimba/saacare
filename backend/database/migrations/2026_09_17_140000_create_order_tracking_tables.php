@@ -54,6 +54,7 @@ return new class extends Migration
 
             $table->index(['order_id', 'status']);
             $table->index(['status', 'last_position_at']);
+            $table->index(['provider_profile_id', 'status']);
         });
 
         Schema::create('order_trip_points', function (Blueprint $table) {

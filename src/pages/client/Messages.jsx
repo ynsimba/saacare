@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Seo from "../../lib/Seo";
 import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
@@ -9,19 +9,32 @@ export default function ClientMessages() {
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
   const endRef = useRef(null);
+  const itemsLenRef = useRef(0);
 
-  const load = () =>
-    api
-      .clientMessages("support")
-      .then((d) => setItems(d.items || []))
-      .catch((err) => setError(err.message || "Chargement impossible."));
-
-  useEffect(() => {
-    load();
+  const load = useCallback(async ({ silent = false } = {}) => {
+    try {
+      const d = await api.clientMessages("support");
+      const next = d.items || [];
+      setItems(next);
+      if (!silent) setError("");
+      return next;
+    } catch (err) {
+      if (!silent) setError(err.message || "Chargement impossible.");
+      return null;
+    }
   }, []);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    load();
+    const id = setInterval(() => load({ silent: true }), 5000);
+    return () => clearInterval(id);
+  }, [load]);
+
+  useEffect(() => {
+    if (items.length > itemsLenRef.current) {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    itemsLenRef.current = items.length;
   }, [items]);
 
   const onSubmit = async (e) => {

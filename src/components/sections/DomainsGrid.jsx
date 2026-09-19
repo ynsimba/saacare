@@ -235,24 +235,6 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
           </span>
         </span>
 
-        {/* Statistique */}
-        <span className="relative hidden shrink-0 text-right lg:block">
-          <span
-            className={`block font-display text-2xl font-bold transition-colors duration-500 ${
-              isHovered ? "text-white" : theme.text
-            }`}
-          >
-            {domain.heroStat.value}
-          </span>
-          <span
-            className={`mt-0.5 block max-w-[11rem] font-mono text-[0.62rem] uppercase leading-snug tracking-[0.1em] transition-colors duration-500 ${
-              isHovered ? "text-white/55" : "text-ink-900/40"
-            }`}
-          >
-            {domain.heroStat.label}
-          </span>
-        </span>
-
         {/* Flèche */}
         <span
           className={`relative grid size-10 shrink-0 place-items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${

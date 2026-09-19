@@ -16,6 +16,7 @@ use App\Support\TripPayload;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -42,11 +43,166 @@ class TrackingController extends Controller
             ->whereNotIn('status', ['annulee'])
             ->latest()
             ->get()
-            // Trajet en cours, à défaut le dernier connu : le prestataire voit ainsi
-            // qu'une arrivée est déjà enregistrée plutôt qu'un bouton de départ.
             ->map(fn (Order $order) => $this->serializeMission($order, $this->activeTrip($order) ?? $this->lastTrip($order)));
 
+        return response()->json([
+            'items' => $items,
+            'pendingOffers' => $items->filter(fn (array $m) => ($m['needsResponse'] ?? false))->values()->all(),
+        ]);
+    }
+
+    /** Courses en attente d’acceptation / refus. */
+    public function pendingOffers(Request $request): JsonResponse
+    {
+        $profile = $this->providerProfile($request);
+
+        $items = Order::with(['client', 'providerProfile.user'])
+            ->where('provider_profile_id', $profile->id)
+            ->where('status', 'proposee')
+            ->latest()
+            ->get()
+            ->map(fn (Order $order) => $this->serializeMission($order, null));
+
         return response()->json(['items' => $items]);
+    }
+
+    /** Le prestataire accepte la course proposée. */
+    public function acceptMission(Request $request, int $orderId): JsonResponse
+    {
+        $profile = $this->providerProfile($request);
+
+        $order = DB::transaction(function () use ($profile, $orderId) {
+            $order = Order::query()
+                ->whereKey($orderId)
+                ->where('provider_profile_id', $profile->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($order->status !== 'proposee' || (int) $order->provider_profile_id !== (int) $profile->id) {
+                return null;
+            }
+
+            $order->status = $order->desired_date ? 'programmee' : 'confirmee';
+            $order->save();
+
+            return $order;
+        });
+
+        if (! $order) {
+            return response()->json(['error' => 'Cette course n’est plus en attente de réponse.'], 422);
+        }
+
+        $order->load(['client', 'providerProfile.user']);
+
+        if ($order->client_id) {
+            AppNotification::create([
+                'user_id' => $order->client_id,
+                'title' => 'Course acceptée',
+                'body' => "Le prestataire a accepté la mission {$order->reference}.",
+                'type' => 'order',
+                'link' => "/client/commandes/{$order->id}/suivi",
+            ]);
+        }
+
+        return response()->json([
+            'item' => $this->serializeMission($order, null),
+            'message' => 'Course acceptée.',
+        ]);
+    }
+
+    /** Le prestataire refuse la course proposée. */
+    public function refuseMission(Request $request, int $orderId): JsonResponse
+    {
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $profile = $this->providerProfile($request);
+        $reason = trim((string) ($data['reason'] ?? ''));
+
+        $result = DB::transaction(function () use ($profile, $orderId) {
+            $order = Order::query()
+                ->whereKey($orderId)
+                ->where('provider_profile_id', $profile->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($order->status !== 'proposee' || (int) $order->provider_profile_id !== (int) $profile->id) {
+                return null;
+            }
+
+            $ref = $order->reference;
+            $clientId = $order->client_id;
+
+            $order->provider_profile_id = null;
+            $order->status = 'nouvelle';
+            $order->save();
+
+            return ['reference' => $ref, 'client_id' => $clientId];
+        });
+
+        if (! $result) {
+            return response()->json(['error' => 'Cette course n’est plus en attente de réponse.'], 422);
+        }
+
+        if ($result['client_id']) {
+            AppNotification::create([
+                'user_id' => $result['client_id'],
+                'title' => 'Course à réassigner',
+                'body' => "Le prestataire a refusé la mission {$result['reference']}. SaaCare vous propose un autre profil."
+                    .($reason !== '' ? " Motif : {$reason}" : ''),
+                'type' => 'order',
+                'link' => '/client/commandes',
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Course refusée.',
+        ]);
+    }
+
+    /** Notifications prestataire. */
+    public function notifications(Request $request): JsonResponse
+    {
+        $items = AppNotification::where('user_id', $request->user()->id)
+            ->latest()
+            ->limit(100)
+            ->get()
+            ->map(fn (AppNotification $n) => [
+                'id' => $n->id,
+                'title' => $n->title,
+                'body' => $n->body ?? '',
+                'type' => $n->type,
+                'link' => $n->link ?? '',
+                'readAt' => $n->read_at?->toIso8601String(),
+                'createdAt' => $n->created_at?->toIso8601String(),
+            ]);
+
+        return response()->json([
+            'items' => $items,
+            'unread' => AppNotification::where('user_id', $request->user()->id)->whereNull('read_at')->count(),
+        ]);
+    }
+
+    public function markNotificationRead(Request $request, int $id): JsonResponse
+    {
+        $n = AppNotification::where('user_id', $request->user()->id)->findOrFail($id);
+        if (! $n->read_at) {
+            $n->read_at = now();
+            $n->save();
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function markAllNotificationsRead(Request $request): JsonResponse
+    {
+        AppNotification::where('user_id', $request->user()->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['ok' => true]);
     }
 
     /** Détail d'une mission, avec son trajet en cours s'il existe. */
@@ -520,7 +676,9 @@ class TrackingController extends Controller
                 'need' => $order->need,
                 'desiredDate' => $order->desired_date?->toDateString(),
                 'frequency' => $order->frequency,
+                'amount' => (int) ($order->amount ?? 0),
                 'trackingAllowed' => $this->isTrackable($order),
+                'needsResponse' => $order->status === 'proposee',
             ],
         );
     }

@@ -6,9 +6,6 @@ import {
   ClipboardCheck,
   Users,
   Clock,
-  Wallet,
-  Star,
-  Bell,
   CalendarDays,
   CreditCard,
   Settings,
@@ -26,11 +23,10 @@ import ClientProfileShell from "./ClientProfileShell";
 import PrestataireProfileShell from "./PrestataireProfileShell";
 import AdminShell from "../admin/AdminShell";
 import { ProviderTripTrackingProvider } from "../tracking/ProviderTripTracking";
+import MissionOfferModal from "../tracking/MissionOfferModal";
 import { CLIENT_NAV, PRESTATAIRE_NAV, SpaceNav } from "./SpaceNav";
 
 export { CLIENT_NAV, PRESTATAIRE_NAV, SpaceNav };
-
-const SOON = { soon: true };
 
 const SUPER_ADMIN_NAV = [
   { to: "/admin/utilisateurs", label: "Utilisateurs", icon: UserCog, match: "users" },
@@ -49,6 +45,8 @@ function navForUser(user) {
       { to: "/admin/missions", label: "Missions actives", icon: Navigation, match: "missions" },
       { to: "/admin/clients", label: "Clients", icon: Users, match: "clients" },
       { to: "/admin/commandes", label: "Commandes", icon: Package, match: "orders" },
+      { to: "/admin/demandes", label: "Demandes web", icon: Clock, end: true },
+      { to: "/admin/devis", label: "Devis", icon: CalendarDays, end: true },
       { to: "/admin/paiements", label: "Paiements", icon: CreditCard, end: true },
       { to: "/admin/tarifs", label: "Grille tarifaire", icon: Tags, end: true },
       { to: "/admin/parametres", label: "Paramètres", icon: Settings, end: true },
@@ -58,14 +56,7 @@ function navForUser(user) {
     return links;
   }
   if (user?.role === "prestataire") {
-    return [
-      ...PRESTATAIRE_NAV,
-      { to: "/prestataire/disponibilite", label: "Disponibilité", icon: Clock, ...SOON },
-      { to: "/prestataire/planning", label: "Planning", icon: CalendarDays, ...SOON },
-      { to: "/prestataire/gains", label: "Gains", icon: Wallet, ...SOON },
-      { to: "/prestataire/avis", label: "Avis", icon: Star, ...SOON },
-      { to: "/prestataire/notifications", label: "Notifications", icon: Bell, ...SOON },
-    ];
+    return PRESTATAIRE_NAV;
   }
   return CLIENT_NAV;
 }
@@ -109,6 +100,7 @@ export default function DashboardLayout() {
           <main className="mt-6 min-w-0">
             {isPrestataire ? (
               <ProviderTripTrackingProvider>
+                <MissionOfferModal />
                 <Outlet />
               </ProviderTripTrackingProvider>
             ) : (

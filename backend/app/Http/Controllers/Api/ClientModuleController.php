@@ -10,7 +10,9 @@ use App\Models\Message;
 use App\Models\Order;
 use App\Models\OrderTrip;
 use App\Models\Payment;
+use App\Models\PlatformSetting;
 use App\Models\ProviderProfile;
+use App\Models\ProviderReview;
 use App\Support\PublicProvider;
 use App\Support\TripPayload;
 use Illuminate\Http\JsonResponse;
@@ -102,7 +104,7 @@ class ClientModuleController extends Controller
 
     public function orders(Request $request): JsonResponse
     {
-        $items = Order::with(['providerProfile.user', 'activeTrip'])
+        $items = Order::with(['providerProfile.user', 'activeTrip', 'review'])
             ->where('client_id', $request->user()->id)
             ->latest()
             ->get()
@@ -203,7 +205,65 @@ class ClientModuleController extends Controller
             'link' => '/client/paiements',
         ]);
 
-        return response()->json(['item' => $this->serializePayment($payment->load('order'))], 201);
+        return response()->json([
+            'item' => $this->serializePayment($payment->load('order')),
+            'paymentInstructions' => PlatformSetting::paymentInstructions(),
+        ], 201);
+    }
+
+    public function storeReview(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'body' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $order = Order::with('providerProfile')
+            ->where('client_id', $request->user()->id)
+            ->findOrFail($id);
+
+        if ($order->status !== 'terminee') {
+            return response()->json(['error' => 'Vous ne pouvez noter qu’une mission terminée.'], 400);
+        }
+
+        if (! $order->provider_profile_id) {
+            return response()->json(['error' => 'Aucun prestataire associé à cette commande.'], 400);
+        }
+
+        if (ProviderReview::query()->where('order_id', $order->id)->exists()) {
+            return response()->json(['error' => 'Un avis a déjà été laissé pour cette commande.'], 400);
+        }
+
+        $review = ProviderReview::create([
+            'provider_profile_id' => $order->provider_profile_id,
+            'order_id' => $order->id,
+            'client_id' => $request->user()->id,
+            'rating' => $data['rating'],
+            'body' => isset($data['body']) ? trim($data['body']) : null,
+            'author_name' => $request->user()->full_name ?: '',
+            'status' => 'published',
+        ]);
+
+        $profile = $order->providerProfile;
+        if ($profile) {
+            $stats = ProviderReview::query()
+                ->where('provider_profile_id', $profile->id)
+                ->where('status', 'published');
+            $profile->reviews = (clone $stats)->count();
+            $profile->rating = round((float) (clone $stats)->avg('rating'), 1);
+            $profile->save();
+        }
+
+        return response()->json([
+            'item' => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'body' => $review->body ?? '',
+                'orderId' => $review->order_id,
+                'createdAt' => $review->created_at?->toIso8601String(),
+            ],
+            'order' => $this->serializeOrder($order->fresh(['providerProfile.user', 'activeTrip', 'review'])),
+        ], 201);
     }
 
     public function messages(Request $request): JsonResponse
@@ -329,6 +389,8 @@ class ClientModuleController extends Controller
 
     private function serializeOrder(Order $o): array
     {
+        $review = $o->relationLoaded('review') ? $o->review : $o->review()->first();
+
         return [
             'id' => $o->id,
             'reference' => $o->reference,
@@ -349,6 +411,12 @@ class ClientModuleController extends Controller
                 'fullName' => $o->providerProfile->user?->full_name,
             ] : null,
             'trip' => TripPayload::trip($o->relationLoaded('activeTrip') ? $o->activeTrip : null),
+            'hasReview' => (bool) $review,
+            'review' => $review ? [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'body' => $review->body ?? '',
+            ] : null,
             'createdAt' => $o->created_at?->toIso8601String(),
         ];
     }

@@ -6,6 +6,7 @@ import { DeskAlert, DeskEmpty, DeskHeading } from "../../components/admin/DeskUI
 
 const STATUS = {
   nouvelle: { label: "Nouvelle", tone: "bg-desk-lilac" },
+  proposee: { label: "Proposée", tone: "bg-desk-butter" },
   programmee: { label: "Programmée", tone: "bg-desk-butter" },
   confirmee: { label: "Confirmée", tone: "bg-desk-mint" },
   en_cours: { label: "En cours", tone: "bg-desk-pink" },

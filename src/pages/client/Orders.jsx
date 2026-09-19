@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { Navigation } from "lucide-react";
 import Seo from "../../lib/Seo";
 import Button from "../../components/ui/Button";
+import OrderReviewForm from "../../components/tracking/OrderReviewForm";
 import { api } from "../../lib/api";
 import { formatEta, tripPresentation } from "../../lib/tripFormat";
 
 const STATUS = {
   nouvelle: "bg-gold-100 text-gold-800",
+  proposee: "bg-gold-100 text-gold-800",
   confirmee: "bg-sky/80 text-navy-800",
+  programmee: "bg-sky/80 text-navy-800",
   en_cours: "bg-teal-50 text-teal-800",
   terminee: "bg-ink-900/10 text-ink-900",
   annulee: "bg-coral-100 text-coral-800",
@@ -100,6 +103,14 @@ export default function ClientOrders() {
                     <Button type="button" size="sm" variant="outline" disabled={busy === o.id} onClick={() => cancel(o.id)}>
                       Annuler
                     </Button>
+                  )}
+                  {o.status === "terminee" && o.provider && (
+                    <OrderReviewForm
+                      order={o}
+                      onDone={(updated) =>
+                        setItems((list) => list.map((row) => (row.id === o.id ? { ...row, ...updated } : row)))
+                      }
+                    />
                   )}
                 </div>
               </div>

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'user_id',
@@ -77,5 +78,25 @@ class ProviderProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function trips(): HasMany
+    {
+        return $this->hasMany(OrderTrip::class);
+    }
+
+    public function availabilitySlots(): HasMany
+    {
+        return $this->hasMany(ProviderAvailabilitySlot::class);
+    }
+
+    public function providerReviews(): HasMany
+    {
+        return $this->hasMany(ProviderReview::class);
     }
 }

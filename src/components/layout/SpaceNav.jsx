@@ -5,6 +5,11 @@ import {
   CreditCard,
   MessageSquare,
   Briefcase,
+  Bell,
+  Clock,
+  CalendarDays,
+  Wallet,
+  Star,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -20,6 +25,11 @@ export const PRESTATAIRE_NAV = [
   { to: "/prestataire/dashboard", label: "Tableau de bord", icon: LayoutDashboard, end: true },
   { to: "/prestataire/profil", label: "Mon profil", icon: UserRound },
   { to: "/prestataire/missions", label: "Missions", icon: Briefcase },
+  { to: "/prestataire/notifications", label: "Notifications", icon: Bell },
+  { to: "/prestataire/disponibilite", label: "Disponibilité", icon: Clock },
+  { to: "/prestataire/planning", label: "Planning", icon: CalendarDays },
+  { to: "/prestataire/gains", label: "Gains", icon: Wallet },
+  { to: "/prestataire/avis", label: "Avis", icon: Star },
 ];
 
 /** Navigation horizontale (espace client / prestataire / onglets profil). */

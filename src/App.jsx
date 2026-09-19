@@ -50,6 +50,11 @@ const ClientFavorites = lazy(() => import("./pages/client/Favorites.jsx"));
 const PrestataireDashboard = lazy(() => import("./pages/prestataire/Dashboard.jsx"));
 const PrestataireProfile = lazy(() => import("./pages/prestataire/Profile.jsx"));
 const PrestataireMissions = lazy(() => import("./pages/prestataire/Missions.jsx"));
+const PrestataireNotifications = lazy(() => import("./pages/prestataire/Notifications.jsx"));
+const PrestataireDisponibilite = lazy(() => import("./pages/prestataire/Disponibilite.jsx"));
+const PrestatairePlanning = lazy(() => import("./pages/prestataire/Planning.jsx"));
+const PrestataireGains = lazy(() => import("./pages/prestataire/Gains.jsx"));
+const PrestataireAvis = lazy(() => import("./pages/prestataire/Avis.jsx"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard.jsx"));
 const AdminProviders = lazy(() => import("./pages/admin/Providers.jsx"));
 const AdminProviderDetail = lazy(() => import("./pages/admin/ProviderDetail.jsx"));
@@ -60,6 +65,8 @@ const AdminClients = lazy(() => import("./pages/admin/Clients.jsx"));
 const AdminClientDetail = lazy(() => import("./pages/admin/ClientDetail.jsx"));
 const AdminOrders = lazy(() => import("./pages/admin/Orders.jsx"));
 const AdminOrderDetail = lazy(() => import("./pages/admin/OrderDetail.jsx"));
+const AdminDemandes = lazy(() => import("./pages/admin/Demandes.jsx"));
+const AdminDevis = lazy(() => import("./pages/admin/Devis.jsx"));
 const AdminPayments = lazy(() => import("./pages/admin/Payments.jsx"));
 const AdminTariffs = lazy(() => import("./pages/admin/Tariffs.jsx"));
 const AdminSettings = lazy(() => import("./pages/admin/Settings.jsx"));
@@ -270,6 +277,47 @@ export default function App() {
                 />
 
                 <Route
+                  path="/prestataire/notifications"
+                  element={
+                    <ProtectedRoute roles={["prestataire"]}>
+                      <PrestataireNotifications />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/prestataire/disponibilite"
+                  element={
+                    <ProtectedRoute roles={["prestataire"]}>
+                      <PrestataireDisponibilite />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/prestataire/planning"
+                  element={
+                    <ProtectedRoute roles={["prestataire"]}>
+                      <PrestatairePlanning />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/prestataire/gains"
+                  element={
+                    <ProtectedRoute roles={["prestataire"]}>
+                      <PrestataireGains />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/prestataire/avis"
+                  element={
+                    <ProtectedRoute roles={["prestataire"]}>
+                      <PrestataireAvis />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
                   path="/admin/dashboard"
                   element={
                     <ProtectedRoute roles={["admin"]}>
@@ -346,6 +394,22 @@ export default function App() {
                   element={
                     <ProtectedRoute roles={["admin"]}>
                       <AdminOrders />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/demandes"
+                  element={
+                    <ProtectedRoute roles={["admin"]}>
+                      <AdminDemandes />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/devis"
+                  element={
+                    <ProtectedRoute roles={["admin"]}>
+                      <AdminDevis />
                     </ProtectedRoute>
                   }
                 />

@@ -5,6 +5,7 @@ import Seo from "../../lib/Seo";
 import Button from "../../components/ui/Button";
 import TripMap from "../../components/tracking/TripMap";
 import TripStatusPanel from "../../components/tracking/TripStatusPanel";
+import OrderReviewForm from "../../components/tracking/OrderReviewForm";
 import { api } from "../../lib/api";
 import { subscribeToMission } from "../../lib/realtime";
 import { formatEta, tripPresentation } from "../../lib/tripFormat";
@@ -12,7 +13,7 @@ import { formatEta, tripPresentation } from "../../lib/tripFormat";
 /** Filtres métier — mappés sur les statuts API. */
 const FILTERS = [
   { key: "all", label: "Toutes" },
-  { key: "en_attente", label: "En attente", statuses: ["nouvelle"] },
+  { key: "en_attente", label: "En attente", statuses: ["nouvelle", "proposee"] },
   { key: "confirmees", label: "Confirmées", statuses: ["confirmee"] },
   { key: "programmees", label: "Programmées", statuses: ["programmee"] },
   { key: "en_cours", label: "En cours", statuses: ["en_cours"] },
@@ -22,6 +23,7 @@ const FILTERS = [
 
 const STATUS_LABEL = {
   nouvelle: "En attente",
+  proposee: "Prestataire contacté",
   confirmee: "Confirmée",
   programmee: "Programmée",
   en_cours: "En cours",
@@ -31,6 +33,7 @@ const STATUS_LABEL = {
 
 const STATUS_STYLE = {
   nouvelle: "bg-gold-100 text-gold-800",
+  proposee: "bg-gold-100 text-gold-800",
   confirmee: "bg-sky/80 text-navy-800",
   programmee: "bg-teal-50 text-teal-800",
   en_cours: "bg-teal-50 text-teal-800",
@@ -285,6 +288,14 @@ export default function ClientReservations() {
                       <Button type="button" size="sm" variant="outline" disabled={busy === o.id} onClick={() => cancel(o.id)}>
                         Annuler
                       </Button>
+                    )}
+                    {o.status === "terminee" && o.provider && (
+                      <OrderReviewForm
+                        order={o}
+                        onDone={(updated) =>
+                          setItems((list) => list.map((row) => (row.id === o.id ? { ...row, ...updated } : row)))
+                        }
+                      />
                     )}
                   </div>
                 </div>

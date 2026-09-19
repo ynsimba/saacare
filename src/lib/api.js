@@ -98,6 +98,7 @@ export const api = {
   clientOrders: () => request("/api/client/orders", { auth: true }),
   createClientOrder: (body) => request("/api/client/orders", { method: "POST", body, auth: true }),
   cancelClientOrder: (id) => request(`/api/client/orders/${id}/cancel`, { method: "PATCH", auth: true }),
+  reviewClientOrder: (id, body) => request(`/api/client/orders/${id}/review`, { method: "POST", body, auth: true }),
   // Suivi de trajet — côté client
   orderTracking: (id) => request(`/api/client/orders/${id}/tracking`, { auth: true }),
   updateOrderAddress: (id, body) => request(`/api/client/orders/${id}/address`, { method: "PATCH", body, auth: true }),
@@ -122,13 +123,28 @@ export const api = {
   // Missions et suivi de trajet — côté prestataire
   prestataireMissions: () => request("/api/prestataire/missions", { auth: true }),
   prestataireMission: (id) => request(`/api/prestataire/missions/${id}`, { auth: true }),
+  prestatairePendingOffers: () => request("/api/prestataire/missions/pending-offers", { auth: true }),
+  acceptMission: (id) => request(`/api/prestataire/missions/${id}/accept`, { method: "POST", auth: true }),
+  refuseMission: (id, body = {}) =>
+    request(`/api/prestataire/missions/${id}/refuse`, { method: "POST", body, auth: true }),
   startTrip: (id) => request(`/api/prestataire/missions/${id}/trip`, { method: "POST", auth: true }),
   pushTripLocation: (id, body) =>
     request(`/api/prestataire/missions/${id}/location`, { method: "POST", body, auth: true }),
   tripArrived: (id) => request(`/api/prestataire/missions/${id}/trip/arrived`, { method: "POST", auth: true }),
   cancelTrip: (id) => request(`/api/prestataire/missions/${id}/trip/cancel`, { method: "POST", auth: true }),
+  prestataireNotifications: () => request("/api/prestataire/notifications", { auth: true }),
+  markPrestataireNotificationRead: (id) =>
+    request(`/api/prestataire/notifications/${id}/read`, { method: "PATCH", auth: true }),
+  markAllPrestataireNotificationsRead: () =>
+    request("/api/prestataire/notifications/read-all", { method: "POST", auth: true }),
   prestataireProfil: () => request("/api/prestataire/profil", { auth: true }),
   updatePrestataireProfil: (body) => request("/api/prestataire/profil", { method: "PATCH", body, auth: true }),
+  prestataireDisponibilite: () => request("/api/prestataire/disponibilite", { auth: true }),
+  updatePrestataireDisponibilite: (slots) =>
+    request("/api/prestataire/disponibilite", { method: "PUT", body: { slots }, auth: true }),
+  prestatairePlanning: () => request("/api/prestataire/planning", { auth: true }),
+  prestataireGains: () => request("/api/prestataire/gains", { auth: true }),
+  prestataireAvis: () => request("/api/prestataire/avis", { auth: true }),
 
   adminDashboard: () => request("/api/admin/dashboard", { auth: true }),
   adminPrestataires: () => request("/api/admin/prestataires", { auth: true }),
@@ -148,6 +164,15 @@ export const api = {
     request(`/api/admin/commandes/${id}/assign`, { method: "POST", body, auth: true }),
   adminPayments: () => request("/api/admin/paiements", { auth: true }),
   createAdminPayment: (body) => request("/api/admin/paiements", { method: "POST", body, auth: true }),
+  adminServiceRequests: () => request("/api/admin/leads/demandes", { auth: true }),
+  patchAdminServiceRequest: (id, body) =>
+    request(`/api/admin/leads/demandes/${id}`, { method: "PATCH", body, auth: true }),
+  adminQuoteRequests: () => request("/api/admin/leads/devis", { auth: true }),
+  patchAdminQuoteRequest: (id, body) =>
+    request(`/api/admin/leads/devis/${id}`, { method: "PATCH", body, auth: true }),
+  adminPlatformSettings: () => request("/api/admin/parametres-plateforme", { auth: true }),
+  updateAdminPlatformSettings: (settings) =>
+    request("/api/admin/parametres-plateforme", { method: "PUT", body: { settings }, auth: true }),
   adminReports: () => request("/api/admin/rapports", { auth: true }),
   adminAppointments: (params = {}) => {
     const qs = new URLSearchParams();
@@ -224,7 +249,7 @@ export const api = {
   provider: (reference) => request(`/api/providers/${encodeURIComponent(reference)}`),
   verifySeal: (seal) => request(`/api/providers/verify?seal=${encodeURIComponent(seal)}`),
 
-  // Legacy public forms (not yet ported to Laravel)
+  // Formulaires publics
   contact: (body) => request("/api/contact", { method: "POST", body }),
   request: (body) => request("/api/requests", { method: "POST", body }),
   quote: (body) => request("/api/quotes/request", { method: "POST", body }),

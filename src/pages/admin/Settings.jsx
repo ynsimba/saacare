@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Camera, Pencil, Trash2, X } from "lucide-react";
 import Seo from "../../lib/Seo";
 import Field from "../../components/ui/Field";
 import Button from "../../components/ui/Button";
 import { useAuth } from "../../lib/auth";
+import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading, initials } from "../../components/admin/DeskUI";
 import { fileToDataUrl, onMediaChange, readMedia, writeMedia } from "../../lib/userMedia";
 
 const MAX_BYTES = 2.5 * 1024 * 1024;
+
+const PLATFORM_FIELDS = [
+  { key: "company_name", label: "Nom de l’entreprise" },
+  { key: "mobile_money_number", label: "Numéro Mobile Money" },
+  { key: "support_phone", label: "Téléphone support" },
+  { key: "support_email", label: "E-mail support" },
+];
 
 export default function AdminSettings() {
   const { user, updateProfile, changePassword } = useAuth();
@@ -31,12 +39,37 @@ export default function AdminSettings() {
   const [pwdMessage, setPwdMessage] = useState("");
   const [pwdError, setPwdError] = useState("");
 
+  const [platform, setPlatform] = useState({
+    company_name: "",
+    mobile_money_number: "",
+    support_phone: "",
+    support_email: "",
+  });
+  const [platformSaving, setPlatformSaving] = useState(false);
+  const [platformMessage, setPlatformMessage] = useState("");
+  const [platformError, setPlatformError] = useState("");
+
   useEffect(() => {
     if (!user) return;
     setFullName(user.fullName || "");
     setPhone(user.phone || "");
     setAvatarUrl(readMedia(user.id, "avatar"));
   }, [user]);
+
+  useEffect(() => {
+    api
+      .adminPlatformSettings()
+      .then((data) => {
+        const s = data.settings || {};
+        setPlatform({
+          company_name: s.company_name || "",
+          mobile_money_number: s.mobile_money_number || "",
+          support_phone: s.support_phone || "",
+          support_email: s.support_email || "",
+        });
+      })
+      .catch((err) => setPlatformError(err.message || "Impossible de charger les paramètres plateforme."));
+  }, []);
 
   useEffect(() => {
     if (!user?.id) return undefined;
@@ -46,9 +79,9 @@ export default function AdminSettings() {
   }, [user?.id]);
 
   useEffect(() => {
-    if (location.hash !== "#admin-profile-edit") return;
+    if (location.hash !== "#admin-profile-edit" && location.hash !== "#plateforme") return;
     requestAnimationFrame(() => {
-      document.getElementById("admin-profile-edit")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, [location.hash, location.key]);
 
@@ -138,11 +171,81 @@ export default function AdminSettings() {
     }
   };
 
+  const onSavePlatform = async (e) => {
+    e.preventDefault();
+    setPlatformSaving(true);
+    setPlatformError("");
+    setPlatformMessage("");
+    try {
+      const data = await api.updateAdminPlatformSettings(platform);
+      const s = data.settings || {};
+      setPlatform({
+        company_name: s.company_name || "",
+        mobile_money_number: s.mobile_money_number || "",
+        support_phone: s.support_phone || "",
+        support_email: s.support_email || "",
+      });
+      setPlatformMessage("Paramètres plateforme enregistrés.");
+    } catch (err) {
+      setPlatformError(err.message || "Impossible d’enregistrer.");
+    } finally {
+      setPlatformSaving(false);
+    }
+  };
+
   return (
     <>
       <Seo title="Paramètres" path="/admin/parametres" noindex />
       <DeskHeading as="h1">Paramètres</DeskHeading>
-      <p className="mt-2 text-sm text-desk-ink/60">Compte administrateur et sécurité.</p>
+      <p className="mt-2 text-sm text-desk-ink/60">
+        Compte administrateur, sécurité et{" "}
+        <Link to="#plateforme" className="font-semibold text-teal-800 underline-offset-2 hover:underline">
+          paramètres plateforme
+        </Link>
+        .
+      </p>
+
+      <form
+        id="plateforme"
+        onSubmit={onSavePlatform}
+        className="mt-5 scroll-mt-24 rounded-3xl bg-white p-5 sm:p-6"
+      >
+        <h2 className="text-lg font-semibold tracking-tight">Plateforme</h2>
+        <p className="mt-1 text-sm text-desk-ink/55">
+          Coordonnées affichées aux clients pour les paiements Mobile Money.
+        </p>
+
+        <div className="mt-5 grid max-w-xl gap-3 sm:grid-cols-2">
+          {PLATFORM_FIELDS.map((f) => (
+            <label key={f.key} className={`block ${f.key === "company_name" || f.key === "support_email" ? "sm:col-span-2" : ""}`}>
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-desk-ink/45">
+                {f.label}
+              </span>
+              <input
+                type={f.key.includes("email") ? "email" : "text"}
+                value={platform[f.key] || ""}
+                onChange={(e) => setPlatform((p) => ({ ...p, [f.key]: e.target.value }))}
+                className="h-12 w-full rounded-2xl bg-desk-canvas px-4 text-sm font-medium text-desk-ink outline-none transition-[background-color] focus:bg-white focus-visible:outline-none"
+              />
+            </label>
+          ))}
+        </div>
+
+        {platformError && (
+          <div className="mt-4">
+            <DeskAlert>{platformError}</DeskAlert>
+          </div>
+        )}
+        {platformMessage && (
+          <p className="mt-4 rounded-2xl bg-desk-mint px-4 py-2.5 text-sm font-medium" role="status">
+            {platformMessage}
+          </p>
+        )}
+
+        <Button type="submit" className="mt-5" disabled={platformSaving}>
+          {platformSaving ? "Enregistrement…" : "Enregistrer la plateforme"}
+        </Button>
+      </form>
 
       <form
         id="admin-profile-edit"
@@ -211,7 +314,7 @@ export default function AdminSettings() {
         </div>
 
         <div className="mt-6">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-desk-ink">Informations</h3>
             {!editing ? (
               <button

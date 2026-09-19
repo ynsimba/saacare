@@ -19,11 +19,12 @@ return new class extends Migration
             $table->string('frequency')->default('');
             $table->date('desired_date')->nullable();
             $table->text('need')->nullable();
-            $table->string('status', 32)->default('nouvelle'); // nouvelle|confirmee|programmee|en_cours|terminee|annulee
+            $table->string('status', 32)->default('nouvelle'); // nouvelle|proposee|confirmee|programmee|en_cours|terminee|annulee
             $table->unsignedInteger('amount')->default(0); // CDF, 0 = sur devis
             $table->timestamps();
 
             $table->index(['client_id', 'status']);
+            $table->index(['provider_profile_id', 'status']);
         });
 
         Schema::create('payments', function (Blueprint $table) {

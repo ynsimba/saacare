@@ -28,6 +28,7 @@ import { formatFreshness } from "../../lib/tripFormat";
 
 const ORDER_STATUS = {
   nouvelle: { label: "Nouvelle", className: "bg-gold-100 text-gold-800" },
+  proposee: { label: "À accepter", className: "bg-gold-100 text-gold-800" },
   confirmee: { label: "Confirmée", className: "bg-sky/80 text-navy-800" },
   programmee: { label: "Programmée", className: "bg-sky/80 text-navy-800" },
   en_cours: { label: "En cours", className: "bg-teal-50 text-teal-800" },
@@ -70,6 +71,12 @@ export default function PrestataireMissions() {
 
   useEffect(() => {
     load();
+  }, [load]);
+
+  useEffect(() => {
+    const onResponse = () => load({ silent: true });
+    window.addEventListener("saacare:mission-response", onResponse);
+    return () => window.removeEventListener("saacare:mission-response", onResponse);
   }, [load]);
 
   // Met à jour le panneau trajet dès qu’une position est transmise.
@@ -128,6 +135,30 @@ export default function PrestataireMissions() {
     }
   };
 
+  const acceptOffer = async (orderId) => {
+    setBusy(orderId);
+    try {
+      await api.acceptMission(orderId);
+      await load({ silent: true });
+    } catch (err) {
+      setError(err.message || "Impossible d’accepter cette course.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const refuseOffer = async (orderId) => {
+    setBusy(orderId);
+    try {
+      await api.refuseMission(orderId);
+      await load({ silent: true });
+    } catch (err) {
+      setError(err.message || "Impossible de refuser cette course.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <>
       <Seo title="Missions" path="/prestataire/missions" noindex />
@@ -168,6 +199,8 @@ export default function PrestataireMissions() {
                 onStart={() => startTrip(mission.order.id)}
                 onArrive={() => arrive(mission.order.id)}
                 onCancel={() => cancelTrip(mission.order.id)}
+                onAccept={() => acceptOffer(mission.order.id)}
+                onRefuse={() => refuseOffer(mission.order.id)}
                 onRetryGps={refreshGps}
               />
             ))}
@@ -183,11 +216,12 @@ export default function PrestataireMissions() {
   );
 }
 
-function MissionCard({ mission, gps, busy, blocked, sendError, onStart, onArrive, onCancel, onRetryGps }) {
-  const { order, destination, trip, client, need, desiredDate, trackingAllowed } = mission;
+function MissionCard({ mission, gps, busy, blocked, sendError, onStart, onArrive, onCancel, onAccept, onRefuse, onRetryGps }) {
+  const { order, destination, trip, client, need, desiredDate, trackingAllowed, needsResponse, amount } = mission;
   const status = ORDER_STATUS[order.status] ?? { label: order.status, className: "bg-paper-200 text-ink-900" };
   const isActive = Boolean(trip?.isActive);
   const arrived = trip?.status === "arrive";
+  const awaitingResponse = Boolean(needsResponse) || order.status === "proposee";
 
   const mapsQuery = destination.isGeolocated
     ? `${destination.latitude},${destination.longitude}`
@@ -316,7 +350,18 @@ function MissionCard({ mission, gps, busy, blocked, sendError, onStart, onArrive
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {!isActive && !arrived && trackingAllowed && (
+        {awaitingResponse && (
+          <>
+            <Button type="button" disabled={busy} onClick={onAccept} withArrow={false}>
+              <CheckCircle2 className="size-4" aria-hidden="true" />
+              Accepter{amount ? ` · ${new Intl.NumberFormat("fr-CD", { style: "currency", currency: "CDF", maximumFractionDigits: 0 }).format(amount)}` : ""}
+            </Button>
+            <Button type="button" variant="outline" size="sm" disabled={busy} onClick={onRefuse}>
+              Refuser
+            </Button>
+          </>
+        )}
+        {!awaitingResponse && !isActive && !arrived && trackingAllowed && (
           <Button type="button" disabled={busy || blocked} onClick={onStart} withArrow>
             <Navigation className="size-4" aria-hidden="true" />
             Je me rends chez le client
@@ -339,10 +384,10 @@ function MissionCard({ mission, gps, busy, blocked, sendError, onStart, onArrive
             Arrivée enregistrée — le partage de position est arrêté.
           </p>
         )}
-        {blocked && !isActive && !arrived && (
+        {blocked && !isActive && !arrived && !awaitingResponse && (
           <p className="text-sm text-ink-900/55">Terminez d’abord le trajet en cours sur une autre mission.</p>
         )}
-        {!trackingAllowed && !arrived && (
+        {!awaitingResponse && !trackingAllowed && !arrived && (
           <p className="text-sm text-ink-900/55">Le suivi s’activera dès que SaaCare aura confirmé cette mission.</p>
         )}
       </div>

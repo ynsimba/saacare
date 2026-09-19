@@ -16,12 +16,12 @@ import {
 import Reveal from "../ui/Reveal";
 import Button from "../ui/Button";
 import { EASE, useIsReducedMotion } from "../../lib/motion";
+import { EMAIL } from "../../data/site";
 
 const YEAR = new Date().getFullYear();
 const PHONE = "+243 816 483 538";
 const PHONE_HREF = "tel:+243816483538";
 const WHATSAPP_HREF = "https://wa.me/243816483538";
-const EMAIL = "contact@saacare.com";
 
 const COLUMNS = [
   {

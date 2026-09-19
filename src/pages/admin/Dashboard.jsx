@@ -29,6 +29,7 @@ const STAT_LINKS = {
 
 const ORDER_STATUS = {
   nouvelle: "Nouvelle",
+  proposee: "Proposée",
   confirmee: "Confirmée",
   programmee: "Programmée",
   en_cours: "En cours",

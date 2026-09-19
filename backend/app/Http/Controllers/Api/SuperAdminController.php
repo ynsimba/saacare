@@ -286,8 +286,12 @@ class SuperAdminController extends Controller
         $deleted = [];
 
         DB::transaction(function () use ($actor, &$deleted) {
+            // Ordre enfant → parent pour respecter les FK.
             $deleted['order_trip_points'] = OrderTripPoint::query()->delete();
             $deleted['order_trips'] = OrderTrip::query()->delete();
+            if (Schema::hasTable('mission_notes')) {
+                $deleted['mission_notes'] = DB::table('mission_notes')->delete();
+            }
             $deleted['payments'] = Payment::query()->delete();
             $deleted['messages'] = Message::query()->delete();
             $deleted['notifications'] = AppNotification::query()->delete();
@@ -295,9 +299,6 @@ class SuperAdminController extends Controller
             $deleted['orders'] = Order::query()->delete();
             $deleted['provider_profiles'] = ProviderProfile::query()->delete();
             $deleted['appointments'] = Appointment::query()->delete();
-            if (Schema::hasTable('mission_notes')) {
-                $deleted['mission_notes'] = DB::table('mission_notes')->delete();
-            }
             $deleted['login_logs'] = LoginLog::query()->delete();
 
             if (Schema::hasTable('personal_access_tokens')) {

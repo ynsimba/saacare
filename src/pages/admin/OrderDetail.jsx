@@ -10,6 +10,7 @@ import { domains } from "../../data/domains";
 
 const STATUS = {
   nouvelle: "Nouvelle",
+  proposee: "Proposée (attente prestataire)",
   programmee: "Programmée",
   confirmee: "Confirmée",
   en_cours: "En cours",
@@ -299,10 +300,10 @@ export default function AdminOrderDetail() {
                 <div className="flex flex-wrap gap-2">
                   <Button type="submit" disabled={saving || !providerId} withArrow={false}>
                     {saving
-                      ? "Assignation…"
+                      ? "Envoi…"
                       : item.provider?.id && String(item.provider.id) === String(providerId)
-                        ? "Confirmer l’assignation"
-                        : "Assigner ce prestataire"}
+                        ? "Renvoyer la proposition"
+                        : "Proposer à ce prestataire"}
                   </Button>
                   {item.provider?.id && (
                     <Link

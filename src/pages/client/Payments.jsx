@@ -16,6 +16,7 @@ export default function ClientPayments() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
+  const [instructions, setInstructions] = useState(null);
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ orderId: "", amount: "", method: "mobile_money", note: "" });
 
@@ -40,14 +41,16 @@ export default function ClientPayments() {
     setSending(true);
     setError("");
     setOk("");
+    setInstructions(null);
     try {
-      await api.createClientPayment({
+      const data = await api.createClientPayment({
         orderId: Number(form.orderId),
         amount: Number(form.amount),
         method: form.method,
         note: form.note,
       });
       setOk("Paiement enregistré (en attente de confirmation).");
+      if (data.paymentInstructions) setInstructions(data.paymentInstructions);
       setForm({ orderId: "", amount: "", method: "mobile_money", note: "" });
       await load();
     } catch (err) {
@@ -95,6 +98,26 @@ export default function ClientPayments() {
 
         {error && <p className="mt-4 rounded-lg border border-coral-500/30 bg-coral-100/60 px-3 py-2 text-sm text-coral-800" role="alert">{error}</p>}
         {ok && <p className="mt-4 rounded-lg border border-teal-600/20 bg-teal-50 px-3 py-2 text-sm text-teal-800" role="status">{ok}</p>}
+
+        {instructions && (
+          <div className="mt-4 rounded-xl border border-teal-600/20 bg-teal-50/70 px-4 py-3 text-sm text-teal-900" role="status">
+            <p className="font-semibold">Instructions de paiement</p>
+            {instructions.mobileMoneyNumber && (
+              <p className="mt-1">
+                Mobile Money : <strong className="font-mono">{instructions.mobileMoneyNumber}</strong>
+              </p>
+            )}
+            {instructions.supportPhone && (
+              <p className="mt-1">Support : {instructions.supportPhone}</p>
+            )}
+            {instructions.supportEmail && (
+              <p className="mt-1">E-mail : {instructions.supportEmail}</p>
+            )}
+            <p className="mt-2 text-teal-800/80">
+              Indiquez la référence du paiement dans le libellé du transfert, puis attendez la confirmation SaaCare.
+            </p>
+          </div>
+        )}
 
         <ul className="mt-6 flex flex-col gap-3">
           {items.map((p) => (

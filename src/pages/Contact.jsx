@@ -9,9 +9,10 @@ import Field from "../components/ui/Field";
 import Button from "../components/ui/Button";
 import { EASE } from "../lib/motion";
 import { api } from "../lib/api";
+import { EMAIL } from "../data/site";
 
 const CONTACT_INFO = [
-  { icon: Mail, label: "contact@saacare.com", sub: "Réponse sous 24 h ouvrées", href: "mailto:contact@saacare.com" },
+  { icon: Mail, label: EMAIL, sub: "Réponse sous 24 h ouvrées", href: `mailto:${EMAIL}` },
   { icon: Phone, label: "+243 816 483 538", sub: "Du lundi au samedi, 8 h – 18 h", href: "tel:+243816483538" },
   {
     icon: MapPin,

@@ -21,6 +21,7 @@ import { formatDistance, formatEta, formatFreshness } from "../../lib/tripFormat
 
 const ORDER_STATUS = {
   nouvelle: "Nouvelle",
+  proposee: "Proposée",
   programmee: "Programmée",
   confirmee: "Confirmée",
   en_cours: "En cours",

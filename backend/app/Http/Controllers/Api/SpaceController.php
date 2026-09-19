@@ -9,10 +9,13 @@ use App\Models\Message;
 use App\Models\Order;
 use App\Models\OrderTrip;
 use App\Models\Payment;
+use App\Models\PlatformSetting;
 use App\Models\ProviderProfile;
+use App\Models\ProviderReview;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -43,6 +46,26 @@ class SpaceController extends Controller
             ? Order::where('provider_profile_id', $profileId)->whereNotIn('status', ['annulee', 'terminee'])->count()
             : 0;
 
+        $monthGains = $profileId
+            ? (int) Payment::query()
+                ->where('status', 'paye')
+                ->whereYear('created_at', now()->year)
+                ->whereMonth('created_at', now()->month)
+                ->whereHas('order', fn ($q) => $q->where('provider_profile_id', $profileId))
+                ->sum('amount')
+            : 0;
+
+        $reviewStats = $profileId
+            ? ProviderReview::query()
+                ->where('provider_profile_id', $profileId)
+                ->where('status', 'published')
+            : null;
+        $reviewCount = $reviewStats ? (clone $reviewStats)->count() : 0;
+        $reviewAvg = $reviewCount > 0 ? round((float) (clone $reviewStats)->avg('rating'), 1) : null;
+        $avisValue = $reviewCount > 0
+            ? ($reviewAvg.' ★ ('.$reviewCount.')')
+            : '0';
+
         // Trajet laissé en cours : la PWA a pu être fermée en route (§11).
         $activeTrip = $profileId
             ? OrderTrip::where('provider_profile_id', $profileId)
@@ -54,8 +77,8 @@ class SpaceController extends Controller
         return response()->json([
             'stats' => [
                 ['label' => 'Missions', 'value' => $missions],
-                ['label' => 'Gains du mois', 'value' => '—'],
-                ['label' => 'Avis', 'value' => (int) ($user->providerProfile?->reviews ?? 0)],
+                ['label' => 'Gains du mois', 'value' => number_format($monthGains, 0, ',', ' ').' CDF'],
+                ['label' => 'Avis', 'value' => $avisValue],
             ],
             'activeTripOrderId' => $activeTrip?->order_id,
             'providerStatus' => $status,
@@ -289,15 +312,8 @@ class SpaceController extends Controller
     {
         $data = $request->validate([
             'providerProfileId' => ['required', 'integer', 'exists:provider_profiles,id'],
-            'status' => ['sometimes', Rule::in(['confirmee', 'programmee', 'en_cours'])],
             'note' => ['nullable', 'string', 'max:500'],
         ]);
-
-        $order = Order::with(['client', 'providerProfile.user'])->findOrFail($id);
-
-        if (in_array($order->status, ['annulee', 'terminee'], true)) {
-            return response()->json(['error' => 'Cette commande est clôturée et ne peut plus être assignée.'], 422);
-        }
 
         $profile = ProviderProfile::with('user')
             ->where('id', $data['providerProfileId'])
@@ -308,53 +324,69 @@ class SpaceController extends Controller
             return response()->json(['error' => 'Prestataire introuvable ou non approuvé.'], 422);
         }
 
-        $previousId = $order->provider_profile_id;
-        $order->provider_profile_id = $profile->id;
+        $order = DB::transaction(function () use ($id, $profile) {
+            $order = Order::query()->whereKey($id)->lockForUpdate()->firstOrFail();
 
-        if (isset($data['status'])) {
-            $order->status = $data['status'];
-        } elseif (in_array($order->status, ['nouvelle', 'confirmee'], true)) {
-            $order->status = $order->desired_date ? 'programmee' : 'confirmee';
+            if (in_array($order->status, ['annulee', 'terminee'], true)) {
+                return ['error' => 'Cette commande est clôturée et ne peut plus être assignée.', 'status' => 422];
+            }
+
+            // Ne pas écraser une acceptation déjà confirmée sans repasser par un flux explicite.
+            if (in_array($order->status, ['confirmee', 'programmee', 'en_cours'], true)
+                && (int) $order->provider_profile_id === (int) $profile->id) {
+                return ['error' => 'Cette course est déjà confirmée pour ce prestataire.', 'status' => 422];
+            }
+
+            $order->provider_profile_id = $profile->id;
+            $order->status = 'proposee';
+            $order->save();
+
+            return ['order' => $order];
+        });
+
+        if (isset($order['error'])) {
+            return response()->json(['error' => $order['error']], $order['status']);
         }
 
-        $order->save();
-        $order->load(['client', 'providerProfile.user']);
+        /** @var Order $orderModel */
+        $orderModel = $order['order'];
+        $orderModel->load(['client', 'providerProfile.user']);
 
         $providerName = $profile->user?->full_name ?: ($profile->metier ?: 'prestataire');
 
-        if ($order->client_id) {
+        if ($orderModel->client_id) {
             AppNotification::create([
-                'user_id' => $order->client_id,
-                'title' => 'Prestataire assigné',
-                'body' => "Votre commande {$order->reference} est confiée à {$providerName}.",
+                'user_id' => $orderModel->client_id,
+                'title' => 'Prestataire contacté',
+                'body' => "Nous avons proposé la mission {$orderModel->reference} à {$providerName}. En attente de sa réponse.",
                 'type' => 'order',
                 'link' => '/client/commandes',
             ]);
 
             if (! empty($data['note'])) {
                 Message::create([
-                    'user_id' => $order->client_id,
+                    'user_id' => $orderModel->client_id,
                     'thread' => 'support',
-                    'body' => "SaaCare — assignation {$order->reference} : ".$data['note'],
+                    'body' => "SaaCare — proposition {$orderModel->reference} : ".$data['note'],
                     'from_staff' => true,
                 ]);
             }
         }
 
-        if ($profile->user_id && (int) $previousId !== (int) $profile->id) {
-            $missionLabel = $order->metier ?: $order->domain;
+        if ($profile->user_id) {
+            $missionLabel = $orderModel->metier ?: $orderModel->domain;
             AppNotification::create([
                 'user_id' => $profile->user_id,
-                'title' => 'Nouvelle mission',
-                'body' => "La mission {$order->reference} ({$missionLabel}) vous a été assignée.",
-                'type' => 'order',
+                'title' => 'Nouvelle course proposée',
+                'body' => "La course {$orderModel->reference} ({$missionLabel}) vous est proposée. Acceptez ou refusez.",
+                'type' => 'mission_offer',
                 'link' => '/prestataire/missions',
             ]);
         }
 
         return response()->json([
-            'item' => $this->serializeAdminOrder($order->fresh(['client', 'providerProfile.user']), true),
-            'message' => 'Prestataire assigné avec succès.',
+            'item' => $this->serializeAdminOrder($orderModel->fresh(['client', 'providerProfile.user']), true),
+            'message' => 'Proposition envoyée au prestataire.',
         ]);
     }
 
@@ -422,6 +454,7 @@ class SpaceController extends Controller
 
         return response()->json([
             'item' => $this->serializeAdminPayment($payment->load(['client', 'order'])),
+            'paymentInstructions' => PlatformSetting::paymentInstructions(),
         ], 201);
     }
 

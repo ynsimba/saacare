@@ -48,6 +48,26 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'client_id');
     }
 
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(AppNotification::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'client_id');
+    }
+
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(ClientFavorite::class);
+    }
+
     public function toPublicArray(): array
     {
         $data = [

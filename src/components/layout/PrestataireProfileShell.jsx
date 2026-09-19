@@ -219,15 +219,17 @@ export default function PrestataireProfileShell() {
               >
                 <Briefcase className="size-4" aria-hidden="true" />
               </Link>
-              <button
-                type="button"
-                className="relative inline-flex size-10 items-center justify-center rounded-lg bg-paper-200 text-ink-900/45"
-                aria-label="Notifications (bientôt)"
-                title="Bientôt disponible"
-                disabled
+              <Link
+                to="/prestataire/notifications"
+                className={`relative inline-flex size-10 items-center justify-center rounded-lg transition-colors ${
+                  location.pathname.startsWith("/prestataire/notifications")
+                    ? "bg-teal-50 text-teal-700"
+                    : "bg-paper-200 text-ink-900 hover:bg-teal-50 hover:text-teal-800"
+                }`}
+                aria-label="Notifications"
               >
                 <Bell className="size-4" aria-hidden="true" />
-              </button>
+              </Link>
               <div className="relative">
                 <button
                   type="button"

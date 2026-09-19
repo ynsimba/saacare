@@ -63,4 +63,14 @@ class Order extends Model
             ->where('status', OrderTrip::STATUS_EN_ROUTE)
             ->latestOfMany();
     }
+
+    public function missionNotes(): HasMany
+    {
+        return $this->hasMany(MissionNote::class);
+    }
+
+    public function review(): HasOne
+    {
+        return $this->hasOne(ProviderReview::class);
+    }
 }
