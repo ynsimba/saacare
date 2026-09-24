@@ -18,8 +18,6 @@ export default function SaaTrustTimeline() {
   return (
     <Section3D variant="up" className="bg-white">
       <section className="relative overflow-hidden bg-white py-8 sm:py-20" aria-labelledby="saatrust-heading">
-        <div className="pointer-events-none absolute -right-24 top-10 -z-10 size-[28rem] rounded-full bg-teal-100/40 blur-3xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute -left-20 bottom-0 -z-10 size-[22rem] rounded-full bg-gold-100/50 blur-3xl" aria-hidden="true" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col justify-between gap-4 sm:gap-8 lg:flex-row lg:items-end">
@@ -43,7 +41,7 @@ export default function SaaTrustTimeline() {
             {saatrustSteps.map((step, index) => (
               <li key={step.number} className="flex flex-col rounded-2xl border border-ink-900/6 bg-paper-100/80 p-3.5">
                 <span className="flex items-center justify-between">
-                  <span className="grid size-9 place-items-center rounded-xl bg-teal-600 text-white shadow-[0_8px_20px_-8px_rgba(1,67,61,0.65)]">
+                  <span className="grid size-9 place-items-center rounded-full bg-teal-600 text-white shadow-[0_8px_20px_-8px_rgba(1,67,61,0.65)]">
                     <ProcessIcon name={step.icon} className="size-4" />
                   </span>
                   <span className="font-mono text-[0.62rem] font-bold tracking-[0.16em] text-gold-700">
@@ -59,8 +57,8 @@ export default function SaaTrustTimeline() {
           </ol>
 
           {/* ---------- Tablet + desktop ---------- */}
-          <div className="relative mt-14 hidden lg:block">
-            <svg className="absolute left-0 right-0 top-6 hidden h-4 w-full lg:block" viewBox="0 0 1000 16" preserveAspectRatio="none" aria-hidden="true">
+          <div className="relative mt-14 hidden rounded-[2.25rem] border border-ink-900/6 bg-paper-100 px-8 pb-9 pt-8 lg:block">
+            <svg className="absolute left-14 top-[3.1rem] hidden h-4 w-[calc(100%-7rem)] lg:block" viewBox="0 0 1000 16" preserveAspectRatio="none" aria-hidden="true">
               <motion.path
                 d="M0 8 H1000"
                 stroke="#EE5518"
@@ -77,12 +75,12 @@ export default function SaaTrustTimeline() {
             <Stagger as="ol" stagger={0.07} className="relative grid grid-cols-7 gap-4">
               {saatrustSteps.map((step) => (
                 <RevealItem as="li" key={step.number} variant="up" className="group relative flex flex-col">
-                  <span className="relative z-10 grid size-12 shrink-0 place-items-center rounded-2xl bg-teal-600 text-white shadow-soft ring-4 ring-white transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:scale-110">
+                  <span className="relative z-10 grid size-12 shrink-0 place-items-center rounded-full bg-teal-600 text-white shadow-soft ring-[6px] ring-paper-100 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:scale-110">
                     <ProcessIcon name={step.icon} className="size-5" />
                   </span>
                   <span className="mt-4">
                     <span className="block text-xs font-bold tracking-[0.16em] text-gold-700">{step.number}</span>
-                    <span className="mt-0.5 block font-display text-lg font-bold text-ink-900">{step.title}</span>
+                    <span className="mt-0.5 block font-display text-lg font-extrabold text-ink-900">{step.title}</span>
                     <span className="mt-1 block text-sm leading-relaxed text-ink-900/70">{step.proof}</span>
                   </span>
                 </RevealItem>
@@ -92,7 +90,7 @@ export default function SaaTrustTimeline() {
 
           <Reveal variant="fade" delay={0.15} className="mt-5 overflow-hidden rounded-2xl bg-gradient-to-br from-mint to-sky/40 p-4 sm:mt-12 sm:p-5">
             <div className="flex items-start gap-3 sm:items-center">
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-teal-600 text-white sm:size-10">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-teal-600 text-white sm:size-10">
                 <ShieldCheck className="size-4 sm:size-5" aria-hidden="true" />
               </span>
               <p className="text-xs leading-snug text-ink-900 sm:text-sm sm:leading-relaxed">
@@ -103,7 +101,7 @@ export default function SaaTrustTimeline() {
             <div className="mt-3 flex gap-2 sm:hidden">
               <Link
                 to="/saatrust"
-                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-teal-600 px-3 py-2.5 text-sm font-semibold text-white"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-teal-600 px-3 py-2.5 text-sm font-semibold text-white"
               >
                 Le protocole <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>

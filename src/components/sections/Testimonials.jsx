@@ -47,10 +47,6 @@ export default function Testimonials() {
       className="relative overflow-hidden bg-white py-8 sm:py-20"
       aria-labelledby="testimonials-heading"
     >
-      <div
-        className="pointer-events-none absolute right-[-10%] top-10 -z-10 size-[30rem] rounded-full bg-gold-100/70 blur-3xl"
-        aria-hidden="true"
-      />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
@@ -63,13 +59,27 @@ export default function Testimonials() {
         <Reveal
           variant="scale"
           delay={0.15}
-          className="relative mx-auto mt-5 max-w-3xl sm:mt-14"
+          className="relative mx-auto mt-5 grid max-w-6xl items-stretch gap-5 sm:mt-14 lg:grid-cols-[0.85fr_1.15fr]"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="relative overflow-hidden rounded-2xl border border-ink-900/8 bg-paper-100 px-5 py-6 shadow-soft sm:px-12 sm:py-12">
+          {/* Photo + capsule de note (grand écran) */}
+          <div className="relative hidden overflow-hidden rounded-[2.25rem] lg:block">
+            <img src="/hero-4.png" alt="" loading="lazy" className="absolute inset-0 size-full object-cover [object-position:60%_40%]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink-950/60 to-transparent" aria-hidden="true" />
+            <div className="glass-capsule absolute bottom-5 left-5 flex items-center gap-3 rounded-2xl px-4 py-3">
+              <div className="flex gap-0.5" aria-hidden="true">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} className="size-4 fill-gold-500 text-gold-500" />
+                ))}
+              </div>
+              <span className="text-sm font-semibold text-ink-900">Avis recueillis après mission</span>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[2.25rem] border border-ink-900/8 bg-paper-100 px-5 py-6 shadow-soft sm:px-12 sm:py-12">
             <Quote
-              className="absolute right-8 top-8 size-16 text-gold-500/15"
+              className="absolute right-8 top-8 size-20 text-gold-500/20"
               aria-hidden="true"
               strokeWidth={1.5}
             />
@@ -92,7 +102,7 @@ export default function Testimonials() {
                     ))}
                   </div>
 
-                  <blockquote className="text-pretty font-display text-lg leading-relaxed text-ink-900 sm:text-2xl">
+                  <blockquote className="text-pretty font-display text-xl font-semibold leading-snug text-ink-900 sm:text-[1.7rem]">
                     « {active.quote} »
                   </blockquote>
 

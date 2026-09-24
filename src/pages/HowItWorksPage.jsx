@@ -56,11 +56,11 @@ export default function HowItWorksPage() {
               Centre d'aide
             </Button>
           </div>
-          <dl className="grid w-full max-w-2xl grid-cols-1 divide-y divide-white/15 border-t border-white/15 pt-6 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <dl className="grid w-full max-w-2xl grid-cols-1 divide-y divide-ink-900/10 border-t border-ink-900/10 pt-6 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {HIGHLIGHTS.map((item) => (
               <div key={item.label} className="flex flex-col-reverse px-4 py-3 text-center sm:py-0">
-                <dt className="mt-1 text-xs leading-snug text-paper-50/80">{item.label}</dt>
-                <dd className="font-display text-2xl font-bold text-paper-50">{item.value}</dd>
+                <dt className="mt-1 text-xs leading-snug text-ink-900/60">{item.label}</dt>
+                <dd className="font-display text-3xl font-extrabold tabular-nums text-teal-700">{item.value}</dd>
               </div>
             ))}
           </dl>
@@ -109,7 +109,7 @@ export default function HowItWorksPage() {
             <Stagger as="ol" stagger={0.06} className="snap-row mt-6 grid grid-cols-2 gap-4 [--snap-w:36%] [--snap-w-sm:24%] sm:mt-12 md:grid-cols-4 lg:grid-cols-7">
               {saatrustSteps.map((step) => (
                 <RevealItem as="li" key={step.number} variant="up" className="rounded-2xl bg-white p-4 text-center">
-                  <span className="mx-auto grid size-11 place-items-center rounded-xl bg-teal-600 text-white">
+                  <span className="mx-auto grid size-11 place-items-center rounded-full bg-teal-600 text-white">
                     <ProcessIcon name={step.icon} className="size-5" />
                   </span>
                   <span className="mt-3 block text-xs font-bold text-gold-700">{step.number}</span>

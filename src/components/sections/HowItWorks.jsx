@@ -46,14 +46,6 @@ export default function HowItWorks({ compact = false }) {
       className="relative overflow-hidden bg-paper-100 py-8 sm:py-20"
       aria-labelledby="how-it-works-heading"
     >
-      <div
-        className="pointer-events-none absolute -left-40 top-1/4 -z-10 size-[32rem] rounded-full bg-teal-100/50 blur-3xl"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -right-32 bottom-0 -z-10 size-[26rem] rounded-full bg-gold-100/50 blur-3xl"
-        aria-hidden="true"
-      />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading

@@ -7,12 +7,12 @@ import { useLocation } from "react-router-dom";
  * exception et gardent une barre claire. Évalué dès le premier rendu, sans
  * clignotement au chargement.
  */
-const LIGHT_HEADER_ROUTES = new Set([]);
 
 export function routeNavTheme(pathname) {
-  // Profils prestataires : en-tête blanc → barre claire + logo couleur (`logo.png`).
-  if (pathname.startsWith("/prestataires/")) return "light";
-  return LIGHT_HEADER_ROUTES.has(pathname) ? "light" : "dark";
+  // Refonte « verre liquide » : tous les en-têtes sont clairs. Une page à
+  // en-tête sombre (ex. 404) le déclare elle-même via useDeclareNavTheme("dark").
+  void pathname;
+  return "light";
 }
 
 /**

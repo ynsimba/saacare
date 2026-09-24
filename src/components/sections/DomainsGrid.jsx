@@ -1,277 +1,104 @@
-import { useCallback, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion, useMotionValue, useSpring } from "motion/react";
-import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import SectionHeading from "../ui/SectionHeading";
 import DomainIcon from "../ui/DomainIcon";
 import Reveal, { Stagger, RevealItem } from "../ui/Reveal";
 import Section3D from "../ui/Section3D";
 import { domains } from "../../data/domains";
-import { THEME } from "../../lib/theme";
-import { EASE, useHasFinePointer, useIsReducedMotion } from "../../lib/motion";
 
 /**
- * Les domaines présentés en liste éditoriale plein format : chaque ligne se
- * remplit de la couleur du domaine au survol, et une vignette d'aperçu suit le
- * curseur pour montrer les services sans quitter la page.
+ * Les sept pôles en mosaïque : une grande tuile photo donne le ton, puis une
+ * tuile par pôle. Mobile : tuiles à glisser ; tablette : 4 colonnes ;
+ * grand écran : bento avec la photo sur 2 × 2 cases.
  */
 export default function DomainsGrid() {
-  const reduced = useIsReducedMotion();
-  const fine = useHasFinePointer();
-  const previewEnabled = fine && !reduced;
-
-  const [hovered, setHovered] = useState(null);
-  // La vignette ne s'affiche qu'après un vrai déplacement du pointeur : un simple
-  // focus clavier met la ligne en avant sans faire surgir une carte hors contexte.
-  const [pointerActive, setPointerActive] = useState(false);
-  // La vignette bascule à gauche du curseur dans la moitié droite de la section,
-  // pour ne jamais sortir de l'écran.
-  const [flipped, setFlipped] = useState(false);
-
-  // Coordonnées relatives à la section : un ancêtre animé (transition de page)
-  // peut créer un bloc conteneur, ce qui rendrait `position: fixed` imprévisible.
-  const sectionRef = useRef(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const px = useSpring(x, { stiffness: 320, damping: 30, mass: 0.5 });
-  const py = useSpring(y, { stiffness: 320, damping: 30, mass: 0.5 });
-
-  const onMouseMove = useCallback(
-    (event) => {
-      const node = sectionRef.current;
-      if (!previewEnabled || !node) return;
-      const rect = node.getBoundingClientRect();
-      const localX = event.clientX - rect.left;
-      x.set(localX);
-      y.set(event.clientY - rect.top);
-      setFlipped(localX > rect.width * 0.62);
-      setPointerActive(true);
-    },
-    [previewEnabled, x, y]
-  );
-
-  const activeDomain = hovered != null && pointerActive ? domains[hovered] : null;
-
-  // `clip={false}` : la vignette d'aperçu doit pouvoir déborder latéralement
-  // de la section ; le débordement reste borné par le clip global de la page.
   return (
-    <Section3D variant="up" clip={false} className="bg-white">
-    <section
-      ref={sectionRef}
-      className="relative isolate bg-white py-8 sm:py-20"
-      aria-labelledby="domains-heading"
-    >
-      {/* Halo de marque diffus — confiné à son propre calque pour que la vignette
-          d'aperçu puisse déborder de la section sans être rognée. */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-        <div className="absolute left-1/2 top-0 size-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-100/50 blur-3xl" />
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end sm:gap-8">
-          <SectionHeading
-            eyebrow="Nos solutions"
-            title={<span id="domains-heading">Sept pôles, un seul registre d'agents vérifiés</span>}
-            subtitle="Enfants, naissance, maison, conduite, cours, aînés et formation : chaque pôle applique le même protocole SaaTrust."
-          />
-          <Reveal variant="right" delay={0.2} className="shrink-0">
-            <Link
-              to="/solutions"
-              className="group inline-flex items-center gap-2 text-sm font-semibold text-teal-700 transition-colors hover:text-teal-800"
-            >
-              <span className="link-underline">Voir toutes nos solutions</span>
-              <ArrowRight
-                className="size-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
-                aria-hidden="true"
-              />
-            </Link>
-          </Reveal>
-        </div>
-
-        {/* ---------------- Mobile : tuiles à glisser · tablette : grille de tuiles ---------------- */}
-        <ul className="snap-row mt-4 [--snap-w:40%] [--snap-w-sm:30%] md:mt-10 md:grid md:grid-cols-4 md:gap-3 lg:hidden" aria-label="Les sept pôles">
-          {domains.map((domain, index) => (
-            <li key={domain.slug}>
-              <Link
-                to={`/solutions/${domain.slug}`}
-                className="tap flex h-full flex-col gap-2.5 rounded-2xl border border-ink-900/8 bg-paper-100 p-3.5"
-              >
-                <span className="flex items-center justify-between">
-                  <span className={`grid size-10 place-items-center rounded-xl ${THEME.teal.bgSoft} ${THEME.teal.text}`}>
-                    <DomainIcon name={domain.icon} className="size-5" />
-                  </span>
-                  <span className="font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-ink-900/30">0{index + 1}</span>
-                </span>
-                <span className="font-display text-[0.95rem] font-bold leading-tight text-ink-900">{domain.name}</span>
-                <span className="line-clamp-2 text-[0.72rem] leading-snug text-ink-900/55">
-                  {domain.available ? domain.tagline : domain.phase}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {/* ---------------- Liste éditoriale (grand écran) ---------------- */}
-        <Stagger
-          as="ul"
-          stagger={0.1}
-          onMouseMove={onMouseMove}
-          onMouseLeave={() => {
-            setHovered(null);
-            setPointerActive(false);
-          }}
-          className="mt-14 hidden border-t border-ink-900/10 lg:block"
-        >
-          {domains.map((domain, index) => (
-            <DomainRow
-              key={domain.slug}
-              domain={domain}
-              index={index}
-              isHovered={hovered === index}
-              onEnter={() => setHovered(index)}
-              reduced={reduced}
+    <Section3D variant="up" className="bg-white">
+      <section className="relative isolate bg-white py-8 sm:py-20" aria-labelledby="domains-heading">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end sm:gap-8">
+            <SectionHeading
+              eyebrow="Nos solutions"
+              title={<span id="domains-heading">Sept pôles, un seul registre d'agents vérifiés</span>}
+              subtitle="Enfants, naissance, maison, conduite, cours, aînés et formation : chaque pôle applique le même protocole SaaTrust."
             />
-          ))}
-        </Stagger>
-      </div>
-
-      {/* ---------------- Vignette d'aperçu qui suit le curseur ---------------- */}
-      {previewEnabled && (
-        <motion.div
-          className="pointer-events-none absolute left-0 top-0 z-20"
-          style={{ x: px, y: py }}
-          aria-hidden="true"
-        >
-          {/* Calque de décalage séparé : motion écrit `transform` sur la carte
-              animée, il ne peut donc pas porter les classes de positionnement. */}
-          <div
-            className={`w-64 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              flipped ? "-translate-x-[calc(100%+1.75rem)]" : "translate-x-7"
-            } -translate-y-1/2`}
-          >
-          <AnimatePresence>
-            {activeDomain && (
-              <motion.div
-                key={activeDomain.slug}
-                initial={{ opacity: 0, scale: 0.86, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 6 }}
-                transition={{ duration: 0.28, ease: EASE }}
-                className="w-64 overflow-hidden rounded-2xl bg-teal-600 p-5 shadow-lifted"
+            <Reveal variant="right" delay={0.2} className="shrink-0">
+              <Link
+                to="/solutions"
+                className="group inline-flex items-center gap-2 rounded-full border border-teal-600/20 bg-white px-4 py-2 text-sm font-semibold text-teal-700 shadow-soft transition-colors hover:border-teal-600/50"
               >
-                <div className="flex items-center gap-2.5 text-white">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/15">
-                    <DomainIcon name={activeDomain.icon} className="size-4.5" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate font-display text-sm font-bold">
-                      {activeDomain.name}
-                    </span>
-                    <span className="block truncate text-[0.68rem] text-white/60">
-                      {activeDomain.services.length} services proposés
-                    </span>
-                  </span>
-                </div>
-
-                <ul className="mt-4 flex flex-col gap-2 border-t border-white/15 pt-4">
-                  {activeDomain.services.slice(0, 3).map((service) => (
-                    <li key={service} className="flex items-start gap-2 text-xs leading-snug text-white/80">
-                      <Check className="mt-0.5 size-3 shrink-0 text-white/60" strokeWidth={2.5} />
-                      <span className="line-clamp-1">{service}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="mt-4 flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-white/70">
-                  Découvrir le pôle
-                  <ArrowUpRight className="size-3" />
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                Voir toutes nos solutions
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+              </Link>
+            </Reveal>
           </div>
-        </motion.div>
-      )}
-    </section>
+
+          <Stagger
+            as="ul"
+            stagger={0.06}
+            aria-label="Les sept pôles"
+            className="snap-row mt-5 grid [--snap-w:44%] [--snap-w-sm:30%] sm:mt-12 md:grid-cols-4 md:gap-3 lg:auto-rows-[minmax(11.5rem,auto)] lg:gap-4"
+          >
+            {/* Tuile photo : grand écran uniquement */}
+            <RevealItem as="li" variant="scale" className="relative hidden overflow-hidden rounded-[2rem] lg:col-span-2 lg:row-span-2 lg:block">
+              <img src="/hero-3.png" alt="" className="absolute inset-0 size-full object-cover [object-position:70%_45%]" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/20 to-transparent" aria-hidden="true" />
+              <div className="relative flex h-full flex-col justify-end p-8 text-paper-50">
+                <span className="glass-capsule w-fit rounded-full px-3 py-1 text-xs font-semibold text-teal-700">Protocole SaaTrust</span>
+                <p className="mt-4 max-w-sm font-display text-3xl font-extrabold leading-tight">
+                  Le même niveau d’exigence, quel que soit le service.
+                </p>
+                <Link
+                  to="/saatrust"
+                  className="group mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-teal-700 transition-transform hover:-translate-y-0.5"
+                >
+                  Découvrir le protocole
+                  <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                </Link>
+              </div>
+            </RevealItem>
+
+            {domains.map((domain, index) => (
+              <RevealItem as="li" key={domain.slug} variant="up" className="h-full">
+                <Link
+                  to={`/solutions/${domain.slug}`}
+                  className="tap group relative flex h-full flex-col gap-3 overflow-hidden rounded-[1.6rem] border border-ink-900/8 bg-paper-100 p-4 transition-[translate,background-color,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-teal-600/20 hover:bg-white hover:shadow-[0_24px_48px_-24px_rgba(1,67,61,0.45)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 sm:p-5"
+                >
+                  <span className="flex items-start justify-between">
+                    <span className="grid size-11 place-items-center rounded-2xl bg-white text-teal-700 shadow-soft transition-[background-color,color,rotate] duration-300 group-hover:-rotate-6 group-hover:bg-teal-600 group-hover:text-white sm:size-12">
+                      <DomainIcon name={domain.icon} className="size-5 sm:size-6" />
+                    </span>
+                    <span className="font-display text-sm font-bold tabular-nums text-ink-900/20">0{index + 1}</span>
+                  </span>
+                  <span className="mt-auto">
+                    <span className="block font-display text-base font-extrabold leading-tight text-ink-900 sm:text-lg">{domain.name}</span>
+                    <span className="mt-1 line-clamp-2 block text-xs leading-snug text-ink-900/55 sm:text-[0.8rem]">
+                      {domain.available ? domain.tagline : domain.phase}
+                    </span>
+                  </span>
+                  <ArrowUpRight
+                    className="absolute bottom-4 right-4 hidden size-4 text-teal-700 opacity-0 transition-[opacity,translate] duration-300 group-hover:-translate-y-0.5 group-hover:opacity-100 sm:block"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </RevealItem>
+            ))}
+
+            {/* Dernière case : raccourci vers la recherche */}
+            <RevealItem as="li" variant="up" className="hidden h-full md:block">
+              <Link
+                to="/prestataires"
+                className="tap group flex h-full flex-col justify-between gap-3 rounded-[1.6rem] bg-teal-600 p-5 text-white transition-[translate,background-color] duration-300 hover:-translate-y-1 hover:bg-teal-700"
+              >
+                <span className="grid size-12 place-items-center rounded-2xl bg-white/15">
+                  <ArrowUpRight className="size-6 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                </span>
+                <span className="font-display text-lg font-extrabold leading-tight">Trouver un prestataire vérifié</span>
+              </Link>
+            </RevealItem>
+          </Stagger>
+        </div>
+      </section>
     </Section3D>
-  );
-}
-
-function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
-  const theme = THEME.teal;
-
-  return (
-    <RevealItem as="li" variant="up" className="border-b border-ink-900/10">
-      <Link
-        to={`/solutions/${domain.slug}`}
-        onMouseEnter={onEnter}
-        onFocus={onEnter}
-        className="group relative flex items-center gap-2.5 overflow-hidden px-1 py-2.5 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold-500 sm:gap-7 sm:px-5 sm:py-8 lg:py-9"
-      >
-        {/* Remplissage coloré qui monte depuis le bas */}
-        <motion.span
-          className={`pointer-events-none absolute inset-0 origin-bottom ${theme.bg}`}
-          initial={false}
-          animate={{ scaleY: isHovered && !reduced ? 1 : 0 }}
-          transition={{ duration: 0.55, ease: EASE }}
-          aria-hidden="true"
-        />
-        {/* Liseré coloré permanent, visible surtout au tactile */}
-        <span
-          className={`pointer-events-none absolute inset-y-0 left-0 w-0.5 ${theme.dot} transition-opacity duration-500 group-hover:opacity-0 lg:opacity-0`}
-          aria-hidden="true"
-        />
-
-        {/* Numéro d'ordre — desktop */}
-        <span
-          className={`relative hidden shrink-0 font-mono text-xs font-semibold tracking-[0.2em] transition-colors duration-500 sm:inline ${
-            isHovered ? "text-white/50" : "text-ink-900/25"
-          }`}
-        >
-          0{index + 1}
-        </span>
-
-        {/* Icône */}
-        <span
-          className={`relative grid size-9 shrink-0 place-items-center rounded-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 sm:size-14 sm:rounded-2xl ${
-            isHovered ? "bg-white/15 text-white" : `${theme.bgSoft} ${theme.text}`
-          }`}
-        >
-          <DomainIcon name={domain.icon} className="size-5 sm:size-7" />
-        </span>
-
-        {/* Titre + accroche */}
-        <span className="relative min-w-0 flex-1">
-          <span
-            className={`block font-display text-base font-bold leading-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:text-2xl lg:text-[1.75rem] ${
-              isHovered ? "sm:translate-x-1 text-ink-900 sm:text-white" : "text-ink-900"
-            }`}
-          >
-            {domain.name}
-          </span>
-          <span
-            className={`mt-0.5 block truncate text-xs leading-snug transition-colors duration-500 sm:mt-1 sm:whitespace-normal sm:text-[0.95rem] sm:leading-relaxed ${
-              isHovered ? "text-ink-900/55 sm:text-white/70" : "text-ink-900/55 sm:text-ink-900/60"
-            }`}
-          >
-            {domain.tagline}{domain.available ? "" : " · " + domain.phase}
-          </span>
-        </span>
-
-        {/* Flèche */}
-        <span
-          className={`relative grid size-8 shrink-0 place-items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:size-10 ${
-            isHovered ? "bg-ink-900/5 text-ink-900/60 sm:bg-white sm:text-ink-900" : "bg-ink-900/5 text-ink-900/60"
-          }`}
-          aria-hidden="true"
-        >
-          <ArrowUpRight
-            className={`size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:size-4 ${
-              isHovered ? "sm:translate-x-0.5 sm:-translate-y-0.5" : ""
-            }`}
-          />
-        </span>
-      </Link>
-    </RevealItem>
   );
 }

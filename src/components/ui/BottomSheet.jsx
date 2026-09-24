@@ -4,6 +4,21 @@ import { AnimatePresence, motion, useDragControls } from "motion/react";
 import { X } from "lucide-react";
 import { springs, useIsReducedMotion } from "../../lib/motion";
 
+/* Verrou de défilement partagé : plusieurs feuilles peuvent s'empiler sans
+   que la première refermée ne rende la main à la page trop tôt. */
+let scrollLocks = 0;
+let savedOverflow = "";
+function lockScroll() {
+  if (scrollLocks++ === 0) {
+    savedOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+  }
+}
+function unlockScroll() {
+  scrollLocks = Math.max(0, scrollLocks - 1);
+  if (scrollLocks === 0) document.body.style.overflow = savedOverflow;
+}
+
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
 
 /**
@@ -27,8 +42,7 @@ export default function BottomSheet({ open, onClose, title, children, footer, cl
   useEffect(() => {
     if (!open) return undefined;
     const previousFocus = document.activeElement;
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
+    lockScroll();
     const raf = requestAnimationFrame(() => panelRef.current?.querySelector(FOCUSABLE)?.focus({ preventScroll: true }));
 
     const onKey = (e) => {
@@ -52,7 +66,7 @@ export default function BottomSheet({ open, onClose, title, children, footer, cl
     document.addEventListener("keydown", onKey);
     return () => {
       cancelAnimationFrame(raf);
-      document.body.style.overflow = overflow;
+      unlockScroll();
       document.removeEventListener("keydown", onKey);
       if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
     };

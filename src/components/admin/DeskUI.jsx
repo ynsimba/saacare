@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Inbox } from "lucide-react";
 
 /** Teintes pastel des cartes du back-office. */
 export const TONES = {
@@ -56,7 +56,7 @@ export function ArrowHint({ size = "md", className = "" }) {
 
 /** Carte KPI / widget entièrement cliquable. */
 export function DeskWidget({ to, tone = "white", className = "", children, label }) {
-  const base = `group block rounded-2xl p-4 transition-[transform,opacity] duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-desk-ink ${TONES[tone] || TONES.white} ${className}`;
+  const base = `tap group block rounded-2xl p-4 transition-[transform,opacity] duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-desk-ink ${TONES[tone] || TONES.white} ${className}`;
   if (!to) {
     return <div className={base}>{children}</div>;
   }
@@ -128,11 +128,15 @@ export function DeskAlert({ children }) {
   );
 }
 
-/** Carte vide (aucun élément). */
-export function DeskEmpty({ children }) {
+/** État vide composé : pictogramme, message et, si utile, l'action qui remplit la liste. */
+export function DeskEmpty({ children, icon: Icon = Inbox, action }) {
   return (
-    <p className="rounded-2xl border-2 border-dashed border-desk-ink/15 px-5 py-8 text-center text-sm font-medium text-desk-ink/55">
-      {children}
-    </p>
+    <div className="screen-in flex flex-col items-center gap-3 rounded-3xl border-2 border-dashed border-desk-ink/12 bg-white/50 px-5 py-10 text-center">
+      <span className="grid size-12 place-items-center rounded-2xl bg-desk-mint text-desk-ink" aria-hidden="true">
+        <Icon className="size-5" strokeWidth={1.75} />
+      </span>
+      <p className="max-w-sm text-pretty text-sm font-medium text-desk-ink/60">{children}</p>
+      {action}
+    </div>
   );
 }

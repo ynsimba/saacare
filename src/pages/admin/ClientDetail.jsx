@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Seo from "../../lib/Seo";
 import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading, initials } from "../../components/admin/DeskUI";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -63,7 +64,7 @@ export default function AdminClientDetail() {
         </div>
       )}
 
-      {!item && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!item && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement du client" />}
 
       {item && (
         <div className="mt-5 space-y-5">

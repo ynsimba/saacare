@@ -2,16 +2,18 @@ import { motion } from "motion/react";
 import { EASE, useIsReducedMotion, viewportOnce } from "../../lib/motion";
 
 export function Eyebrow({ children, tone = "text-teal-700", className = "" }) {
+  // Teintes claires = posé sur un fond sombre : pastille translucide plutôt que blanche.
+  const onDark = /-(100|200|300)\b|paper/.test(tone);
   return (
     <span
-      className={`inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.18em] ${tone} ${className}`}
+      className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 ${onDark ? "border-white/15 bg-white/8" : "border-current/15 bg-white/70"} text-[0.7rem] font-semibold uppercase tracking-[0.14em] backdrop-blur ${tone} ${className}`}
     >
       <motion.span
-        className="block h-px bg-current opacity-60"
-        initial={{ width: 0 }}
-        whileInView={{ width: "1.5rem" }}
+        className="block size-1.5 rounded-full bg-gold-500"
+        initial={{ scale: 0 }}
+        whileInView={{ scale: 1 }}
         viewport={viewportOnce}
-        transition={{ duration: 0.6, ease: EASE }}
+        transition={{ type: "spring", stiffness: 400, damping: 18 }}
         aria-hidden="true"
       />
       {children}

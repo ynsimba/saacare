@@ -18,6 +18,7 @@ import { useProviderTripTracking } from "../../components/tracking/ProviderTripT
 import { GPS_ACTIVE, GPS_ERROR, GPS_REQUESTING } from "../../hooks/useGeolocationTracker";
 import { api } from "../../lib/api";
 import { formatFreshness } from "../../lib/tripFormat";
+import { SkeletonList } from "../../components/ui/Skeleton";
 
 /**
  * Missions du prestataire et suivi de trajet (§7).
@@ -185,7 +186,7 @@ export default function PrestataireMissions() {
         )}
 
         {loading ? (
-          <p className="mt-6 text-sm text-ink-900/55">Chargement de vos missions…</p>
+          <SkeletonList rows={3} className="mt-6" label="Chargement de vos missions" />
         ) : (
           <ul className="mt-6 flex flex-col gap-4">
             {items.map((mission) => (

@@ -28,7 +28,7 @@
    ============================================================ */
 @theme {
   /* Montserrat pour les titres, Poppins pour le texte, l'interface et les données */
-  --font-display: "Montserrat", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Urbanist", "Montserrat", "Segoe UI", system-ui, sans-serif;
   --font-sans: "Poppins", "Segoe UI", system-ui, sans-serif;
   --font-mono: "Poppins", "Segoe UI", system-ui, sans-serif;
 
@@ -92,7 +92,7 @@
   --color-desk-lilac: #dccbea;
   --color-desk-muted: #a9adbd;
 
-  --shadow-soft: 0 1px 2px rgba(16, 42, 42, 0.05), 0 8px 24px -8px rgba(16, 42, 42, 0.12);
+  --shadow-soft: 0 1px 2px rgba(1, 67, 61, 0.04), 0 12px 32px -14px rgba(1, 67, 61, 0.18);
   --shadow-lifted: 0 20px 45px -18px rgba(1, 67, 61, 0.34);
 
   /* Rayons : 8 px UI, 16 px cartes, 24 px blocs éditoriaux */
@@ -100,10 +100,10 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-3xl: 24px;
-  --radius-4xl: 32px;
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+  --radius-4xl: 40px;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -193,8 +193,9 @@ body {
 }
 
 /* Titres : Montserrat en casse phrase, interlettrage normal (charte §08) */
-h1, h2 {
+h1, h2, h3 {
   font-family: var(--font-display);
+  letter-spacing: -0.025em;
 }
 
 ::selection {
@@ -708,4 +709,74 @@ figcaption {
   .snap-row-lg.mx-auto {
     margin-inline: 0;
   }
+}
+
+/* ============================================================
+   CHARGEMENT & APPARITIONS — partagés site / espaces / back-office
+   ============================================================ */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: skeleton-sweep 1.4s var(--ease-out-expo) infinite;
+}
+@keyframes skeleton-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* Cascade d'entrée : chaque enfant arrive 45 ms après le précédent. */
+.stagger-in > * {
+  animation: stagger-rise 0.5s var(--ease-out-expo) both;
+}
+.stagger-in > *:nth-child(2) { animation-delay: 45ms; }
+.stagger-in > *:nth-child(3) { animation-delay: 90ms; }
+.stagger-in > *:nth-child(4) { animation-delay: 135ms; }
+.stagger-in > *:nth-child(5) { animation-delay: 180ms; }
+.stagger-in > *:nth-child(6) { animation-delay: 225ms; }
+.stagger-in > *:nth-child(7) { animation-delay: 270ms; }
+.stagger-in > *:nth-child(n + 8) { animation-delay: 300ms; }
+@keyframes stagger-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Écran qui arrive (changement de route dans les espaces) */
+.screen-in {
+  animation: stagger-rise 0.42s var(--ease-out-expo) both;
+}
+
+/* Dock admin mobile : la pastille active est animée par motion (layoutId). */
+.admin-dock .admin-rail-link--active::before {
+  opacity: 0;
+}
+
+/* ============================================================
+   REFONTE « VERRE LIQUIDE ÉDITORIAL »
+   Le verre est réservé à ce qui flotte au-dessus du contenu :
+   navigation, recherche, capsules d'information, barres d'onglets.
+   ============================================================ */
+.glass-capsule {
+  background: color-mix(in srgb, var(--color-paper-50) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(1, 67, 61, 0.05),
+    0 18px 40px -18px rgba(1, 67, 61, 0.35);
+}
+
+/* Motif rayonnant de la charte, recoloré en vert par masque (l'image source est blanche). */
+.hero-rays {
+  background-color: var(--color-teal-600);
+  -webkit-mask: url("/motif.png") center / contain no-repeat;
+  mask: url("/motif.png") center / contain no-repeat;
+  opacity: 0.06;
 }

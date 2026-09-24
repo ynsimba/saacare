@@ -24,18 +24,18 @@ Route::post('/requests', [PublicLeadController::class, 'storeRequest'])->middlew
 Route::post('/quotes/request', [PublicLeadController::class, 'storeQuote'])->middleware('throttle:10,1');
 
 Route::get('/providers', [ProviderController::class, 'index']);
-Route::get('/providers/verify', [ProviderController::class, 'verify']);
+Route::get('/providers/verify', [ProviderController::class, 'verify'])->middleware('throttle:30,1');
 Route::get('/providers/{reference}', [ProviderController::class, 'show']);
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/auth/google', [AuthController::class, 'google']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:register');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+Route::post('/auth/google', [AuthController::class, 'google'])->middleware('throttle:login');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::patch('/me', [AuthController::class, 'updateProfile']);
-    Route::patch('/me/password', [AuthController::class, 'changePassword']);
+    Route::patch('/me/password', [AuthController::class, 'changePassword'])->middleware('throttle:sensitive');
 
     Route::middleware('role:client')->prefix('client')->group(function () {
         Route::get('/dashboard', [SpaceController::class, 'clientDashboard']);
@@ -134,7 +134,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/statistiques', [SuperAdminController::class, 'statistics']);
             Route::get('/donnees', [SuperAdminController::class, 'dataOverview']);
             Route::get('/donnees/backup', [SuperAdminController::class, 'exportBackup']);
-            Route::post('/donnees/purge', [SuperAdminController::class, 'purgeAll']);
+            Route::post('/donnees/purge', [SuperAdminController::class, 'purgeAll'])->middleware('throttle:sensitive');
         });
     });
 });

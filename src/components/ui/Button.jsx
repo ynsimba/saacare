@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { useMagnetic } from "../../lib/motion";
+import { useSurface } from "../../lib/surface";
+
+/** Sur une surface claire, les variantes « fond sombre » prennent leur équivalent clair. */
+const LIGHT_SURFACE_SWAP = { onDark: "primary", glass: "outline" };
 
 const VARIANTS = {
   /* Action principale — vert SaaCare */
@@ -12,7 +16,7 @@ const VARIANTS = {
   secondary:
     "bg-ink-900 text-white shadow-soft hover:bg-ink-950 hover:shadow-[0_18px_45px_-18px_rgba(16,42,42,0.8)] focus-visible:bg-ink-950",
   /* Action secondaire — contour vert */
-  outline: "bg-white text-teal-700 border border-teal-600 hover:bg-teal-50",
+  outline: "bg-white/80 text-teal-700 border border-teal-600/25 backdrop-blur hover:border-teal-600/60 hover:bg-white",
   ghost: "bg-transparent text-teal-700 hover:bg-teal-50",
   onDark: "bg-white text-teal-700 hover:bg-paper-100 hover:shadow-[0_18px_45px_-18px_rgba(255,255,255,0.45)]",
   /* Point d'attention — orange assombri pour garder un texte blanc lisible (AA) */
@@ -23,10 +27,10 @@ const VARIANTS = {
 };
 
 const SIZES = {
-  sm: "px-4 py-2 text-sm",
-  md: "px-5 py-2.5 text-[0.95rem]",
+  sm: "px-4.5 py-2 text-sm",
+  md: "px-6 py-2.5 text-[0.95rem]",
   lg: "px-7 py-3.5 text-base",
-  xl: "px-8 py-4 text-[1.05rem]",
+  xl: "px-9 py-4 text-[1.05rem]",
 };
 
 const MotionLink = motion.create(Link);
@@ -51,11 +55,13 @@ const Button = forwardRef(function Button(
   },
   ref
 ) {
+  const surface = useSurface();
+  if (surface === "light" && LIGHT_SURFACE_SWAP[variant]) variant = LIGHT_SURFACE_SWAP[variant];
   const magnet = useMagnetic(0.28, 90);
   const useMagnet = magnetic && magnet.active;
 
   const classes = `group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden
-    rounded-md font-semibold transition-[background-color,color,box-shadow,border-color,background-position]
+    rounded-full font-semibold transition-[background-color,color,box-shadow,border-color,background-position]
     duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-2 focus-visible:outline-gold-500
     disabled:opacity-50 disabled:pointer-events-none shine
     ${VARIANTS[variant]} ${SIZES[size]} ${className}`;

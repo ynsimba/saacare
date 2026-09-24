@@ -85,7 +85,7 @@ export default function Contact() {
                   lift={4}
                   className="group flex items-center gap-4 rounded-2xl border border-ink-900/8 bg-white p-5 transition-[box-shadow,border-color] duration-500 hover:border-ink-900/12 hover:shadow-lifted"
                 >
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:bg-teal-600 group-hover:text-white">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700 transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:bg-teal-600 group-hover:text-white">
                     <Icon className="size-5" aria-hidden="true" />
                   </span>
                   <span className="min-w-0">

@@ -55,10 +55,6 @@ export default function WhyChoose() {
         className="relative overflow-hidden bg-paper-100 py-8 sm:py-20"
         aria-labelledby="why-choose-heading"
       >
-        <div
-          className="pointer-events-none absolute -left-40 top-1/3 -z-10 size-[34rem] rounded-full bg-teal-100/60 blur-3xl"
-          aria-hidden="true"
-        />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* ---------------- En-tête ---------------- */}
@@ -143,7 +139,7 @@ export default function WhyChoose() {
                     <Cell active={active} first {...rowHandlers}>
                       <span className="flex items-center gap-3.5">
                         <span
-                          className={`grid size-10 shrink-0 place-items-center rounded-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                          className={`grid size-10 shrink-0 place-items-center rounded-xl transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                             active ? "-rotate-6 bg-teal-600 text-white" : "bg-teal-50 text-teal-700"
                           }`}
                         >

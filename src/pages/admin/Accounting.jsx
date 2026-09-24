@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Seo from "../../lib/Seo";
 import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading, DeskWidget } from "../../components/admin/DeskUI";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 const METHOD_LABEL = {
   mobile_money: "Mobile Money",
@@ -50,7 +51,7 @@ export default function AdminAccounting() {
           <DeskAlert>{error}</DeskAlert>
         </div>
       )}
-      {!data && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!data && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement de la comptabilité" />}
 
       {data && (
         <div className="mt-5 space-y-5">

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Seo from "../../lib/Seo";
 import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading, DeskWidget } from "../../components/admin/DeskUI";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 const STAT_TONES = ["mint", "butter", "lilac", "pink"];
 
@@ -66,7 +67,7 @@ export default function AdminReports() {
         </div>
       )}
 
-      {!data && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!data && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement des rapports" />}
 
       {data && (
         <div className="mt-5 space-y-6">

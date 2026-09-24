@@ -5,6 +5,7 @@ import Field from "../../components/ui/Field";
 import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading } from "../../components/admin/DeskUI";
+import { SkeletonList } from "../../components/ui/Skeleton";
 
 const TABLE_LABELS = {
   users: "Utilisateurs",
@@ -95,7 +96,7 @@ export default function AdminData() {
 
       <section className="mt-5 rounded-3xl bg-white p-5">
         <h2 className="text-lg font-semibold">Inventaire</h2>
-        {!overview && !error && <p className="mt-3 text-sm text-desk-ink/55">Chargement…</p>}
+        {!overview && !error && <SkeletonList tone="desk" rows={3} className="mt-3" label="Chargement des données" />}
         {overview && (
           <>
             <p className="mt-2 text-sm text-desk-ink/55">

@@ -124,22 +124,19 @@ export default function ClientProfileShell() {
           }
         >
           {!coverUrl && (
-            <div className="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
-              <div className="absolute -left-10 top-8 size-56 rounded-full bg-teal-400/30 blur-3xl" />
-              <div className="absolute right-0 top-0 size-72 rounded-full bg-gold-500/20 blur-3xl" />
-            </div>
+            <div className="hero-rays pointer-events-none absolute -right-10 -top-6 h-56 w-80 !bg-white !opacity-[0.12]" aria-hidden="true" />
           )}
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-900/35 to-transparent" aria-hidden="true" />
           <button
             type="button"
             onClick={() => coverInputRef.current?.click()}
-            className="absolute bottom-3 right-3 inline-flex min-h-10 items-center gap-2 rounded-lg bg-white px-3.5 py-2 text-sm font-semibold text-ink-900 shadow-soft transition-colors hover:bg-paper-100 sm:bottom-4 sm:right-4"
+            className="absolute bottom-3 right-3 inline-flex min-h-10 items-center gap-2 glass-capsule tap rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition-colors sm:bottom-4 sm:right-4"
           >
             <Camera className="size-4 text-teal-700" aria-hidden="true" />
             <span className="hidden sm:inline">Ajouter une photo de couverture</span>
             <span className="sm:hidden">Couverture</span>
           </button>
-          <input ref={coverInputRef} type="file" accept="image/*" className="sr-only" onChange={onPickCover} />
+          <input ref={coverInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={onPickCover} />
         </div>
 
         <div className="relative px-4 pb-5 pt-0 sm:px-6 sm:pb-6">
@@ -163,7 +160,7 @@ export default function ClientProfileShell() {
                 >
                   <Camera className="size-4" aria-hidden="true" />
                 </button>
-                <input ref={avatarInputRef} type="file" accept="image/*" className="sr-only" onChange={onPickAvatar} />
+                <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={onPickAvatar} />
               </div>
 
               <div className="min-w-0 pb-1">
@@ -186,7 +183,7 @@ export default function ClientProfileShell() {
             <div className="flex flex-wrap items-center gap-2 lg:pb-1">
               <Link
                 to="/client/dashboard"
-                className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-teal-700"
+                className="inline-flex min-h-10 items-center gap-2 rounded-full bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-teal-700"
               >
                 <LayoutDashboard className="size-4" aria-hidden="true" />
                 Tableau de bord

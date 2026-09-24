@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { Menu, X, ChevronDown, ChevronRight, ArrowUpRight, Phone, MessageCircle } from "lucide-react";
 import Button from "../ui/Button";
 import BottomSheet from "../ui/BottomSheet";
@@ -40,7 +40,7 @@ const NAV_LINKS = [
 function Logo({ dark }) {
   return (
     <Link to="/" className="group flex shrink-0 items-center" aria-label="SaaCare — Accueil">
-      <span className="relative block h-9 sm:h-11 xl:h-12">
+      <span className="relative block h-8 sm:h-9 xl:h-10">
         <motion.img
           src="/logo.png"
           alt=""
@@ -82,8 +82,7 @@ export default function Navbar() {
   const lastY = useRef(0);
   const espaceTo = homeForRole(user?.role);
 
-  const { scrollY, scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.001 });
+  const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (y) => {
     setScrolled(y > 16);
@@ -93,7 +92,6 @@ export default function Navbar() {
   });
 
   const onDark = navTheme === "dark" && !scrolled && !open;
-  const solid = scrolled || open;
 
   useEffect(() => {
     lastY.current = window.scrollY;
@@ -135,20 +133,20 @@ export default function Navbar() {
       initial={false}
       animate={{ y: hidden && !reduced ? "-110%" : "0%" }}
       transition={{ duration: 0.45, ease: EASE }}
-      className="fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)]"
+      className="fixed inset-x-0 top-0 z-50 px-3 pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:px-5 sm:pt-[calc(env(safe-area-inset-top)+0.75rem)]"
     >
-      <motion.div
-        aria-hidden="true"
-        initial={false}
-        animate={{ opacity: solid ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: EASE }}
-        className="glass absolute inset-0 shadow-soft"
-      />
-
       <nav
-        className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6 lg:px-8"
+        className="relative isolate mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 rounded-full pl-4 pr-2 sm:h-16 sm:pl-6 sm:pr-2.5"
         aria-label="Navigation principale"
       >
+        {/* Verre liquide : la barre flotte au-dessus du contenu, plus dense une fois la page défilée */}
+        <motion.div
+          aria-hidden="true"
+          initial={false}
+          animate={{ opacity: onDark ? 0.18 : 1, scale: scrolled ? 1 : 1.01 }}
+          transition={{ type: "spring", stiffness: 260, damping: 28 }}
+          className="glass-capsule absolute inset-0 -z-10 rounded-full"
+        />
         <Logo dark={onDark} />
 
         {/* ---------- Liens (grand écran) ---------- */}
@@ -260,7 +258,7 @@ export default function Navbar() {
                           <li>
                             <Link
                               to="/solutions"
-                              className="flex h-full items-center justify-between gap-2 rounded-xl bg-teal-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
+                              className="flex h-full items-center justify-between gap-2 rounded-full bg-teal-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
                             >
                               Voir toutes nos solutions
                               <ArrowUpRight className="size-4" aria-hidden="true" />
@@ -324,14 +322,6 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* ---------- Barre de progression de lecture ---------- */}
-      <motion.div
-        aria-hidden="true"
-        style={{ scaleX: progress }}
-        className={`absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[linear-gradient(90deg,var(--color-teal-600),var(--color-gold-500))] transition-opacity duration-300 ${
-          scrolled ? "opacity-100" : "opacity-0"
-        }`}
-      />
 
       {/* ---------- Menu mobile : feuille glissante depuis le bas ---------- */}
       <BottomSheet open={open} onClose={closeMenu} title="Menu" maxHeight="90dvh">

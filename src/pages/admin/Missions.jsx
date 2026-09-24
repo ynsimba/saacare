@@ -5,6 +5,7 @@ import Seo from "../../lib/Seo";
 import { DeskAlert, DeskEmpty, DeskHeading, initials } from "../../components/admin/DeskUI";
 import { api } from "../../lib/api";
 import { formatDistance, formatEta, formatFreshness, secondsSince, STALE_AFTER_SECONDS } from "../../lib/tripFormat";
+import { SkeletonList } from "../../components/ui/Skeleton";
 
 /**
  * Missions actives — supervision (§12).
@@ -85,7 +86,7 @@ export default function AdminMissions() {
 
       <div className="mt-8">
         {loading ? (
-          <p className="rounded-[2.5rem] bg-white px-8 py-12 text-lg text-desk-ink/55">Chargement…</p>
+          <SkeletonList tone="desk" rows={4} label="Chargement des missions" />
         ) : shown.length === 0 ? (
           <DeskEmpty>{query ? "Aucune mission ne correspond à la recherche." : "Aucun trajet en cours actuellement."}</DeskEmpty>
         ) : (

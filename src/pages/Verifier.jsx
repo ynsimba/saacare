@@ -80,7 +80,7 @@ export default function Verifier() {
             autoComplete="off"
             className="min-h-12 flex-1 rounded-xl px-4 text-base uppercase text-ink-900 outline-none placeholder:normal-case placeholder:text-navy-500"
           />
-          <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 text-sm font-semibold text-white hover:bg-teal-700">
+          <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-teal-600 px-6 text-sm font-semibold text-white hover:bg-teal-700">
             <Search className="size-4" aria-hidden="true" />
             Vérifier
           </button>
@@ -145,7 +145,7 @@ export default function Verifier() {
                   Vérifiez la saisie. Si une personne se présente chez vous avec ce numéro, ne la laissez pas entrer et
                   appelez-nous immédiatement.
                 </p>
-                <a href={PHONE_HREF} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-coral-700 px-4 text-sm font-semibold text-white">
+                <a href={PHONE_HREF} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-coral-700 px-4 text-sm font-semibold text-white">
                   <Phone className="size-4" aria-hidden="true" />
                   {PHONE}
                 </a>

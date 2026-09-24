@@ -13,6 +13,7 @@ import { getDomainBySlug } from "../data/domains";
 import { api } from "../lib/api";
 import { THEME } from "../lib/theme";
 import { EASE } from "../lib/motion";
+import { SkeletonPage } from "../components/ui/Skeleton";
 
 export default function ProviderProfile() {
   const { reference } = useParams();
@@ -63,7 +64,7 @@ export default function ProviderProfile() {
   if (status === "loading" || !provider) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-        <p className="text-sm text-ink-900/55">Chargement du profil…</p>
+        <SkeletonPage label="Chargement du profil" />
       </div>
     );
   }

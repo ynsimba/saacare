@@ -15,6 +15,9 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /** Pièces de candidature : images et PDF uniquement (jamais de HTML ni de SVG). */
+    private const ALLOWED_DOC_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+
     public function register(Request $request): JsonResponse
     {
         $isProvider = ($request->input('role') ?? 'client') === 'prestataire';
@@ -22,7 +25,7 @@ class AuthController extends Controller
 
         $data = $request->validate([
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'max:72'],
             'fullName' => ['required', 'string', 'max:255'],
             'phone' => [$isProvider ? 'required' : 'nullable', 'string', 'max:50'],
             'commune' => [$isProvider ? 'required' : 'nullable', 'string', 'max:120'],
@@ -47,20 +50,20 @@ class AuthController extends Controller
             'documents' => [$req, 'array'],
             'documents.photo' => [$req, 'array'],
             'documents.photo.name' => [$req, 'string', 'max:255'],
-            'documents.photo.mime' => [$req, 'string', 'max:120'],
-            'documents.photo.dataUrl' => [$req, 'string', 'max:6000000'],
+            'documents.photo.mime' => [$req, 'string', Rule::in(self::ALLOWED_DOC_MIMES)],
+            'documents.photo.dataUrl' => [$req, 'string', 'max:6000000', 'regex:/^data:(image\/(jpeg|png|webp)|application\/pdf);base64,[A-Za-z0-9+\/=\s]+$/'],
             'documents.identity' => [$req, 'array'],
             'documents.identity.name' => [$req, 'string', 'max:255'],
-            'documents.identity.mime' => [$req, 'string', 'max:120'],
-            'documents.identity.dataUrl' => [$req, 'string', 'max:6000000'],
+            'documents.identity.mime' => [$req, 'string', Rule::in(self::ALLOWED_DOC_MIMES)],
+            'documents.identity.dataUrl' => [$req, 'string', 'max:6000000', 'regex:/^data:(image\/(jpeg|png|webp)|application\/pdf);base64,[A-Za-z0-9+\/=\s]+$/'],
             'documents.cv' => [$req, 'array'],
             'documents.cv.name' => [$req, 'string', 'max:255'],
-            'documents.cv.mime' => [$req, 'string', 'max:120'],
-            'documents.cv.dataUrl' => [$req, 'string', 'max:6000000'],
+            'documents.cv.mime' => [$req, 'string', Rule::in(self::ALLOWED_DOC_MIMES)],
+            'documents.cv.dataUrl' => [$req, 'string', 'max:6000000', 'regex:/^data:(image\/(jpeg|png|webp)|application\/pdf);base64,[A-Za-z0-9+\/=\s]+$/'],
             'documents.motivationLetter' => [$req, 'array'],
             'documents.motivationLetter.name' => [$req, 'string', 'max:255'],
-            'documents.motivationLetter.mime' => [$req, 'string', 'max:120'],
-            'documents.motivationLetter.dataUrl' => [$req, 'string', 'max:6000000'],
+            'documents.motivationLetter.mime' => [$req, 'string', Rule::in(self::ALLOWED_DOC_MIMES)],
+            'documents.motivationLetter.dataUrl' => [$req, 'string', 'max:6000000', 'regex:/^data:(image\/(jpeg|png|webp)|application\/pdf);base64,[A-Za-z0-9+\/=\s]+$/'],
         ], [
             'email.unique' => 'Un compte existe déjà avec cet e-mail. Connectez-vous ou utilisez une autre adresse.',
             'email.email' => 'Indiquez une adresse e-mail valide.',
@@ -74,6 +77,9 @@ class AuthController extends Controller
             'documents.identity.required' => 'La pièce d’identité est obligatoire.',
             'documents.cv.required' => 'Le CV est obligatoire.',
             'documents.motivationLetter.required' => 'La lettre de motivation est obligatoire.',
+            'documents.*.mime.in' => 'Format de fichier non accepté : JPG, PNG, WebP ou PDF uniquement.',
+            'documents.*.dataUrl.regex' => 'Fichier invalide : JPG, PNG, WebP ou PDF uniquement.',
+            'password.max' => 'Le mot de passe ne peut pas dépasser 72 caractères.',
         ]);
 
         $role = $data['role'] ?? 'client';
@@ -193,11 +199,21 @@ class AuthController extends Controller
             return response()->json(['error' => 'Jeton Google invalide.'], 401);
         }
 
+        // Sans adresse vérifiée par Google, rattacher un compte existant par
+        // e-mail permettrait d'en prendre le contrôle.
+        if (($payload['email_verified'] ?? false) !== true && ($payload['email_verified'] ?? '') !== 'true') {
+            return response()->json(['error' => 'Adresse e-mail Google non vérifiée.'], 401);
+        }
+
         $googleId = $payload['sub'];
         $email = strtolower($payload['email']);
         $fullName = trim($payload['name'] ?? explode('@', $email)[0] ?: 'Utilisateur');
 
         $user = User::where('google_id', $googleId)->orWhere('email', $email)->first();
+
+        if ($user && $user->google_id && $user->google_id !== $googleId) {
+            return response()->json(['error' => 'Ce compte est lié à un autre profil Google.'], 409);
+        }
 
         if ($user) {
             if (! $user->google_id) {
@@ -278,7 +294,7 @@ class AuthController extends Controller
 
         $data = $request->validate([
             'currentPassword' => ['required', 'string'],
-            'newPassword' => ['required', 'string', 'min:8'],
+            'newPassword' => ['required', 'string', 'min:8', 'max:72', 'different:currentPassword'],
             'confirmPassword' => ['required', 'same:newPassword'],
         ]);
 
@@ -288,6 +304,10 @@ class AuthController extends Controller
 
         $user->password = $data['newPassword'];
         $user->save();
+
+        // Un mot de passe changé ferme toutes les autres sessions ouvertes.
+        $currentId = $user->currentAccessToken()?->id;
+        $user->tokens()->when($currentId, fn ($q) => $q->where('id', '!=', $currentId))->delete();
 
         return response()->json(['ok' => true]);
     }

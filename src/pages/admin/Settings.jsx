@@ -276,8 +276,10 @@ export default function AdminSettings() {
             <input
               ref={avatarInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               className="sr-only"
+              tabIndex={-1}
+              aria-hidden="true"
               onChange={onPickAvatar}
             />
           </div>
