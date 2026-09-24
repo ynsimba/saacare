@@ -44,7 +44,7 @@ export default function Testimonials() {
   return (
     <Section3D variant="right" className="bg-white">
     <section
-      className="relative overflow-hidden bg-white py-20 sm:py-28"
+      className="relative overflow-hidden bg-white py-8 sm:py-20"
       aria-labelledby="testimonials-heading"
     >
       <div
@@ -63,18 +63,18 @@ export default function Testimonials() {
         <Reveal
           variant="scale"
           delay={0.15}
-          className="relative mx-auto mt-14 max-w-3xl"
+          className="relative mx-auto mt-5 max-w-3xl sm:mt-14"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="relative overflow-hidden rounded-2xl border border-ink-900/8 bg-paper-100 px-6 py-10 shadow-soft sm:px-12 sm:py-14">
+          <div className="relative overflow-hidden rounded-2xl border border-ink-900/8 bg-paper-100 px-5 py-6 shadow-soft sm:px-12 sm:py-12">
             <Quote
               className="absolute right-8 top-8 size-16 text-gold-500/15"
               aria-hidden="true"
               strokeWidth={1.5}
             />
 
-            <div className="relative min-h-[15rem] sm:min-h-[13rem]">
+            <div className="relative min-h-[10rem] sm:min-h-[13rem]">
               <AnimatePresence mode="wait" custom={direction} initial={false}>
                 <motion.figure
                   key={active.name}
@@ -84,7 +84,7 @@ export default function Testimonials() {
                   animate="center"
                   exit={reduced ? undefined : "exit"}
                   transition={{ duration: 0.55, ease: EASE }}
-                  className="flex flex-col gap-6"
+                  className="flex flex-col gap-4 sm:gap-6"
                 >
                   <div className="flex gap-0.5" aria-hidden="true">
                     {[0, 1, 2, 3, 4].map((i) => (
@@ -92,7 +92,7 @@ export default function Testimonials() {
                     ))}
                   </div>
 
-                  <blockquote className="text-pretty font-display text-xl leading-relaxed text-ink-900 sm:text-2xl">
+                  <blockquote className="text-pretty font-display text-lg leading-relaxed text-ink-900 sm:text-2xl">
                     « {active.quote} »
                   </blockquote>
 
@@ -112,7 +112,7 @@ export default function Testimonials() {
             </div>
 
             {/* Contrôles */}
-            <div className="mt-8 flex items-center justify-between gap-4 border-t border-ink-900/8 pt-6">
+            <div className="mt-5 flex items-center justify-between gap-4 border-t border-ink-900/8 pt-4 sm:mt-8 sm:pt-6">
               <div className="flex items-center gap-2" role="tablist" aria-label="Choisir un témoignage">
                 {testimonials.map((t, i) => (
                   <button

@@ -87,7 +87,7 @@ export default function Verifier() {
         </form>
       </PageHero>
 
-      <section className="bg-paper-100 py-14 sm:py-20">
+      <section className="bg-paper-100 py-8 sm:py-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8" aria-live="polite">
           <AnimatePresence mode="wait">
             {query && checking && (

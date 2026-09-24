@@ -77,7 +77,7 @@ export default function Hero() {
     <section
       ref={sectionRef}
       data-nav-theme="dark"
-      className="noise-overlay relative isolate -mt-20 flex min-h-[100svh] items-center overflow-hidden bg-ink-950 pt-20"
+      className="noise-overlay relative isolate -mt-20 flex min-h-[85svh] items-center overflow-hidden bg-ink-950 pt-20 sm:min-h-[100svh]"
     >
       {/* ---------- Visuels de fond : crossfade + Ken Burns + parallaxe pointeur ---------- */}
       <motion.div
@@ -126,7 +126,7 @@ export default function Hero() {
       {/* ---------- Contenu ---------- */}
       <motion.div
         style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
-        className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-28 pt-12 sm:px-6 lg:px-8 lg:pb-32 lg:pt-16"
+        className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 sm:pb-28 lg:px-8 lg:pb-32 lg:pt-16"
       >
         <div>
           <motion.div variants={container} initial="hidden" animate="show" className="max-w-2xl">
@@ -136,7 +136,7 @@ export default function Hero() {
               <AnimatedText text="de confiance," as="span" className="block" delay={0.5} />
               <span className="mt-1 block">
                 <AnimatedText
-                  text="saacare"
+                  text="SaaCare"
                   as="span"
                   className="text-gold-500"
                   delay={0.68}
@@ -152,7 +152,7 @@ export default function Hero() {
 
             <motion.p
               variants={item}
-              className="mt-7 max-w-xl text-pretty text-base leading-relaxed text-paper-100/72 sm:text-lg"
+              className="mt-4 max-w-xl text-pretty text-[0.95rem] leading-relaxed text-paper-100/72 sm:mt-7 sm:text-lg"
             >
               Nounous, chauffeurs, répétiteurs et artisans vérifiés, formés et notés. Réservez en
               quelques clics et payez en toute sécurité —{" "}
@@ -167,7 +167,7 @@ export default function Hero() {
               onSubmit={onSearch}
               role="search"
               aria-label="Recherche rapide de prestataire"
-              className="gradient-border glass-dark relative z-40 mt-7 flex flex-col gap-2 rounded-2xl p-2 sm:mt-9 sm:flex-row sm:items-center"
+              className="gradient-border glass-dark relative z-40 mt-5 flex flex-col gap-2 rounded-2xl p-2 sm:mt-9 sm:flex-row sm:items-center"
             >
               <HeroSelect
                 id="hero-domain"
@@ -201,7 +201,7 @@ export default function Hero() {
             </motion.form>
 
             {/* Actions */}
-            <motion.div variants={item} className="relative z-0 mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <motion.div variants={item} className="relative z-0 mt-7 hidden gap-3 sm:flex sm:flex-row sm:flex-wrap sm:items-center">
               <Button to="/trouver-un-prestataire" size="lg" variant="primary" withArrow magnetic className="w-full sm:w-auto">
                 Trouver un prestataire
               </Button>
@@ -211,7 +211,7 @@ export default function Hero() {
             </motion.div>
 
             {/* Gages de confiance */}
-            <motion.ul variants={item} className="mt-9 flex flex-wrap gap-x-7 gap-y-3">
+            <motion.ul variants={item} className="mt-5 flex flex-wrap gap-x-5 gap-y-2 sm:mt-9 sm:gap-x-7 sm:gap-y-3">
               {TRUST_ITEMS.map(({ icon: Icon, label }) => (
                 <li key={label} className="flex items-center gap-2 text-sm text-paper-100/65">
                   <Icon className="size-4 text-teal-300" aria-hidden="true" />

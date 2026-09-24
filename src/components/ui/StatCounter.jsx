@@ -31,16 +31,18 @@ export default function StatCounter({ value, suffix = "", label, decimals = 0, c
       initial={reduced ? false : { opacity: 0, y: 18 }}
       animate={inView ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration: 0.7, ease: EASE }}
-      className={className}
+      className={`flex h-full flex-col ${className}`}
     >
-      <div className="flex items-baseline gap-1 font-display text-4xl font-bold text-white sm:text-5xl">
+      <div className="flex min-h-[2.5rem] items-baseline gap-1 font-display text-3xl font-bold tabular-nums text-white sm:min-h-[3.5rem] sm:text-5xl">
         <motion.span>{rounded}</motion.span>
-        <span className="text-teal-300">{suffix}</span>
+        <span className="text-[0.65em] font-semibold text-teal-300">{suffix}</span>
       </div>
-      <p className="mt-1.5 text-sm text-white/60">{label}</p>
+      <p className="mt-1 flex-1 text-xs leading-snug text-white/60 sm:mt-2 sm:min-h-[2.75rem] sm:text-sm sm:leading-snug">
+        {label}
+      </p>
       <motion.span
         aria-hidden="true"
-        className="mt-4 block h-px origin-left bg-gradient-to-r from-teal-400/70 to-transparent"
+        className="mt-2.5 block h-px w-full origin-left bg-gradient-to-r from-teal-400/70 to-transparent sm:mt-4"
         initial={reduced ? false : { scaleX: 0 }}
         animate={inView ? { scaleX: 1 } : undefined}
         transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}

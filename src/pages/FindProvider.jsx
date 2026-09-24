@@ -330,7 +330,7 @@ export default function FindProvider() {
         compact
       />
 
-      <section className="bg-paper-100 pb-16 pt-8 sm:pb-20">
+      <section className="bg-paper-100 pb-10 pt-6 sm:pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* ---------------- Barre de recherche ---------------- */}
           <form
@@ -477,7 +477,7 @@ export default function FindProvider() {
                   <>
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {results.slice(0, visible).map((p, i) => (
-                        <ProviderCard key={p.reference} provider={p} index={i} />
+                        <ProviderCard key={p.reference || p.id} provider={p} index={i} />
                       ))}
                     </div>
                     {visible < results.length && (

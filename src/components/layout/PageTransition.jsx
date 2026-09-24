@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { EASE, useIsReducedMotion } from "../../lib/motion";
+import { EASE, IS_COARSE_POINTER, springs, useIsReducedMotion } from "../../lib/motion";
 
 /**
  * Enveloppe chaque page pour une transition douce lors du changement de route :
@@ -9,6 +9,20 @@ export default function PageTransition({ children }) {
   const reduced = useIsReducedMotion();
 
   if (reduced) return <div>{children}</div>;
+
+  // Tactile : le flou (filter) coûte cher sur GPU mobile — glissement + fondu
+  // sur ressort, uniquement transform/opacity, pour une transition « native ».
+  if (IS_COARSE_POINTER) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0, transition: springs.gentle }}
+        exit={{ opacity: 0, transition: { duration: 0.14, ease: "easeOut" } }}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

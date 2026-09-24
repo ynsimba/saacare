@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
-   TOKENS DE MARQUE SAACARE — Charte graphique v1.0 (septembre 2026)
+   TOKENS DE MARQUE SaaCare — Charte graphique v1.0 (septembre 2026)
 
    Palette officielle
      Vert SaaCare  #01433D  confiance — texte, navigation, action principale
@@ -19,9 +19,9 @@
 
    Les noms de jetons historiques (teal, navy, gold, coral…) sont conservés :
    ils désignent des RÔLES utilisés dans toute la base de code.
-     teal-*   → VERT SAACARE — accent principal, vérification
+     teal-*   → VERT SaaCare — accent principal, vérification
      navy-*   → vert profond / encre — autorité, fonds sombres
-     coral-*  → ORANGE SAACARE — appels à l'attention
+     coral-*  → ORANGE SaaCare — appels à l'attention
      gold-*   → orange — sceau, distinctions, notes
      ink-*    → ENCRE — texte
      paper-*  → blanc, crème et gris doux
@@ -514,3 +514,198 @@ select:focus-visible,
   z-index: 1;
 }
 
+
+/* ============================================================
+   EXPÉRIENCE « APPLICATION » — mobile et tablette
+   ============================================================ */
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Supprime le délai du double-tap et rend chaque toucher immédiat. */
+a,
+button,
+label,
+summary,
+select,
+[role="button"],
+[role="tab"] {
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p,
+li,
+figcaption {
+  text-wrap: pretty;
+}
+
+/* Retour tactile : léger enfoncement, interruptible (transition CSS). */
+.tap {
+  -webkit-user-select: none;
+  user-select: none;
+  transition-property: transform, background-color, color, box-shadow, border-color, opacity;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out-expo);
+}
+.tap:active {
+  transform: scale(0.96);
+  transition-duration: 60ms;
+}
+
+/* Barre d'onglets flottante : verre dépoli dense, ombre portée douce. */
+.app-tabbar {
+  background: color-mix(in srgb, var(--color-paper-50) 86%, transparent);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(16, 42, 42, 0.07);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 18px 40px -18px rgba(1, 67, 61, 0.45),
+    0 4px 12px -6px rgba(16, 42, 42, 0.12);
+}
+
+@media (pointer: coarse) {
+  /* Boutons et liens-boutons : retour de pression natif. */
+  button:not(:disabled):active,
+  a[class*="rounded"]:active {
+    transform: scale(0.97);
+  }
+  button,
+  a[class*="rounded"] {
+    transition-property: transform, background-color, color, box-shadow, border-color, opacity, background-position;
+  }
+
+  /* Pas de sélection de texte accidentelle sur les commandes. */
+  button,
+  [role="button"],
+  [role="tab"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Défilement horizontal : inertie et accrochage propre. */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  /* Effets décoratifs coûteux : allégés pour garder 60 i/s au défilement. */
+  .aurora-blob {
+    animation: none !important;
+    filter: blur(60px);
+    will-change: auto;
+  }
+  .noise-overlay::after {
+    display: none;
+  }
+  .shine::after {
+    display: none;
+  }
+}
+
+/* Champs de saisie ≥ 16 px sur mobile : iOS ne zoome plus au focus. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* ============================================================
+   RÉDUCTION DU DÉFILEMENT — mobile et tablette
+   `.snap-row`    : grille → carrousel horizontal à glisser (< 768 px)
+   `.snap-row-lg` : idem jusqu'à la tablette paysage (< 1024 px)
+   La carte suivante dépasse volontairement : c'est l'invitation à glisser.
+   ============================================================ */
+@media (max-width: 767px) {
+  .snap-row {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.75rem;
+    margin-inline: -1rem;
+    padding: 0.25rem 1rem 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+  }
+  .snap-row > * {
+    flex: 0 0 var(--snap-w, 82%);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+}
+@media (min-width: 640px) and (max-width: 767px) {
+  .snap-row {
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+    scroll-padding-inline: 1.5rem;
+  }
+  .snap-row > * {
+    flex-basis: var(--snap-w-sm, 56%);
+  }
+}
+@media (max-width: 1023px) {
+  .snap-row-lg {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.75rem;
+    margin-inline: -1rem;
+    padding: 0.25rem 1rem 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+  }
+  .snap-row-lg > * {
+    flex: 0 0 var(--snap-w, 84%);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .snap-row-lg {
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+    scroll-padding-inline: 1.5rem;
+  }
+  .snap-row-lg > * {
+    flex-basis: var(--snap-w-sm, 58%);
+  }
+}
+.snap-row::-webkit-scrollbar,
+.snap-row-lg::-webkit-scrollbar {
+  display: none;
+}
+
+/* Boutons d'en-tête de page : côte à côte sur téléphone plutôt qu'empilés. */
+@media (max-width: 639px) {
+  .page-hero-actions > .flex:has(> :nth-child(2)) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .page-hero-actions > .flex:has(> :nth-child(2)) > :is(a, button) {
+    padding: 0.7rem 0.6rem;
+    font-size: 0.82rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+}
+
+/* Carrousel posé directement sur un conteneur de page : pas de débord négatif. */
+@media (max-width: 1023px) {
+  .snap-row.mx-auto,
+  .snap-row-lg.mx-auto {
+    margin-inline: 0;
+  }
+}

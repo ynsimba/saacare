@@ -43,7 +43,7 @@ export default function HowItWorks({ compact = false }) {
     <Section3D variant="up" className="bg-paper-100">
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-paper-100 py-20 sm:py-28"
+      className="relative overflow-hidden bg-paper-100 py-8 sm:py-20"
       aria-labelledby="how-it-works-heading"
     >
       <div
@@ -59,10 +59,10 @@ export default function HowItWorks({ compact = false }) {
         <SectionHeading
           eyebrow="Le parcours"
           title={<span id="how-it-works-heading">Quatre étapes, un seul interlocuteur</span>}
-          subtitle="Vous cherchez, vous demandez, nous confirmons. Et nous restons présents après le début de la mission."
+          subtitle="Cherchez un profil, déposez une demande, puis suivez la mission avec le même interlocuteur."
         />
 
-        <div className="mt-14 grid grid-cols-1 items-start gap-10 lg:mt-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16">
+        <div className="mt-8 grid grid-cols-1 items-start gap-6 sm:mt-10 lg:mt-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16">
           {/* ---------------- Colonne des étapes ---------------- */}
           <div>
             <ol className="relative flex flex-col">
@@ -82,7 +82,7 @@ export default function HowItWorks({ compact = false }) {
                     type="button"
                     onClick={() => select(index)}
                     aria-current={isActive ? "step" : undefined}
-                    className="group flex w-full items-start gap-4 rounded-2xl py-4 pr-3 text-left transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+                    className="group flex w-full items-start gap-3 rounded-2xl py-2.5 pr-2 text-left transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 sm:gap-4 sm:py-4 sm:pr-3"
                   >
                     {/* Puce / icône */}
                     <span className="relative z-10 shrink-0">
@@ -182,21 +182,21 @@ export default function HowItWorks({ compact = false }) {
           )}
           </div>
 
-          {/* ---------------- Aperçu de l'interface ---------------- */}
-          <Reveal variant="scale" duration={0.85} className="lg:sticky lg:top-28">
+          {/* Aperçu interface — desktop uniquement (évite un scroll mobile trop long) */}
+          <Reveal variant="scale" duration={0.85} className="hidden lg:sticky lg:top-28 lg:block">
             <div className="relative">
               {/* Cadres décalés en arrière-plan */}
               <div
-                className="absolute -right-3 -top-3 hidden h-full w-full rounded-xl border border-ink-900/8 bg-white/50 sm:block"
+                className="absolute -right-3 -top-3 h-full w-full rounded-xl border border-ink-900/8 bg-white/50"
                 aria-hidden="true"
               />
               <div
-                className="absolute -right-6 -top-6 hidden h-full w-full rounded-xl border border-ink-900/6 bg-white/25 sm:block"
+                className="absolute -right-6 -top-6 h-full w-full rounded-xl border border-ink-900/6 bg-white/25"
                 aria-hidden="true"
               />
 
               <div className="relative overflow-hidden rounded-xl border border-ink-900/8 bg-paper-50 shadow-lifted">
-                <div className="flex min-h-[27rem] flex-col sm:min-h-[28rem]" aria-hidden="true">
+                <div className="flex min-h-[28rem] flex-col" aria-hidden="true">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={active}
@@ -218,7 +218,7 @@ export default function HowItWorks({ compact = false }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.35, ease: EASE }}
-                className="absolute -bottom-5 left-4 flex items-center gap-2.5 rounded-2xl border border-ink-900/8 bg-white px-4 py-3 shadow-lifted sm:left-8"
+                className="absolute -bottom-5 left-8 flex items-center gap-2.5 rounded-2xl border border-ink-900/8 bg-white px-4 py-3 shadow-lifted"
               >
                 <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gold-100 text-gold-700">
                   <RefreshCcw className="size-4" aria-hidden="true" />
@@ -234,24 +234,9 @@ export default function HowItWorks({ compact = false }) {
           </Reveal>
         </div>
 
-        {/* Pagination discrète (mobile) */}
-        <div className="mt-14 flex items-center justify-center gap-2 lg:hidden">
-          {processSteps.map((step, index) => (
-            <button
-              key={step.number}
-              type="button"
-              onClick={() => select(index)}
-              aria-label={`Étape ${index + 1} : ${step.title}`}
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                index === active ? "w-8 bg-teal-600" : "w-1.5 bg-ink-900/15"
-              }`}
-            />
-          ))}
-        </div>
-
         {compact && (
-          <Reveal variant="up" className="mt-12 flex justify-center">
-            <Button to="/comment-ca-marche" variant="outline" size="lg" withArrow magnetic>
+          <Reveal variant="up" className="mt-8 flex justify-center sm:mt-12">
+            <Button to="/comment-ca-marche" variant="outline" size="md" withArrow magnetic className="sm:px-7 sm:py-3.5 sm:text-base">
               Voir le parcours en détail
             </Button>
           </Reveal>

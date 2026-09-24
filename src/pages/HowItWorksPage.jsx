@@ -70,19 +70,19 @@ export default function HowItWorksPage() {
       <HowItWorks />
 
       <Section3D variant="right" className="bg-white">
-        <section className="bg-white py-20 sm:py-24" aria-labelledby="facts-heading">
+        <section className="bg-white py-8 sm:py-16" aria-labelledby="facts-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading eyebrow="L'essentiel" title={<span id="facts-heading">Ce qu'il faut savoir avant de demander</span>} />
-            <Stagger as="dl" stagger={0.05} className="mt-12 grid grid-cols-1 gap-x-12 border-t border-ink-900/10 lg:grid-cols-2">
+            <Stagger as="dl" stagger={0.05} className="snap-row mt-6 grid grid-cols-1 gap-x-12 [--snap-w:78%] sm:mt-12 md:grid-cols-2 md:border-t md:border-ink-900/10">
               {FACTS.map(({ icon: Icon, term, detail, to, linkLabel }) => (
-                <RevealItem key={term} variant="up" className="border-b border-ink-900/10 py-5">
+                <RevealItem key={term} variant="up" className="rounded-2xl bg-paper-100 p-4 md:rounded-none md:border-b md:border-ink-900/10 md:bg-transparent md:px-0 md:py-5">
                   <dt className="flex items-center gap-3">
                     <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-teal-50 text-teal-700">
                       <Icon className="size-4.5" aria-hidden="true" />
                     </span>
                     <span className="text-xs font-semibold uppercase tracking-[0.14em] text-navy-600">{term}</span>
                   </dt>
-                  <dd className="mt-2 pl-12 text-[0.95rem] font-medium leading-snug text-ink-900">
+                  <dd className="mt-2 text-[0.9rem] md:pl-12 md:text-[0.95rem] font-medium leading-snug text-ink-900">
                     {detail}
                     {to && (
                       <Link to={to} className="ml-2 inline-flex items-center gap-1 align-middle text-sm font-semibold text-teal-700 hover:underline">
@@ -99,14 +99,14 @@ export default function HowItWorksPage() {
       </Section3D>
 
       <Section3D variant="left" className="bg-paper-100">
-        <section className="bg-paper-100 py-20 sm:py-24" aria-labelledby="verification-heading">
+        <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="verification-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading
               eyebrow="Avant la mise en relation"
               title={<span id="verification-heading">Chaque agent a passé ces sept contrôles</span>}
               subtitle="Le même protocole pour tous les pôles, complété par un test pratique propre à chaque métier."
             />
-            <Stagger as="ol" stagger={0.06} className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
+            <Stagger as="ol" stagger={0.06} className="snap-row mt-6 grid grid-cols-2 gap-4 [--snap-w:36%] [--snap-w-sm:24%] sm:mt-12 md:grid-cols-4 lg:grid-cols-7">
               {saatrustSteps.map((step) => (
                 <RevealItem as="li" key={step.number} variant="up" className="rounded-2xl bg-white p-4 text-center">
                   <span className="mx-auto grid size-11 place-items-center rounded-xl bg-teal-600 text-white">
@@ -117,7 +117,7 @@ export default function HowItWorksPage() {
                 </RevealItem>
               ))}
             </Stagger>
-            <p className="mt-8 flex flex-wrap items-center gap-2 text-sm text-ink-900/80">
+            <p className="mt-5 flex flex-wrap items-center gap-2 text-sm text-ink-900/80 sm:mt-8">
               <ShieldCheck className="size-4 text-teal-700" aria-hidden="true" />
               Revérification tous les 12 mois, et après tout incident.
               <Link to="/saatrust" className="inline-flex items-center gap-1 font-semibold text-teal-700 hover:underline">

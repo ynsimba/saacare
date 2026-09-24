@@ -33,9 +33,9 @@ export default function Garanties() {
         compact
       />
 
-      <section className="bg-paper-100 py-16 sm:py-20">
+      <section className="bg-paper-100 py-8 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
+          <Stagger className="snap-row grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
             {guarantees.map((g) => (
               <RevealItem key={g.title} variant="up" className="flex h-full flex-col rounded-2xl border border-ink-900/8 bg-white p-6">
                 <span className="grid size-12 place-items-center rounded-2xl bg-teal-600 text-white">
@@ -50,10 +50,10 @@ export default function Garanties() {
       </section>
 
       <Section3D variant="up" className="bg-white">
-        <section className="bg-white py-16 sm:py-20" aria-labelledby="incident-heading">
+        <section className="bg-white py-8 sm:py-16" aria-labelledby="incident-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading eyebrow="En cas d'incident" title={<span id="incident-heading">Voici ce qui se passe, étape par étape</span>} />
-            <Stagger as="ol" className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+            <Stagger as="ol" className="snap-row mt-6 sm:mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
               {INCIDENT_STEPS.map((s, i) => (
                 <RevealItem as="li" key={s.title} variant="up" className="rounded-2xl bg-mint p-6">
                   <span className="font-display text-3xl font-bold text-gold-700">0{i + 1}</span>

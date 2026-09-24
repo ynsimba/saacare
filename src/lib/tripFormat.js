@@ -6,6 +6,9 @@
 /** Une position plus vieille que ce délai n'est plus « en direct ». */
 export const STALE_AFTER_SECONDS = 60;
 
+/** Au-delà, on parle de dernière position connue (plus d’alarme « signal coupé »). */
+export const STALE_LONG_AFTER_SECONDS = 5 * 60;
+
 export function formatDistance(meters) {
   if (meters == null) return "—";
   if (meters < 950) return `${Math.round(meters / 10) * 10} m`;
@@ -61,6 +64,13 @@ export function tripPresentation(trip) {
       tone: "waiting",
       title: "Prestataire en route",
       detail: "En attente de la première position GPS.",
+    };
+  }
+  if (age != null && age > STALE_LONG_AFTER_SECONDS) {
+    return {
+      tone: "offline",
+      title: "Dernière position connue",
+      detail: "Le prestataire n’envoie plus sa position pour le moment. Les infos ci-dessous correspondent au dernier point reçu.",
     };
   }
   if (age != null && age > STALE_AFTER_SECONDS) {

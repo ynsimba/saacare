@@ -48,10 +48,10 @@ export default function Diaspora() {
         </Button>
       </PageHero>
 
-      <section className="bg-paper-100 py-16 sm:py-20" aria-labelledby="uses-heading">
+      <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="uses-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Pour qui" title={<span id="uses-heading">Ce que vous pouvez organiser à distance</span>} />
-          <Stagger className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+          <Stagger className="snap-row mt-6 sm:mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
             {USES.map(({ icon: Icon, title, text }) => (
               <RevealItem key={title} variant="up" className="rounded-2xl bg-white p-6">
                 <Icon className="size-6 text-teal-600" aria-hidden="true" />
@@ -63,13 +63,13 @@ export default function Diaspora() {
         </div>
       </section>
 
-      <section className="bg-white py-16 sm:py-20" aria-labelledby="proof-heading">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <section className="bg-white py-8 sm:py-16" aria-labelledby="proof-heading">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div>
             <SectionHeading eyebrow="La preuve, chaque mois" title={<span id="proof-heading">Vous savez ce que votre argent a produit</span>} />
-            <ul className="mt-8 flex flex-col gap-3">
+            <ul className="snap-row mt-5 flex flex-col gap-3 [--snap-w:78%] sm:mt-8">
               {PROOF.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="flex items-start gap-4 rounded-2xl bg-mint p-5">
+                <li key={title} className="flex items-start gap-3 rounded-2xl bg-mint p-4 sm:gap-4 sm:p-5">
                   <Icon className="mt-0.5 size-5 shrink-0 text-teal-700" aria-hidden="true" />
                   <span>
                     <strong className="block font-display text-ink-900">{title}</strong>
@@ -92,7 +92,7 @@ export default function Diaspora() {
         </div>
       </section>
 
-      <section id="demande-diaspora" className="scroll-mt-24 bg-paper-100 py-16 sm:py-20">
+      <section id="demande-diaspora" className="scroll-mt-24 bg-paper-100 py-8 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-ink-900/8 bg-white p-5 shadow-soft sm:p-8">
             <h2 className="font-display text-2xl font-bold text-ink-900">Faire une demande depuis l'étranger</h2>

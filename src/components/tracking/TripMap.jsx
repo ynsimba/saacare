@@ -158,11 +158,11 @@ export default function TripMap({ position, destination, path = [], className = 
       >
         <MapPinned className="size-8 text-navy-500" aria-hidden="true" />
         <p className="font-display text-base font-bold text-ink-900">
-          {error === "missing-key" ? "Carte non configurée" : "Carte momentanément indisponible"}
+          {error === "missing-key" ? "Carte indisponible" : "Carte momentanément indisponible"}
         </p>
         <p className="max-w-sm text-sm text-ink-900/70">
           {error === "missing-key"
-            ? "La clé Google Maps n’est pas renseignée. La distance et l’heure d’arrivée restent affichées ci-dessous."
+            ? "Ajoutez VITE_GOOGLE_MAPS_API_KEY au build de la PWA pour afficher Google Maps. Le suivi GPS (distance, ETA, coordonnées) fonctionne déjà sans carte."
             : "Google Maps n’a pas répondu. Le suivi continue : distance et arrivée estimée restent à jour."}
         </p>
         <dl className="mt-1 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">

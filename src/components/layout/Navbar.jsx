@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
-import { Menu, X, ChevronDown, ArrowUpRight, Phone, MessageCircle } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, ArrowUpRight, Phone, MessageCircle } from "lucide-react";
 import Button from "../ui/Button";
+import BottomSheet from "../ui/BottomSheet";
 import DomainIcon from "../ui/DomainIcon";
 import { domains } from "../../data/domains";
 import { PHONE, PHONE_HREF, WHATSAPP_HREF } from "../../data/site";
 import { THEME } from "../../lib/theme";
-import { EASE, useIsReducedMotion } from "../../lib/motion";
+import { EASE, haptic, springs, useIsReducedMotion } from "../../lib/motion";
 import { useNavTheme } from "../../lib/navTheme";
 import { homeForRole, useAuth } from "../../lib/auth";
 
@@ -76,7 +77,6 @@ export default function Navbar() {
   const reduced = useIsReducedMotion();
   const navTheme = useNavTheme();
   const { user, loading: authLoading } = useAuth();
-  const panelRef = useRef(null);
   const toggleRef = useRef(null);
   const closeTimer = useRef(null);
   const lastY = useRef(0);
@@ -106,24 +106,7 @@ export default function Navbar() {
     setHovered(null);
   }, [location.pathname]);
 
-  /* Menu mobile : verrou du défilement, focus initial, fermeture via Échap. */
-  useEffect(() => {
-    if (!open) return undefined;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector("a,button")?.focus();
-    const onKey = (e) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
+  const closeMenu = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     if (!openMenu) return undefined;
@@ -295,6 +278,11 @@ export default function Navbar() {
 
         {/* ---------- Actions (grand écran) ---------- */}
         <div className="hidden items-center gap-2 xl:flex">
+          {!authLoading && !user && (
+            <Button to="/inscription/client" variant={onDark ? "glass" : "outline"} size="sm" magnetic>
+              S’inscrire
+            </Button>
+          )}
           {!authLoading && (
             <Button
               to={user ? espaceTo : "/login"}
@@ -311,10 +299,13 @@ export default function Navbar() {
         <button
           ref={toggleRef}
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => {
+            haptic();
+            setOpen((o) => !o);
+          }}
           aria-expanded={open}
           aria-controls="mobile-menu"
-          className={`relative flex size-11 items-center justify-center rounded-full transition-colors duration-300 xl:hidden ${
+          className={`tap relative flex size-11 items-center justify-center rounded-full transition-colors duration-300 xl:hidden ${
             onDark ? "text-paper-50 hover:bg-white/10" : "text-ink-900 hover:bg-ink-900/5"
           }`}
         >
@@ -342,101 +333,91 @@ export default function Navbar() {
         }`}
       />
 
-      {/* ---------- Panneau latéral mobile ---------- */}
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              key="scrim"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 top-[calc(4rem+env(safe-area-inset-top))] z-40 bg-ink-950/40 backdrop-blur-sm sm:top-[calc(5rem+env(safe-area-inset-top))] xl:hidden"
-              aria-hidden="true"
-            />
-            <motion.div
-              key="panel"
-              id="mobile-menu"
-              ref={panelRef}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Menu de navigation"
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 24 }}
-              transition={{ duration: 0.35, ease: EASE }}
-              className="fixed bottom-0 right-0 top-[calc(4rem+env(safe-area-inset-top))] z-40 w-full max-w-md overflow-y-auto border-l border-ink-900/8 bg-paper-50 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:top-[calc(5rem+env(safe-area-inset-top))] xl:hidden"
+      {/* ---------- Menu mobile : feuille glissante depuis le bas ---------- */}
+      <BottomSheet open={open} onClose={closeMenu} title="Menu" maxHeight="90dvh">
+        <div id="mobile-menu">
+          <div className="grid grid-cols-2 gap-2">
+            {!user && (
+              <Button to="/inscription/client" variant="outline" size="lg" className="tap w-full rounded-2xl">
+                S’inscrire
+              </Button>
+            )}
+            <Button
+              to={user ? espaceTo : "/login"}
+              variant="primary"
+              size="lg"
+              className={`tap w-full rounded-2xl ${user ? "col-span-2" : ""}`}
             >
-              <div className="flex flex-col gap-2.5 border-b border-ink-900/8 px-4 py-5">
-                <Button to={user ? espaceTo : "/login"} variant="primary" size="lg" className="w-full">
-                  {user ? "Mon espace" : "Connexion"}
-                </Button>
-              </div>
+              {user ? "Mon espace" : "Connexion"}
+            </Button>
+          </div>
 
-              <motion.ul
-                initial="hidden"
-                animate="show"
-                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }}
-                className="flex flex-col gap-1 px-4 pt-4"
+          <motion.ul
+            initial="hidden"
+            animate="show"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }}
+            className="mt-4 overflow-hidden rounded-2xl border border-ink-900/6 bg-paper-100"
+          >
+            {NAV_LINKS.filter((l) => !l.children).map((link) => (
+              <motion.li
+                key={link.to}
+                className="border-b border-ink-900/6 last:border-b-0"
+                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: springs.gentle } }}
               >
-                {NAV_LINKS.filter((l) => !l.children).map((link) => (
-                  <motion.li
-                    key={link.to}
-                    variants={{ hidden: { opacity: 0, x: 18 }, show: { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } } }}
-                  >
-                    <NavLink
-                      to={link.to}
-                      className={({ isActive }) =>
-                        `flex min-h-12 items-center justify-between rounded-xl px-4 py-3 text-base font-medium transition-colors ${
-                          isActive ? "bg-teal-50 text-teal-700" : "text-ink-900/80 hover:bg-ink-900/4"
-                        }`
-                      }
-                    >
-                      {link.label}
-                      <ArrowUpRight className="size-4 opacity-40" aria-hidden="true" />
-                    </NavLink>
-                  </motion.li>
-                ))}
-              </motion.ul>
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `tap flex min-h-13 items-center justify-between px-4 py-3 text-[0.95rem] font-medium ${
+                      isActive ? "text-teal-700" : "text-ink-900/85"
+                    }`
+                  }
+                >
+                  {link.label}
+                  <ChevronRight className="size-4 opacity-35" aria-hidden="true" />
+                </NavLink>
+              </motion.li>
+            ))}
+          </motion.ul>
 
-              <div className="px-4 pt-5">
-                <p className="px-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-navy-500">
-                  Nos solutions
-                </p>
-                <ul className="mt-2.5 grid grid-cols-2 gap-2">
-                  {domains.map((d) => (
-                    <li key={d.slug}>
-                      <Link
-                        to={`/solutions/${d.slug}`}
-                        className="flex h-full flex-col gap-2 rounded-2xl border border-ink-900/8 bg-paper-100 p-3.5 transition-colors hover:border-ink-900/20"
-                      >
-                        <span className={`grid size-9 place-items-center rounded-lg ${THEME[d.theme]?.chip}`}>
-                          <DomainIcon name={d.icon} className="size-4.5" />
-                        </span>
-                        <span className="text-sm font-semibold leading-tight text-ink-900">{d.name}</span>
-                        {!d.available && (
-                          <span className="text-[0.65rem] font-medium uppercase tracking-wide text-navy-500">{d.phase}</span>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <p className="mt-6 px-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-navy-500">Nos solutions</p>
+          <motion.ul
+            initial="hidden"
+            animate="show"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.18 } } }}
+            className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3"
+          >
+            {domains.map((d) => (
+              <motion.li
+                key={d.slug}
+                variants={{ hidden: { opacity: 0, scale: 0.94 }, show: { opacity: 1, scale: 1, transition: springs.gentle } }}
+              >
+                <Link
+                  to={`/solutions/${d.slug}`}
+                  className="tap flex h-full flex-col gap-2 rounded-2xl border border-ink-900/6 bg-paper-100 p-3.5"
+                >
+                  <span className={`grid size-9 place-items-center rounded-xl ${THEME[d.theme]?.chip}`}>
+                    <DomainIcon name={d.icon} className="size-4.5" />
+                  </span>
+                  <span className="text-sm font-semibold leading-tight text-ink-900">{d.name}</span>
+                  {!d.available && (
+                    <span className="text-[0.65rem] font-medium uppercase tracking-wide text-navy-500">{d.phase}</span>
+                  )}
+                </Link>
+              </motion.li>
+            ))}
+          </motion.ul>
 
-              <div className="mt-6 flex flex-col gap-1 border-t border-ink-900/8 px-4 py-5">
-                <a href={PHONE_HREF} className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium text-ink-900/80 hover:bg-ink-900/4">
-                  <Phone className="size-4 text-teal-600" aria-hidden="true" /> {PHONE}
-                </a>
-                <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium text-ink-900/80 hover:bg-ink-900/4">
-                  <MessageCircle className="size-4 text-teal-600" aria-hidden="true" /> WhatsApp
-                </a>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <a href={PHONE_HREF} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-teal-50 px-3 text-sm font-semibold text-teal-700">
+              <Phone className="size-4" aria-hidden="true" /> Appeler
+            </a>
+            <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-teal-50 px-3 text-sm font-semibold text-teal-700">
+              <MessageCircle className="size-4" aria-hidden="true" /> WhatsApp
+            </a>
+          </div>
+          <p className="mt-3 text-center text-xs text-ink-900/45">{PHONE}</p>
+        </div>
+      </BottomSheet>
     </motion.header>
   );
 }

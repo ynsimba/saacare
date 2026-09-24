@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Plus, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import Seo from "../../lib/Seo";
 import { api } from "../../lib/api";
+import { useAuth } from "../../lib/auth";
 import Field from "../../components/ui/Field";
 import Button from "../../components/ui/Button";
 import { DeskAlert, DeskEmpty, DeskHeading, initials } from "../../components/admin/DeskUI";
@@ -22,6 +23,7 @@ const emptyForm = {
 };
 
 export default function AdminUsers() {
+  const { user: me } = useAuth();
   const { query = "" } = useOutletContext() || {};
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
@@ -55,6 +57,30 @@ export default function AdminUsers() {
       setItems((list) => list.map((u) => (u.id === id ? data.item : u)));
     } catch (err) {
       setError(err.message || "Mise à jour impossible.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const onDelete = async (u) => {
+    if (String(u.id) === String(me?.id)) {
+      setError("Vous ne pouvez pas supprimer votre propre compte.");
+      return;
+    }
+    const confirmed = window.confirm(
+      `Supprimer définitivement « ${u.fullName || u.email} » ?\nCette action est irréversible.`,
+    );
+    if (!confirmed) return;
+
+    setBusyId(u.id);
+    setError("");
+    setOk("");
+    try {
+      await api.deleteSuperAdminUser(u.id);
+      setItems((list) => list.filter((row) => row.id !== u.id));
+      setOk("Utilisateur supprimé.");
+    } catch (err) {
+      setError(err.message || "Suppression impossible.");
     } finally {
       setBusyId(null);
     }
@@ -193,52 +219,69 @@ export default function AdminUsers() {
               </tr>
             </thead>
             <tbody>
-              {shown.map((u) => (
-                <tr key={u.id}>
-                  <td className={`${cellBase} rounded-l-2xl pl-4`}>
-                    <div className="flex items-center gap-3">
-                      <span className="flex size-9 items-center justify-center rounded-full bg-white text-xs font-bold">
-                        {initials(u.fullName || "")}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="font-semibold">{u.fullName}</p>
-                        <p className="truncate text-xs text-desk-ink/55">{u.email}</p>
+              {shown.map((u) => {
+                const isSelf = String(u.id) === String(me?.id);
+                return (
+                  <tr key={u.id}>
+                    <td className={`${cellBase} rounded-l-2xl pl-4`}>
+                      <div className="flex items-center gap-3">
+                        <span className="flex size-9 items-center justify-center rounded-full bg-white text-xs font-bold">
+                          {initials(u.fullName || "")}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-semibold">{u.fullName}</p>
+                          <p className="truncate text-xs text-desk-ink/55">{u.email}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className={cellBase}>
-                    <select
-                      value={u.role}
-                      disabled={busyId === u.id}
-                      onChange={(e) => patch(u.id, { role: e.target.value })}
-                      className="h-9 rounded-full bg-white px-3 text-xs font-semibold outline-none"
-                    >
-                      {Object.entries(ROLE_LABEL).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className={cellBase}>
-                    {u.role === "admin" ? (
-                      <button
-                        type="button"
+                    </td>
+                    <td className={cellBase}>
+                      <select
+                        value={u.role}
                         disabled={busyId === u.id}
-                        onClick={() => patch(u.id, { isSuperAdmin: !u.isSuperAdmin })}
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                          u.isSuperAdmin ? "bg-desk-ink text-white" : "bg-white text-desk-ink"
-                        }`}
+                        onChange={(e) => patch(u.id, { role: e.target.value })}
+                        className="h-9 rounded-full bg-white px-3 text-xs font-semibold outline-none"
                       >
-                        {u.isSuperAdmin ? "Oui" : "Non"}
-                      </button>
-                    ) : (
-                      <span className="text-desk-ink/40">—</span>
-                    )}
-                  </td>
-                  <td className={`${cellBase} rounded-r-2xl pr-4 text-xs text-desk-ink/50`}>#{u.id}</td>
-                </tr>
-              ))}
+                        {Object.entries(ROLE_LABEL).map(([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className={cellBase}>
+                      {u.role === "admin" ? (
+                        <button
+                          type="button"
+                          disabled={busyId === u.id}
+                          onClick={() => patch(u.id, { isSuperAdmin: !u.isSuperAdmin })}
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            u.isSuperAdmin ? "bg-desk-ink text-white" : "bg-white text-desk-ink"
+                          }`}
+                        >
+                          {u.isSuperAdmin ? "Oui" : "Non"}
+                        </button>
+                      ) : (
+                        <span className="text-desk-ink/40">—</span>
+                      )}
+                    </td>
+                    <td className={`${cellBase} rounded-r-2xl pr-4`}>
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="text-xs text-desk-ink/40">#{u.id}</span>
+                        <button
+                          type="button"
+                          title={isSelf ? "Impossible de supprimer votre compte" : `Supprimer ${u.fullName || u.email}`}
+                          disabled={busyId === u.id || isSelf}
+                          onClick={() => onDelete(u)}
+                          className="inline-flex size-9 items-center justify-center rounded-full bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-35"
+                        >
+                          <Trash2 className="size-4" strokeWidth={1.75} aria-hidden="true" />
+                          <span className="sr-only">Supprimer {u.fullName || u.email}</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

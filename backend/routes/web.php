@@ -11,7 +11,7 @@ Route::get('/', function () {
         'service' => 'saacare-api',
         'ok' => true,
         'docs' => url('/api/health'),
-        'frontend' => rtrim((string) env('FRONTEND_URL', 'https://app.saacare.com'), '/'),
+        'frontend' => rtrim((string) env('FRONTEND_URL', 'https://www.saacare.com'), '/'),
     ]);
 });
 

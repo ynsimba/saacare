@@ -137,4 +137,35 @@ class SuperAdminCreateUserTest extends TestCase
             ->assertStatus(422)
             ->assertJsonStructure(['error', 'details']);
     }
+
+    public function test_super_admin_can_delete_user(): void
+    {
+        $target = User::create([
+            'full_name' => 'À supprimer',
+            'email' => 'delete.me@saacare.cd',
+            'password' => 'demo1234',
+            'role' => 'client',
+        ]);
+
+        $this->actingAs($this->superAdmin, 'sanctum')
+            ->postJson('/api/admin/utilisateurs/'.$target->id.'/supprimer')
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseMissing('users', ['id' => $target->id]);
+    }
+
+    public function test_cannot_delete_own_account(): void
+    {
+        $this->actingAs($this->superAdmin, 'sanctum')
+            ->postJson('/api/admin/utilisateurs/'.$this->superAdmin->id.'/supprimer')
+            ->assertStatus(422);
+    }
+
+    public function test_regular_admin_cannot_delete_users(): void
+    {
+        $this->actingAs($this->admin, 'sanctum')
+            ->postJson('/api/admin/utilisateurs/'.$this->superAdmin->id.'/supprimer')
+            ->assertForbidden();
+    }
 }

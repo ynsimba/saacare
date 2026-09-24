@@ -34,7 +34,7 @@ export default function SupportCTA() {
   return (
     <div
       ref={rootRef}
-      className="fixed bottom-20 left-4 z-40 flex flex-col items-start gap-3 xl:bottom-8 xl:left-8"
+      className="fixed bottom-8 left-8 z-40 hidden flex-col items-start gap-3 xl:flex"
     >
       <AnimatePresence>
         {open && (

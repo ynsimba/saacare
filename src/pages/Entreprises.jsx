@@ -11,7 +11,7 @@ import CTASection from "../components/sections/CTASection";
 const OFFERS = [
   { icon: Users, title: "Mise à disposition de personnel", text: "Agents d'entretien, aides, cuisiniers, employés par SaaCare et affectés chez vous." },
   { icon: Sparkles, title: "Entretien de locaux", text: "Bureaux, écoles, immeubles et parties communes, avec continuité de service contractualisée." },
-  { icon: Car, title: "Chauffeurs", text: "Chauffeurs de direction et de mission pour entreprises, ONG et ambassades." },
+  { icon: Car, title: "Chauffeurs, courses et livraisons", text: "Chauffeurs de direction, courtiers pour courses du quotidien, et livraison de produits pour vos clients." },
   { icon: FileCheck2, title: "Conformité sociale externalisée", text: "Contrats, bulletins, CNSS, INPP, ONEM et IPR gérés, et audit de conformité sur devis." },
 ];
 
@@ -67,10 +67,10 @@ export default function Entreprises() {
         </div>
       </PageHero>
 
-      <section id="offre" className="scroll-mt-24 bg-paper-100 py-16 sm:py-20" aria-labelledby="offers-heading">
+      <section id="offre" className="scroll-mt-24 bg-paper-100 py-8 sm:py-16" aria-labelledby="offers-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Notre offre" title={<span id="offers-heading">Quatre services pour les organisations</span>} />
-          <Stagger className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+          <Stagger className="snap-row mt-6 sm:mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
             {OFFERS.map(({ icon: Icon, title, text }) => (
               <RevealItem key={title} variant="up" className="flex h-full flex-col rounded-2xl border border-ink-900/8 bg-white p-6">
                 <span className="grid size-12 place-items-center rounded-2xl bg-teal-600 text-white">
@@ -85,20 +85,20 @@ export default function Entreprises() {
       </section>
 
       <Section3D variant="up" className="bg-white">
-        <section className="bg-white py-16 sm:py-20">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <section className="bg-white py-8 sm:py-16">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-2 lg:px-8">
             <div>
               <SectionHeading eyebrow="Pourquoi SaaCare" title="Sept structures de placement sur dix sont irrégulières. Pas nous." subtitle="La conformité n'est pas une contrainte : c'est ce que vous achetez." />
-              <ul className="mt-8 flex flex-col gap-3">
+              <ul className="mt-5 flex flex-col gap-2 sm:mt-8 sm:gap-3">
                 {WHY.map(({ icon: Icon, text }) => (
-                  <li key={text} className="flex items-start gap-3 rounded-xl bg-paper-100 px-4 py-3 text-sm text-ink-900">
+                  <li key={text} className="flex items-start gap-3 rounded-xl bg-paper-100 px-3.5 py-2.5 text-[0.85rem] text-ink-900 sm:px-4 sm:py-3 sm:text-sm">
                     <Icon className="mt-0.5 size-4.5 shrink-0 text-teal-600" aria-hidden="true" />
                     {text}
                   </li>
                 ))}
               </ul>
             </div>
-            <Reveal variant="right" className="h-fit rounded-3xl bg-navy-800 p-6 text-paper-50 sm:p-8">
+            <Reveal variant="right" className="h-fit rounded-3xl bg-navy-800 p-5 text-paper-50 sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-200">Exemple</p>
               <h3 className="mt-2 font-display text-2xl font-bold">Un chauffeur mis à disposition</h3>
               <p className="mt-1 text-sm text-paper-50/80">Contrat de 12 à 24 mois, à Kinshasa.</p>
@@ -118,10 +118,10 @@ export default function Entreprises() {
         </section>
       </Section3D>
 
-      <section className="bg-paper-100 py-16 sm:py-20" aria-labelledby="process-heading">
+      <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="process-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Le déroulé" title={<span id="process-heading">De la demande au suivi mensuel</span>} />
-          <Stagger as="ol" className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5" stagger={0.08}>
+          <Stagger as="ol" className="snap-row mt-6 sm:mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5" stagger={0.08}>
             {PROCESS.map((p, i) => (
               <RevealItem as="li" key={p.title} variant="up" className="rounded-2xl bg-white p-5">
                 <span className="grid size-9 place-items-center rounded-full bg-gold-100 font-display font-bold text-gold-800">{i + 1}</span>

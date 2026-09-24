@@ -11,31 +11,46 @@ const FEMALE_FIRST_NAMES = new Set([
   "belleza",
   "marie",
   "grace",
-  "grace",
   "fatou",
   "aisha",
   "amina",
 ]);
+
+function resolveIdentity(user) {
+  const email = String(user?.email || "").toLowerCase();
+  const known = ADMIN_TITLES[email];
+  if (known) return known;
+
+  const parts = String(user?.fullName || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!parts.length) return { title: "", name: "" };
+
+  const first = parts[0];
+  const title = FEMALE_FIRST_NAMES.has(first.toLowerCase()) ? "Mme" : "M.";
+  return { title, name: first };
+}
+
+function helloForHour(hour) {
+  if (hour < 12) return "Bonjour";
+  if (hour < 18) return "Bon après-midi";
+  return "Bonsoir";
+}
 
 /**
  * Salutation admin selon l’heure et la civilité.
  * Ex. « Bonjour M. Yves », « Bon après-midi Mme Sephora ».
  */
 export function adminDayGreeting(user, now = new Date()) {
-  const hour = now.getHours();
-  const hello = hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
+  const parts = adminDayGreetingParts(user, now);
+  if (!parts.name) return parts.hello;
+  return `${parts.hello} ${parts.title} ${parts.name}`.replace(/\s+/g, " ").trim();
+}
 
-  const email = String(user?.email || "").toLowerCase();
-  const known = ADMIN_TITLES[email];
-  if (known) return `${hello} ${known.title} ${known.name}`;
-
-  const parts = String(user?.fullName || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-  if (!parts.length) return hello;
-
-  const first = parts[0];
-  const title = FEMALE_FIRST_NAMES.has(first.toLowerCase()) ? "Mme" : "M.";
-  return `${hello} ${title} ${first}`;
+/** Parties séparées pour un rendu typographique plus riche (mobile). */
+export function adminDayGreetingParts(user, now = new Date()) {
+  const hello = helloForHour(now.getHours());
+  const { title, name } = resolveIdentity(user);
+  return { hello, title, name };
 }

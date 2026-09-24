@@ -91,7 +91,7 @@ export default function ValuesBento() {
 
   return (
     <Section3D variant="left" className="bg-white">
-    <section className="relative overflow-hidden bg-white py-20 sm:py-28" aria-labelledby="values-heading">
+    <section className="relative overflow-hidden bg-white py-8 sm:py-20" aria-labelledby="values-heading">
       <div
         className="pointer-events-none absolute left-1/2 top-1/3 -z-10 size-[42rem] -translate-x-1/2 rounded-full bg-teal-100/35 blur-3xl"
         aria-hidden="true"
@@ -104,7 +104,7 @@ export default function ValuesBento() {
             variant="blur"
             className="sm:col-span-2 lg:col-span-2 lg:row-span-2"
           >
-            <div className="noise-overlay relative isolate flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 p-8 text-paper-50 sm:p-10">
+            <div className="noise-overlay relative isolate flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 p-6 text-paper-50 sm:p-10">
               {/* Halos */}
               <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
                 <div className="aurora-blob -left-16 top-[-20%] size-72 bg-teal-500/22 animate-aurora" />
@@ -118,17 +118,17 @@ export default function ValuesBento() {
                 </span>
                 <h2
                   id="values-heading"
-                  className="mt-5 text-balance font-display text-3xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-4xl"
+                  className="mt-3 text-balance font-display text-2xl font-bold leading-[1.08] sm:mt-5 sm:text-3xl tracking-[-0.02em] sm:text-4xl"
                 >
                   Ce qui guide chacune de nos décisions
                 </h2>
-                <p className="mt-5 max-w-md text-pretty leading-relaxed text-paper-100/65">
+                <p className="mt-3 max-w-md text-pretty text-sm leading-relaxed text-paper-100/65 sm:mt-5 sm:text-base">
                   Cinq principes non négociables. Ils dictent qui entre sur la plateforme, comment
                   nos agents sont protégés et ce que nous faisons quand quelque chose se passe mal.
                 </p>
               </div>
 
-              <div className="relative mt-10 flex items-end justify-between gap-6">
+              <div className="relative mt-5 flex items-end justify-between gap-6 sm:mt-10">
                 <Link
                   to="/comment-ca-marche"
                   className="group inline-flex items-center gap-2 text-sm font-semibold text-paper-50"
@@ -155,17 +155,19 @@ export default function ValuesBento() {
             </div>
           </RevealItem>
 
-          {/* ---------------- Tuiles de valeurs ---------------- */}
-          {VALUES.map((value, index) => (
-            <ValueTile key={value.title} value={value} index={index} />
-          ))}
+          {/* ---------------- Tuiles de valeurs (à glisser sur mobile) ---------------- */}
+          <div className="snap-row-lg [--snap-w:80%] [--snap-w-sm:46%] sm:col-span-2 lg:contents">
+            {VALUES.map((value, index) => (
+              <ValueTile key={value.title} value={value} index={index} />
+            ))}
+          </div>
         </Stagger>
 
         {/* Note de bas de section */}
         <Reveal
           variant="fade"
           delay={0.15}
-          className="mt-8 flex items-center justify-center gap-3 text-center"
+          className="mt-5 flex items-center justify-center gap-3 text-center sm:mt-8"
         >
           <span className="hidden h-px w-8 bg-ink-900/10 sm:block" aria-hidden="true" />
           <p className="text-sm text-ink-900/50">

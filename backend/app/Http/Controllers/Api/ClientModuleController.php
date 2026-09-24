@@ -13,6 +13,7 @@ use App\Models\Payment;
 use App\Models\PlatformSetting;
 use App\Models\ProviderProfile;
 use App\Models\ProviderReview;
+use App\Support\ProviderIdentity;
 use App\Support\PublicProvider;
 use App\Support\TripPayload;
 use Illuminate\Http\JsonResponse;
@@ -158,9 +159,11 @@ class ClientModuleController extends Controller
             });
         }
 
-        $items = $query->latest()->get()->map(
-            fn (ProviderProfile $p) => PublicProvider::serialize($p, true)
-        );
+        $items = $query->latest()->get()->map(function (ProviderProfile $p) {
+            ProviderIdentity::ensure($p);
+
+            return PublicProvider::serialize($p, true);
+        });
 
         return response()->json(['items' => $items]);
     }

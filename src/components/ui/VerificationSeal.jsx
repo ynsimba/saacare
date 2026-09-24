@@ -6,7 +6,7 @@ import { useIsReducedMotion } from "../../lib/motion";
  * Rappelle le motif central de SaaCare — des professionnels contrôlés et certifiés —
  * sous la forme d'un tampon officiel, avec anneau tournant et coche tracée au chargement.
  */
-export default function VerificationSeal({ size = 220, label = "SAACARE · PRESTATAIRE VÉRIFIÉ ·" }) {
+export default function VerificationSeal({ size = 220, label = "SaaCare · PRESTATAIRE VÉRIFIÉ ·" }) {
   const reduced = useIsReducedMotion();
   const r = size / 2;
   const textPathId = "seal-text-path";

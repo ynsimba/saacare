@@ -17,6 +17,7 @@ export default function ProviderCard({ provider, index = 0 }) {
   const domain = getDomainBySlug(provider.domainSlug);
   const reduced = useIsReducedMotion();
   const available = provider.availability === "immediate";
+  const profileKey = provider.reference || (provider.id != null ? String(provider.id) : null);
 
   return (
     <motion.div
@@ -67,14 +68,20 @@ export default function ProviderCard({ provider, index = 0 }) {
         </div>
 
         <div className="mt-auto pt-4">
-          <Link
-            to={`/prestataires/${provider.reference}`}
-            className="group/cta inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md bg-white px-5 py-2 text-sm font-semibold text-teal-700 shadow-soft transition-colors duration-300 hover:bg-paper-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            Voir le profil
-            <ArrowRight className="size-3.5 transition-transform duration-300 group-hover/cta:translate-x-0.5" aria-hidden="true" />
-            <span className="sr-only"> {provider.reference}</span>
-          </Link>
+          {profileKey ? (
+            <Link
+              to={`/prestataires/${profileKey}`}
+              className="group/cta inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md bg-white px-5 py-2 text-sm font-semibold text-teal-700 shadow-soft transition-colors duration-300 hover:bg-paper-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Voir le profil
+              <ArrowRight className="size-3.5 transition-transform duration-300 group-hover/cta:translate-x-0.5" aria-hidden="true" />
+              <span className="sr-only"> {profileKey}</span>
+            </Link>
+          ) : (
+            <span className="inline-flex min-h-10 items-center justify-center rounded-md bg-white/80 px-5 py-2 text-sm font-semibold text-teal-700/50">
+              Profil indisponible
+            </span>
+          )}
         </div>
       </Spotlight>
     </motion.div>

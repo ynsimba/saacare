@@ -15,6 +15,7 @@ const NEED_TYPES = [
   { value: "mise-a-disposition", label: "Mise à disposition de personnel" },
   { value: "entretien", label: "Entretien de locaux" },
   { value: "chauffeurs", label: "Chauffeurs" },
+  { value: "courses-livraison", label: "Courses du quotidien & livraison" },
   { value: "conformite", label: "Conformité sociale externalisée" },
 ];
 
@@ -73,7 +74,7 @@ export default function QuoteRequest() {
         compact
       />
 
-      <section className="bg-paper-100 py-12 sm:py-16">
+      <section className="bg-paper-100 py-8 sm:py-14">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-ink-900/8 bg-white p-5 shadow-soft sm:p-8">
             <AnimatePresence mode="wait">

@@ -58,7 +58,7 @@ export default function DomainsGrid() {
     <Section3D variant="up" clip={false} className="bg-white">
     <section
       ref={sectionRef}
-      className="relative isolate bg-white py-20 sm:py-28"
+      className="relative isolate bg-white py-8 sm:py-20"
       aria-labelledby="domains-heading"
     >
       {/* Halo de marque diffus — confiné à son propre calque pour que la vignette
@@ -68,7 +68,7 @@ export default function DomainsGrid() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end sm:gap-8">
           <SectionHeading
             eyebrow="Nos solutions"
             title={<span id="domains-heading">Sept pôles, un seul registre d'agents vérifiés</span>}
@@ -88,7 +88,30 @@ export default function DomainsGrid() {
           </Reveal>
         </div>
 
-        {/* ---------------- Liste éditoriale ---------------- */}
+        {/* ---------------- Mobile : tuiles à glisser · tablette : grille de tuiles ---------------- */}
+        <ul className="snap-row mt-4 [--snap-w:40%] [--snap-w-sm:30%] md:mt-10 md:grid md:grid-cols-4 md:gap-3 lg:hidden" aria-label="Les sept pôles">
+          {domains.map((domain, index) => (
+            <li key={domain.slug}>
+              <Link
+                to={`/solutions/${domain.slug}`}
+                className="tap flex h-full flex-col gap-2.5 rounded-2xl border border-ink-900/8 bg-paper-100 p-3.5"
+              >
+                <span className="flex items-center justify-between">
+                  <span className={`grid size-10 place-items-center rounded-xl ${THEME.teal.bgSoft} ${THEME.teal.text}`}>
+                    <DomainIcon name={domain.icon} className="size-5" />
+                  </span>
+                  <span className="font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-ink-900/30">0{index + 1}</span>
+                </span>
+                <span className="font-display text-[0.95rem] font-bold leading-tight text-ink-900">{domain.name}</span>
+                <span className="line-clamp-2 text-[0.72rem] leading-snug text-ink-900/55">
+                  {domain.available ? domain.tagline : domain.phase}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        {/* ---------------- Liste éditoriale (grand écran) ---------------- */}
         <Stagger
           as="ul"
           stagger={0.1}
@@ -97,7 +120,7 @@ export default function DomainsGrid() {
             setHovered(null);
             setPointerActive(false);
           }}
-          className="mt-14 border-t border-ink-900/10"
+          className="mt-14 hidden border-t border-ink-900/10 lg:block"
         >
           {domains.map((domain, index) => (
             <DomainRow
@@ -183,7 +206,7 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
         to={`/solutions/${domain.slug}`}
         onMouseEnter={onEnter}
         onFocus={onEnter}
-        className="group relative flex items-center gap-5 overflow-hidden px-2 py-7 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold-500 sm:gap-7 sm:px-5 sm:py-9 lg:py-10"
+        className="group relative flex items-center gap-2.5 overflow-hidden px-1 py-2.5 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold-500 sm:gap-7 sm:px-5 sm:py-8 lg:py-9"
       >
         {/* Remplissage coloré qui monte depuis le bas */}
         <motion.span
@@ -199,9 +222,9 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
           aria-hidden="true"
         />
 
-        {/* Numéro d'ordre */}
+        {/* Numéro d'ordre — desktop */}
         <span
-          className={`relative shrink-0 font-mono text-xs font-semibold tracking-[0.2em] transition-colors duration-500 ${
+          className={`relative hidden shrink-0 font-mono text-xs font-semibold tracking-[0.2em] transition-colors duration-500 sm:inline ${
             isHovered ? "text-white/50" : "text-ink-900/25"
           }`}
         >
@@ -210,25 +233,25 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
 
         {/* Icône */}
         <span
-          className={`relative grid size-12 shrink-0 place-items-center rounded-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 sm:size-14 ${
+          className={`relative grid size-9 shrink-0 place-items-center rounded-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 sm:size-14 sm:rounded-2xl ${
             isHovered ? "bg-white/15 text-white" : `${theme.bgSoft} ${theme.text}`
           }`}
         >
-          <DomainIcon name={domain.icon} className="size-6 sm:size-7" />
+          <DomainIcon name={domain.icon} className="size-5 sm:size-7" />
         </span>
 
         {/* Titre + accroche */}
         <span className="relative min-w-0 flex-1">
           <span
-            className={`block font-display text-xl font-bold leading-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:text-2xl lg:text-[1.75rem] ${
-              isHovered ? "translate-x-1 text-white" : "text-ink-900"
+            className={`block font-display text-base font-bold leading-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:text-2xl lg:text-[1.75rem] ${
+              isHovered ? "sm:translate-x-1 text-ink-900 sm:text-white" : "text-ink-900"
             }`}
           >
             {domain.name}
           </span>
           <span
-            className={`mt-1 block text-sm leading-relaxed transition-colors duration-500 sm:text-[0.95rem] ${
-              isHovered ? "text-white/70" : "text-ink-900/60"
+            className={`mt-0.5 block truncate text-xs leading-snug transition-colors duration-500 sm:mt-1 sm:whitespace-normal sm:text-[0.95rem] sm:leading-relaxed ${
+              isHovered ? "text-ink-900/55 sm:text-white/70" : "text-ink-900/55 sm:text-ink-900/60"
             }`}
           >
             {domain.tagline}{domain.available ? "" : " · " + domain.phase}
@@ -237,14 +260,14 @@ function DomainRow({ domain, index, isHovered, onEnter, reduced }) {
 
         {/* Flèche */}
         <span
-          className={`relative grid size-10 shrink-0 place-items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isHovered ? "bg-white text-ink-900" : "bg-ink-900/5 text-ink-900/60"
+          className={`relative grid size-8 shrink-0 place-items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:size-10 ${
+            isHovered ? "bg-ink-900/5 text-ink-900/60 sm:bg-white sm:text-ink-900" : "bg-ink-900/5 text-ink-900/60"
           }`}
           aria-hidden="true"
         >
           <ArrowUpRight
-            className={`size-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              isHovered ? "translate-x-0.5 -translate-y-0.5" : ""
+            className={`size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:size-4 ${
+              isHovered ? "sm:translate-x-0.5 sm:-translate-y-0.5" : ""
             }`}
           />
         </span>

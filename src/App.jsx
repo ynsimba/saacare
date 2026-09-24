@@ -499,7 +499,7 @@ export default function App() {
           </Suspense>
         </div>
       ) : (
-        <main id="main-content" className="flex-1 pb-16 pt-20 xl:pb-0">
+        <main id="main-content" className="flex-1 pt-[calc(4rem+env(safe-area-inset-top))] sm:pt-20">
           <Suspense fallback={<RouteFallback />}>
             <AnimatePresence mode="wait" initial={false}>
               <Routes location={location} key={location.pathname}>

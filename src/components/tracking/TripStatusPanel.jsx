@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Route, Clock, Radio, WifiOff, CheckCircle2, XCircle } from "lucide-react";
+import { Route, Clock, Radio, WifiOff, CheckCircle2, XCircle, MapPin } from "lucide-react";
 import { formatDistance, formatEta, formatArrivalClock, formatFreshness, tripPresentation } from "../../lib/tripFormat";
 
 /**
@@ -12,6 +12,7 @@ const TONES = {
   live: { className: "border-teal-600/25 bg-teal-50 text-teal-800", icon: Radio },
   waiting: { className: "border-gold-500/25 bg-gold-100/60 text-gold-800", icon: Clock },
   stale: { className: "border-gold-500/40 bg-gold-100 text-gold-800", icon: WifiOff },
+  offline: { className: "border-ink-900/10 bg-paper-200 text-ink-900", icon: MapPin },
   done: { className: "border-teal-600/25 bg-teal-50 text-teal-800", icon: CheckCircle2 },
   cancelled: { className: "border-ink-900/10 bg-paper-200 text-ink-900", icon: XCircle },
   idle: { className: "border-ink-900/10 bg-paper-200 text-ink-900", icon: Clock },

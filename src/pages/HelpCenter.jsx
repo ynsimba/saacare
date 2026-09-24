@@ -55,7 +55,7 @@ export default function HelpCenter() {
         align="center"
         eyebrow="Centre d'aide"
         title="Comment pouvons-nous vous aider ?"
-        subtitle="Des réponses courtes, sans jargon. Et une équipe joignable du lundi au samedi."
+        subtitle="Parcourez les questions par thème, ou écrivez-nous : l'équipe répond du lundi au samedi."
         breadcrumb={[{ label: "Accueil", to: "/" }, { label: "Aide" }]}
         compact
       >
@@ -85,8 +85,8 @@ export default function HelpCenter() {
         </div>
       </PageHero>
 
-      <section className="bg-paper-100 py-12 sm:py-16">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-14 lg:px-8">
+      <section className="bg-paper-100 py-8 sm:py-14">
+        <div className="mx-auto grid max-w-6xl gap-6 sm:gap-10 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-14 lg:px-8">
           {/* ---------- Catégories : select mobile, liste desktop ---------- */}
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <p className="mb-3 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-navy-500">
@@ -212,7 +212,7 @@ export default function HelpCenter() {
         </div>
       </section>
 
-      <section className="bg-white py-14 sm:py-16" aria-labelledby="support-heading">
+      <section className="bg-white py-8 sm:py-14" aria-labelledby="support-heading">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 id="support-heading" className="font-display text-2xl font-bold text-ink-900 sm:text-3xl">
             Vous n'avez pas trouvé votre réponse ?
@@ -220,7 +220,7 @@ export default function HelpCenter() {
           <p className="mx-auto mt-3 max-w-md text-ink-900/75">
             Notre équipe répond sous 24 heures ouvrées, du lundi au samedi de 8 h à 18 h.
           </p>
-          <div className="mt-8 grid grid-cols-1 gap-3 text-left sm:grid-cols-3">
+          <div className="snap-row mt-8 grid grid-cols-1 gap-3 text-left sm:grid-cols-3">
             <SupportCard
               href={WHATSAPP_HREF}
               external

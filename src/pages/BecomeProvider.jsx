@@ -89,10 +89,10 @@ export default function BecomeProvider() {
       </div>
 
       {/* ---------------- Ce que vous gagnez ---------------- */}
-      <section className="bg-paper-100 py-16 sm:py-20" aria-labelledby="benefits-heading">
+      <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="benefits-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Ce que vous gagnez" title={<span id="benefits-heading">Plus qu'une mission : un métier reconnu</span>} />
-          <Stagger className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
+          <Stagger className="snap-row mt-6 sm:mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
             {BENEFITS.map(({ icon: Icon, title, text }) => (
               <RevealItem key={title} variant="up" className="rounded-2xl border border-ink-900/8 bg-white p-6">
                 <span className="grid size-11 place-items-center rounded-xl bg-teal-50 text-teal-700">
@@ -108,10 +108,10 @@ export default function BecomeProvider() {
 
       {/* ---------------- Métiers recherchés ---------------- */}
       <Section3D variant="up" className="bg-white">
-        <section className="bg-white py-16 sm:py-20" aria-labelledby="metiers-heading">
+        <section className="bg-white py-8 sm:py-16" aria-labelledby="metiers-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading eyebrow="Métiers recherchés" title={<span id="metiers-heading">Nous recrutons dans quinze métiers</span>} />
-            <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="snap-row mt-6 sm:mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {poles.map((pole) => (
                 <Reveal key={pole.slug} variant="up" className="rounded-2xl bg-paper-100 p-5">
                   <p className="flex items-center gap-2 font-display font-bold text-ink-900">
@@ -134,9 +134,9 @@ export default function BecomeProvider() {
       </Section3D>
 
       {/* ---------------- Conditions + pièces ---------------- */}
-      <section className="bg-paper-100 py-16 sm:py-20">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <Reveal variant="left" className="rounded-3xl bg-white p-6 sm:p-8">
+      <section className="bg-paper-100 py-8 sm:py-16">
+        <div className="snap-row-lg mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 [--snap-w:88%] sm:px-6 lg:grid-cols-2 lg:px-8">
+          <Reveal variant="left" className="rounded-3xl bg-white p-5 sm:p-8">
             <h2 className="font-display text-2xl font-bold text-ink-900">Les conditions</h2>
             <ul className="mt-5 flex flex-col gap-3">
               {CONDITIONS.map((c) => (
@@ -150,7 +150,7 @@ export default function BecomeProvider() {
               Pas d'attestation de résidence ou d'extrait de casier ? Nous vous accompagnons pour les obtenir, à nos frais.
             </p>
           </Reveal>
-          <Reveal variant="right" className="rounded-3xl bg-white p-6 sm:p-8">
+          <Reveal variant="right" className="rounded-3xl bg-white p-5 sm:p-8">
             <h2 className="font-display text-2xl font-bold text-ink-900">Les pièces à préparer</h2>
             <ul className="mt-5 flex flex-col gap-3">
               {APPLICATION_DOCUMENTS.map((d) => (
@@ -174,10 +174,10 @@ export default function BecomeProvider() {
 
       {/* ---------------- Déroulé ---------------- */}
       <Section3D variant="left" className="bg-white">
-        <section id="deroule" className="scroll-mt-24 bg-white py-16 sm:py-20" aria-labelledby="steps-heading">
+        <section id="deroule" className="scroll-mt-24 bg-white py-8 sm:py-16" aria-labelledby="steps-heading">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <SectionHeading eyebrow="Le déroulé de la sélection" title={<span id="steps-heading">Voici les prochaines étapes</span>} />
-            <Stagger as="ol" className="relative mt-10 flex flex-col gap-4 border-l-2 border-teal-100 pl-6" stagger={0.07}>
+            <Stagger as="ol" className="relative mt-6 flex flex-col gap-3 border-l-2 border-teal-100 pl-6 sm:mt-10 sm:gap-4" stagger={0.07}>
               {STEPS.map((s, i) => (
                 <RevealItem as="li" key={s.title} variant="left" className="relative">
                   <span className="absolute -left-[2.35rem] top-0 grid size-7 place-items-center rounded-full bg-teal-600 text-xs font-bold text-white">{i + 1}</span>
@@ -186,7 +186,7 @@ export default function BecomeProvider() {
                 </RevealItem>
               ))}
             </Stagger>
-            <Reveal variant="up" className="mt-10 flex flex-col items-start gap-4 rounded-3xl bg-navy-800 p-6 text-paper-50 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <Reveal variant="up" className="mt-6 flex flex-col items-start gap-4 rounded-3xl bg-navy-800 p-5 sm:mt-10 text-paper-50 sm:flex-row sm:items-center sm:justify-between sm:p-8">
               <p className="font-display text-xl font-bold">Prêt ? Nous restons à vos côtés à chaque étape.</p>
               <Button to="/inscription/prestataire" variant="onDark" size="lg" withArrow className="shrink-0">
                 Postuler gratuitement
@@ -196,7 +196,7 @@ export default function BecomeProvider() {
         </section>
       </Section3D>
 
-      <section className="bg-paper-100 py-16" aria-labelledby="provider-faq-heading">
+      <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="provider-faq-heading">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 id="provider-faq-heading" className="font-display text-2xl font-bold text-ink-900">Vos questions</h2>
           <div className="mt-6 flex flex-col gap-1 rounded-3xl border border-ink-900/8 bg-white p-2">

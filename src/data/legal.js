@@ -10,7 +10,7 @@ export const legalPages = {
       {
         heading: "Éditeur du site",
         body: [
-          "Le site saacare.cd est édité par SAACARE SARL, société à responsabilité limitée de droit OHADA en cours de constitution, dont le siège pilote est situé Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa, République Démocratique du Congo.",
+          "Le site saacare.cd est édité par SaaCare SARL, société à responsabilité limitée de droit OHADA en cours de constitution, dont le siège pilote est situé Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa, République Démocratique du Congo.",
           "RCCM : en cours d'immatriculation. Identification nationale : en cours. NIF : en cours.",
           "Contact : contact@saacare.com — +243 816 483 538.",
         ],

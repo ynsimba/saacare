@@ -71,6 +71,12 @@ export default function Connexion() {
   const [error, setError] = useState("");
   const googleReady = useRef(false);
 
+  const [pageOrigin, setPageOrigin] = useState("");
+
+  useEffect(() => {
+    setPageOrigin(typeof window !== "undefined" ? window.location.origin : "");
+  }, []);
+
   useEffect(() => {
     if (!loading && user) {
       const target = location.state?.from || homeForRole(user.role);
@@ -255,11 +261,17 @@ export default function Connexion() {
                 </span>
               </Button>
               <div id="google-btn-host" className="sr-only" aria-hidden="true" />
+              {GOOGLE_CLIENT_ID && pageOrigin && (
+                <p className="mt-3 text-center text-[0.7rem] leading-relaxed text-ink-900/40">
+                  Origine à autoriser dans Google Cloud :{" "}
+                  <code className="rounded bg-paper-200 px-1.5 py-0.5 font-mono text-ink-900/70">{pageOrigin}</code>
+                </p>
+              )}
 
               <p className="mt-6 text-center text-sm text-ink-900/60">
                 Pas encore de compte ?{" "}
-                <Link to="/inscription" className="font-semibold text-teal-700 hover:underline">
-                  S’inscrire
+                <Link to="/inscription/client" className="font-semibold text-teal-700 hover:underline">
+                  Créer un compte client
                 </Link>
               </p>
             </div>

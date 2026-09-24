@@ -17,7 +17,7 @@ import TripStatusPanel from "../../components/tracking/TripStatusPanel";
 import { DeskAlert, DeskHeading, initials } from "../../components/admin/DeskUI";
 import { api } from "../../lib/api";
 import { subscribeToMission } from "../../lib/realtime";
-import { formatDistance, formatEta, formatFreshness } from "../../lib/tripFormat";
+import { formatDistance, formatEta } from "../../lib/tripFormat";
 
 const ORDER_STATUS = {
   nouvelle: "Nouvelle",
@@ -271,9 +271,6 @@ export default function AdminMissionDetail() {
                   className="h-full w-full"
                 />
               </div>
-              <p className="px-5 py-3 text-xs text-desk-ink/50" aria-live="polite">
-                {formatFreshness(trip?.position?.recordedAt)}
-              </p>
             </section>
 
             <section className="rounded-3xl bg-white p-5">

@@ -13,6 +13,7 @@ use App\Models\PlatformSetting;
 use App\Models\ProviderProfile;
 use App\Models\ProviderReview;
 use App\Models\User;
+use App\Support\ProviderIdentity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -174,7 +175,7 @@ class SpaceController extends Controller
     {
         $profile = ProviderProfile::with('user')->findOrFail($id);
 
-        return response()->json(['item' => $this->serializeProvider($profile, true)]);
+        return response()->json(['item' => $this->serializeProvider($profile, true, true)]);
     }
 
     public function updateProviderStatus(Request $request, int $id): JsonResponse
@@ -187,10 +188,15 @@ class SpaceController extends Controller
         $profile->status = $data['status'];
         $profile->save();
 
+        if ($data['status'] === 'approved') {
+            ProviderIdentity::ensure($profile->fresh());
+            $profile->refresh();
+        }
+
         return response()->json(['item' => $this->serializeProvider($profile, true)]);
     }
 
-    private function serializeProvider(ProviderProfile $p, bool $detailed = false): array
+    private function serializeProvider(ProviderProfile $p, bool $detailed = false, bool $includeDocuments = false): array
     {
         $item = [
             'id' => $p->id,
@@ -213,6 +219,14 @@ class SpaceController extends Controller
             'createdAt' => $p->created_at?->toIso8601String(),
         ];
 
+        $docs = is_array($p->application_documents) ? $p->application_documents : [];
+        $item['documentsSubmitted'] = [
+            'photo' => filled(data_get($docs, 'photo.dataUrl')),
+            'identity' => filled(data_get($docs, 'identity.dataUrl')),
+            'cv' => filled(data_get($docs, 'cv.dataUrl')),
+            'motivationLetter' => filled(data_get($docs, 'motivationLetter.dataUrl')),
+        ];
+
         if ($detailed) {
             $item['seal'] = $p->seal;
             $item['level'] = $p->level;
@@ -231,9 +245,54 @@ class SpaceController extends Controller
             $item['nextCheck'] = $p->next_check;
             $item['gender'] = $p->gender;
             $item['price'] = $p->price;
+            $item['lastName'] = $p->last_name ?: '';
+            $item['middleName'] = $p->middle_name ?: '';
+            $item['firstName'] = $p->first_name ?: '';
+            $item['initials'] = $p->initials ?: '';
+            $item['maritalStatus'] = $p->marital_status ?: '';
+            $item['birthPlace'] = $p->birth_place ?: '';
+            $item['birthDate'] = $p->birth_date?->format('Y-m-d');
+            $item['religion'] = $p->religion ?: '';
+            $item['idType'] = $p->id_type ?: '';
+            $item['idIssuedAt'] = $p->id_issued_at?->format('Y-m-d');
+            $item['idExpiresAt'] = $p->id_expires_at?->format('Y-m-d');
+            $item['emergencyName'] = $p->emergency_name ?: '';
+            $item['emergencyPhone'] = $p->emergency_phone ?: '';
+            $item['emergencyRelation'] = $p->emergency_relation ?: '';
+
+            if ($includeDocuments) {
+                $item['documents'] = $this->serializeApplicationDocuments($docs);
+            }
         }
 
         return $item;
+    }
+
+    /**
+     * @param  array<string, mixed>  $docs
+     * @return array<string, array{name: string, mime: string, dataUrl: string}|null>
+     */
+    private function serializeApplicationDocuments(array $docs): array
+    {
+        $keys = ['photo', 'identity', 'cv', 'motivationLetter'];
+        $out = [];
+
+        foreach ($keys as $key) {
+            $doc = is_array($docs[$key] ?? null) ? $docs[$key] : null;
+            if (! $doc || ! filled($doc['dataUrl'] ?? null)) {
+                $out[$key] = null;
+
+                continue;
+            }
+
+            $out[$key] = [
+                'name' => (string) ($doc['name'] ?? $key),
+                'mime' => (string) ($doc['mime'] ?? 'application/octet-stream'),
+                'dataUrl' => (string) $doc['dataUrl'],
+            ];
+        }
+
+        return $out;
     }
 
     public function adminClients(): JsonResponse

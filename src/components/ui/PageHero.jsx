@@ -48,7 +48,7 @@ export default function PageHero({
 
       <div
         className={`relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${
-          compact ? "pb-10 pt-10 sm:pb-16 sm:pt-20" : "pb-14 pt-12 sm:pb-24 sm:pt-24"
+          compact ? "pb-6 pt-8 sm:pb-16 sm:pt-20" : "pb-14 pt-12 sm:pb-24 sm:pt-24"
         }`}
       >
         <div className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
@@ -58,7 +58,7 @@ export default function PageHero({
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: EASE }}
-              className={`mb-6 flex flex-wrap items-center gap-1 text-xs text-paper-100/55 ${
+              className={`mb-3 flex flex-wrap items-center gap-1 text-xs text-paper-100/55 sm:mb-6 ${
                 centered ? "justify-center" : ""
               }`}
             >
@@ -92,8 +92,8 @@ export default function PageHero({
           )}
 
           <h1
-            className={`mt-5 text-balance font-display font-bold leading-[1.06] tracking-[-0.02em] ${
-              compact ? "text-3xl sm:text-4xl lg:text-5xl" : "text-4xl sm:text-5xl lg:text-[3.5rem]"
+            className={`mt-3 text-balance font-display font-bold leading-[1.06] tracking-[-0.02em] sm:mt-5 ${
+              compact ? "text-2xl sm:text-4xl lg:text-5xl" : "text-4xl sm:text-5xl lg:text-[3.5rem]"
             }`}
           >
             <AnimatedText text={title} as="span" className="block" delay={0.12} />
@@ -104,7 +104,7 @@ export default function PageHero({
               initial={reduced ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
-              className={`mt-6 text-pretty text-base leading-relaxed text-paper-100/70 sm:text-lg ${
+              className={`mt-3 text-pretty text-sm leading-relaxed text-paper-100/70 sm:mt-6 sm:text-lg ${
                 centered ? "mx-auto max-w-2xl" : "max-w-2xl"
               }`}
             >
@@ -117,7 +117,7 @@ export default function PageHero({
               initial={reduced ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.5, ease: EASE }}
-              className={`mt-9 ${centered ? "flex flex-wrap justify-center gap-3" : ""}`}
+              className={`page-hero-actions mt-5 sm:mt-9 ${centered ? "flex flex-wrap justify-center gap-3" : ""}`}
             >
               {children}
             </motion.div>
@@ -127,7 +127,7 @@ export default function PageHero({
 
       {/* Vague de raccord vers le contenu clair */}
       <div className="relative -mb-px" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" className="block h-10 w-full text-paper-100 sm:h-14">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" className="block h-6 w-full text-paper-100 sm:h-14">
           <path
             d="M0,60 L0,28 C240,4 480,44 720,32 C960,20 1200,-8 1440,16 L1440,60 Z"
             fill="currentColor"

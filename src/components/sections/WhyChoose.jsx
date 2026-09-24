@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { ShieldCheck, Clock, Activity, Headset, Lock, X, Check, Sparkles } from "lucide-react";
 import { Eyebrow } from "../ui/SectionHeading";
 import Button from "../ui/Button";
-import Reveal, { Stagger, RevealItem } from "../ui/Reveal";
+import Reveal from "../ui/Reveal";
 import Section3D from "../ui/Section3D";
 import { EASE, useIsReducedMotion } from "../../lib/motion";
 
@@ -17,7 +17,7 @@ const CRITERIA = [
     icon: ShieldCheck,
     label: "Vérification du professionnel",
     without: "Bouche-à-oreille, aucun contrôle d'identité ni d'antécédents.",
-    with: "Protocole SaaTrust en 7 étapes : identité, domicile, antécédents, garants, références, test pratique, aptitude.",
+    with: "Chaque agent passe par SaaTrust : sept contrôles écrits avant toute mise en relation.",
   },
   {
     icon: Clock,
@@ -52,7 +52,7 @@ export default function WhyChoose() {
   return (
     <Section3D variant="left" className="bg-paper-100">
       <section
-        className="relative overflow-hidden bg-paper-100 py-20 sm:py-28"
+        className="relative overflow-hidden bg-paper-100 py-8 sm:py-20"
         aria-labelledby="why-choose-heading"
       >
         <div
@@ -62,12 +62,12 @@ export default function WhyChoose() {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* ---------------- En-tête ---------------- */}
-          <div className="flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
+          <div className="flex flex-col justify-between gap-5 sm:gap-10 lg:flex-row lg:items-end">
             <Reveal variant="blur" className="max-w-2xl">
               <Eyebrow>Pourquoi SaaCare</Eyebrow>
               <h2
                 id="why-choose-heading"
-                className="mt-5 text-balance font-display text-3xl font-bold leading-[1.15] tracking-[-0.015em] text-ink-900 sm:text-4xl"
+                className="mt-3 text-balance font-display text-2xl font-bold leading-[1.15] tracking-[-0.015em] text-ink-900 sm:mt-5 sm:text-4xl"
               >
                 Aucune famille ne devrait prendre de risque en{" "}
                 <span className="relative inline-block">
@@ -78,13 +78,13 @@ export default function WhyChoose() {
                   />
                 </span>
               </h2>
-              <p className="mt-5 text-pretty text-base leading-relaxed text-ink-900/65">
+              <p className="mt-3 text-pretty text-sm leading-relaxed text-ink-900/65 sm:mt-5 sm:text-base">
                 En RDC, la majorité des services à domicile restent non encadrés. Voici,
                 concrètement, ce que change le passage par SaaCare.
               </p>
             </Reveal>
 
-            <Reveal variant="right" delay={0.15} className="flex shrink-0 items-center gap-6">
+            <Reveal variant="right" delay={0.15} className="hidden shrink-0 items-center gap-6 sm:flex">
               <Button to="/a-propos" variant="secondary" withArrow magnetic>
                 Notre mission
               </Button>
@@ -95,7 +95,7 @@ export default function WhyChoose() {
           <Reveal
             variant="up"
             delay={0.1}
-            className="relative mt-14 hidden overflow-hidden rounded-3xl border border-ink-900/8 bg-white shadow-soft lg:block"
+            className="relative mt-8 sm:mt-14 hidden overflow-hidden rounded-3xl border border-ink-900/8 bg-white shadow-soft lg:block"
           >
             <div className="relative grid grid-cols-3">
               {/* Colonne SaaCare mise en relief */}
@@ -184,55 +184,44 @@ export default function WhyChoose() {
             </div>
           </Reveal>
 
-          {/* ---------------- Comparatif — mobile et tablette ---------------- */}
-          <Stagger as="ul" stagger={0.09} className="mt-12 flex flex-col gap-4 lg:hidden">
-            {CRITERIA.map((row) => {
+          {/* ---------------- Comparatif — mobile et tablette : une carte par critère ---------------- */}
+          <ul className="snap-row-lg mt-5 [--snap-w:80%] [--snap-w-sm:46%] lg:hidden">
+            {CRITERIA.map((row, index) => {
               const Icon = row.icon;
               return (
-                <RevealItem
-                  as="li"
-                  key={row.label}
-                  variant="up"
-                  className="overflow-hidden rounded-2xl border border-ink-900/8 bg-white shadow-soft"
-                >
-                  <div className="flex items-center gap-3 border-b border-ink-900/8 p-5">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-teal-50 text-teal-700">
-                      <Icon className="size-5" aria-hidden="true" strokeWidth={1.75} />
+                <li key={row.label} className="flex flex-col overflow-hidden rounded-2xl border border-ink-900/8 bg-white shadow-soft">
+                  <div className="flex items-center gap-2.5 px-3.5 pb-2.5 pt-3.5">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-teal-50 text-teal-700">
+                      <Icon className="size-4" aria-hidden="true" strokeWidth={1.75} />
                     </span>
-                    <h3 className="font-display text-base font-bold text-ink-900">{row.label}</h3>
+                    <h3 className="min-w-0 flex-1 font-display text-sm font-bold leading-tight text-ink-900">{row.label}</h3>
+                    <span className="font-mono text-[0.6rem] font-semibold text-ink-900/30">
+                      {index + 1}/{CRITERIA.length}
+                    </span>
                   </div>
-
-                  <div className="flex items-start gap-3 p-5">
-                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-ink-900/6 text-ink-900/35">
-                      <X className="size-3" strokeWidth={3} aria-hidden="true" />
-                    </span>
+                  <p className="flex gap-2 border-t border-ink-900/6 px-3.5 py-2.5 text-[0.75rem] leading-snug text-ink-900/50">
+                    <X className="mt-0.5 size-3 shrink-0 text-ink-900/30" strokeWidth={3} aria-hidden="true" />
                     <span>
-                      <span className="block font-mono text-[0.62rem] uppercase tracking-[0.14em] text-ink-900/35">
-                        Sans plateforme
-                      </span>
-                      <span className="mt-1 block text-sm leading-relaxed text-ink-900/55">
-                        {row.without}
-                      </span>
+                      <span className="sr-only">Sans plateforme : </span>
+                      {row.without}
                     </span>
-                  </div>
-
-                  <div className="flex items-start gap-3 bg-gradient-to-br from-navy-800 to-ink-950 p-5">
-                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-teal-500 text-white">
-                      <Check className="size-3" strokeWidth={3.5} aria-hidden="true" />
-                    </span>
+                  </p>
+                  <p className="flex flex-1 gap-2 bg-gradient-to-br from-navy-800 to-ink-950 px-3.5 py-3 text-[0.78rem] leading-snug text-paper-100/90">
+                    <Check className="mt-0.5 size-3 shrink-0 text-teal-400" strokeWidth={3.5} aria-hidden="true" />
                     <span>
-                      <span className="block font-mono text-[0.62rem] uppercase tracking-[0.14em] text-teal-300">
-                        Avec SaaCare
-                      </span>
-                      <span className="mt-1 block text-sm leading-relaxed text-paper-100/85">
-                        {row.with}
-                      </span>
+                      <span className="sr-only">Avec SaaCare : </span>
+                      {row.with}
                     </span>
-                  </div>
-                </RevealItem>
+                  </p>
+                </li>
               );
             })}
-          </Stagger>
+          </ul>
+          <div className="mt-3 sm:hidden">
+            <Button to="/a-propos" variant="secondary" size="sm" withArrow className="w-full">
+              Notre mission
+            </Button>
+          </div>
         </div>
       </section>
     </Section3D>

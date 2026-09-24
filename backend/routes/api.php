@@ -126,6 +126,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/utilisateurs', [SuperAdminController::class, 'users']);
             Route::post('/utilisateurs', [SuperAdminController::class, 'createUser']);
             Route::patch('/utilisateurs/{id}', [SuperAdminController::class, 'updateUser']);
+            // POST: Hostinger/LiteSpeed renvoie souvent 405 sur DELETE
+            Route::post('/utilisateurs/{id}/supprimer', [SuperAdminController::class, 'deleteUser']);
+            Route::delete('/utilisateurs/{id}', [SuperAdminController::class, 'deleteUser']);
             Route::get('/journal-connexions', [SuperAdminController::class, 'loginJournal']);
             Route::get('/comptabilite', [SuperAdminController::class, 'accounting']);
             Route::get('/statistiques', [SuperAdminController::class, 'statistics']);

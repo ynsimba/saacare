@@ -229,7 +229,7 @@ export const faqCategories = [
     items: [
       {
         q: "Comment les agents sont-ils vérifiés ?",
-        a: "Par le protocole SaaTrust en 7 étapes : identité, domicile, antécédents, garants, références, test pratique et aptitude médicale. Sur 100 candidatures, environ 15 agents sont admis.",
+        a: "Par le protocole SaaTrust en 7 étapes : identité, domicile, antécédents, garants, références, test pratique et aptitude médicale.",
       },
       {
         q: "Puis-je vérifier moi-même un agent ?",

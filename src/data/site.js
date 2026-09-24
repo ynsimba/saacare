@@ -4,7 +4,7 @@
  * (cahier des charges §2.1 et annexe A) : tant qu'ils manquent, le site
  * affiche « en cours » plutôt qu'un numéro inventé.
  */
-export const SITE_URL = "https://app.saacare.com";
+export const SITE_URL = "https://www.saacare.com";
 export const TAGLINE = "Des services qui vous accompagnent";
 export const PROMISE = "Des services qui simplifient le quotidien et restent présents au bon moment.";
 export const POSITIONING =
@@ -17,6 +17,15 @@ export const EMAIL = "hello@saacare.com";
 export const ADDRESS = "Concession COTEX N° 63, Ave Colonel Mondjiba";
 export const CITY = "Kinshasa, RDC";
 export const HOURS = "Lun – Sam, 8 h – 18 h";
+
+/** Réseaux sociaux publics — ajouter une entrée ici pour l’afficher partout. */
+export const SOCIAL = [
+  {
+    id: "instagram",
+    label: "Instagram",
+    href: "https://www.instagram.com/saacare__/",
+  },
+];
 
 export const SITE_VERSION = "1.0";
 

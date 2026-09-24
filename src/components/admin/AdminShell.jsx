@@ -1,16 +1,25 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { LogOut, PanelLeftClose, PanelLeftOpen, Search } from "lucide-react";
+import { LogOut, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Search } from "lucide-react";
 import "@fontsource/urbanist/latin-400.css";
 import "@fontsource/urbanist/latin-500.css";
 import "@fontsource/urbanist/latin-600.css";
 import "@fontsource/urbanist/latin-700.css";
 import { useAuth } from "../../lib/auth";
-import { adminDayGreeting } from "../../lib/adminGreeting";
+import BottomSheet from "../ui/BottomSheet";
+import { adminDayGreeting, adminDayGreetingParts } from "../../lib/adminGreeting";
 import { initials } from "./DeskUI";
 import { onMediaChange, readMedia } from "../../lib/userMedia";
 
 const SIDEBAR_KEY = "saacare.admin.sidebarExpanded";
+
+/** Liens prioritaires sur mobile (pas de scroll). Le reste passe dans « Plus ». */
+const MOBILE_PRIMARY_PATHS = [
+  "/admin/dashboard",
+  "/admin/prestataires",
+  "/admin/missions",
+  "/admin/commandes",
+];
 
 function isRailActive(pathname, { to, end, match }) {
   if (match === "providers") {
@@ -49,6 +58,7 @@ export default function AdminShell({ links }) {
     }
   });
   const greeting = adminDayGreeting(user);
+  const greetingParts = adminDayGreetingParts(user);
 
   useEffect(() => {
     if (!user?.id) {
@@ -148,15 +158,14 @@ export default function AdminShell({ links }) {
         </aside>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <header className="flex flex-wrap items-center gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 lg:px-8 lg:pt-6">
+          <header className="flex items-center gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 lg:flex-wrap lg:gap-3 lg:px-8 lg:pt-6">
             <Link to="/admin/dashboard" className="lg:hidden" aria-label="SaaCare">
               <img src="/icone.png" alt="" width={36} height={36} className="size-9 object-contain" />
             </Link>
-            <p className="order-first w-full text-2xl font-semibold leading-none tracking-tight sm:order-none sm:w-auto sm:text-3xl">
-              {greeting}
-            </p>
 
-            <div className="ml-auto flex flex-1 items-center gap-3 sm:max-w-sm sm:flex-none lg:w-80 lg:max-w-none">
+            <p className="hidden text-3xl font-semibold leading-none tracking-tight lg:block">{greeting}</p>
+
+            <div className="ml-auto flex min-w-0 flex-1 items-center gap-3 sm:max-w-sm sm:flex-none lg:w-80 lg:max-w-none">
               <label className="flex h-11 flex-1 items-center gap-2.5 rounded-full bg-white px-4 lg:h-12">
                 <Search className="size-5 shrink-0 text-desk-ink" strokeWidth={1.5} aria-hidden="true" />
                 <span className="sr-only">Rechercher</span>
@@ -183,25 +192,143 @@ export default function AdminShell({ links }) {
             </div>
           </header>
 
-          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-24 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
+          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-28 pt-4 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
+            <section
+              aria-label="Salutation"
+              className="relative mb-5 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-white via-white to-desk-butter/70 px-5 py-4 shadow-[0_10px_30px_-18px_rgba(29,31,36,0.35)] lg:hidden"
+            >
+              <div
+                className="pointer-events-none absolute -right-6 -top-8 size-28 rounded-full bg-desk-ink/[0.04]"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute -bottom-10 left-8 size-24 rounded-full bg-desk-butter"
+                aria-hidden="true"
+              />
+              <p className="relative text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-desk-ink/45">
+                {greetingParts.hello}
+              </p>
+              <p className="relative mt-1.5 text-[1.65rem] font-semibold leading-none tracking-tight text-desk-ink">
+                {greetingParts.title ? (
+                  <>
+                    <span className="text-desk-ink/55">{greetingParts.title}</span> {greetingParts.name}
+                  </>
+                ) : (
+                  greetingParts.name || "Admin"
+                )}
+              </p>
+              <p className="relative mt-2 text-sm text-desk-ink/55">Back-office SaaCare</p>
+            </section>
+
             <Outlet context={{ query: query.trim().toLowerCase() }} />
           </main>
         </div>
       </div>
 
-      <div className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-1 overflow-x-auto rounded-full bg-white px-2 py-2 shadow-[0_12px_40px_-12px_rgba(29,31,36,0.35)] lg:hidden">
-        <RailNav links={links} className="gap-1" />
+      <MobileAdminDock links={links} onLogout={logout} />
+    </div>
+  );
+}
+
+function MobileAdminDock({ links, onLogout }) {
+  const { pathname } = useLocation();
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  const byPath = new Map(links.map((l) => [l.to, l]));
+  const primary = MOBILE_PRIMARY_PATHS.map((to) => byPath.get(to)).filter(Boolean);
+  const primarySet = new Set(MOBILE_PRIMARY_PATHS);
+  const more = links.filter((l) => !primarySet.has(l.to));
+  const moreActive = more.some((l) => isRailActive(pathname, l));
+
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [pathname]);
+
+  const closeMore = useCallback(() => setMoreOpen(false), []);
+
+  return (
+    <>
+      <BottomSheet open={moreOpen} onClose={closeMore} title="Plus" className="admin-ui lg:hidden">
+            <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {more.map((link) => {
+                const { to, label, icon: Icon, soon } = link;
+                const active = !soon && isRailActive(pathname, link);
+                if (soon) {
+                  return (
+                    <li key={to}>
+                      <span className="flex flex-col items-center gap-1.5 rounded-2xl bg-desk-canvas/80 px-2 py-3 text-desk-ink/30">
+                        <Icon className="size-6" strokeWidth={1.75} aria-hidden="true" />
+                        <span className="line-clamp-2 text-center text-[0.7rem] font-medium leading-tight">{label}</span>
+                      </span>
+                    </li>
+                  );
+                }
+                return (
+                  <li key={to}>
+                    <Link
+                      to={to}
+                      onClick={() => setMoreOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex flex-col items-center gap-1.5 rounded-2xl px-2 py-3 transition-colors ${
+                        active ? "bg-desk-ink text-white" : "bg-desk-canvas text-desk-ink hover:bg-desk-ink/[0.08]"
+                      }`}
+                    >
+                      <Icon className="size-6" strokeWidth={1.75} aria-hidden="true" />
+                      <span className="line-clamp-2 text-center text-[0.7rem] font-semibold leading-tight">{label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-desk-canvas text-sm font-semibold text-desk-ink"
+            >
+              <LogOut className="size-5" aria-hidden="true" />
+              Déconnexion
+            </button>
+      </BottomSheet>
+
+      <nav
+        aria-label="Navigation du back-office"
+        className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 grid grid-cols-5 items-center gap-1 rounded-[1.75rem] bg-white px-1.5 py-2 shadow-[0_12px_40px_-12px_rgba(29,31,36,0.35)] lg:hidden"
+      >
+        {primary.map((link) => {
+          const { to, label, icon: Icon } = link;
+          const active = isRailActive(pathname, link);
+          return (
+            <Link
+              key={to}
+              to={to}
+              title={label}
+              aria-current={active ? "page" : undefined}
+              className={`admin-rail-link flex h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 ${
+                active ? "admin-rail-link--active" : "admin-rail-link--idle"
+              }`}
+            >
+              <Icon className="relative z-10 size-6 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              <span className="relative z-10 max-w-full truncate px-0.5 text-[0.62rem] font-semibold leading-none">
+                {label === "Tableau de bord" ? "Accueil" : label === "Missions actives" ? "Missions" : label === "Commandes" ? "Commandes" : label}
+              </span>
+            </Link>
+          );
+        })}
         <button
           type="button"
-          onClick={logout}
-          title="Déconnexion"
-          className="admin-rail-icon-btn ml-auto flex size-11 shrink-0 items-center justify-center rounded-full text-desk-ink"
+          title="Plus"
+          aria-expanded={moreOpen}
+          aria-haspopup="dialog"
+          onClick={() => setMoreOpen(true)}
+          className={`admin-rail-link flex h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 ${
+            moreActive || moreOpen ? "admin-rail-link--active" : "admin-rail-link--idle"
+          }`}
         >
-          <LogOut className="size-5" aria-hidden="true" />
-          <span className="sr-only">Déconnexion</span>
+          <MoreHorizontal className="relative z-10 size-6 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+          <span className="relative z-10 text-[0.62rem] font-semibold leading-none">Plus</span>
         </button>
-      </div>
-    </div>
+      </nav>
+    </>
   );
 }
 

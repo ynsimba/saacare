@@ -47,7 +47,7 @@ export default function SectionHeading({
       initial={reduced ? false : "hidden"}
       whileInView={reduced ? undefined : "show"}
       viewport={viewportOnce}
-      className={`flex max-w-2xl flex-col gap-4 ${alignClasses}`}
+      className={`flex max-w-2xl flex-col gap-2.5 sm:gap-4 ${alignClasses}`}
     >
       {eyebrow && (
         <motion.span variants={reduced ? undefined : item}>
@@ -56,7 +56,7 @@ export default function SectionHeading({
       )}
       <Component
         variants={reduced ? undefined : item}
-        className={`text-balance font-display text-3xl font-bold leading-[1.1] tracking-[-0.015em] sm:text-4xl ${
+        className={`text-balance font-display text-[1.65rem] font-bold leading-[1.12] tracking-[-0.015em] sm:text-4xl ${
           invert ? "text-paper-50" : "text-ink-900"
         } ${titleClassName}`}
       >
@@ -65,7 +65,7 @@ export default function SectionHeading({
       {subtitle && (
         <motion.p
           variants={reduced ? undefined : item}
-          className={`text-pretty text-base leading-relaxed sm:text-lg ${
+          className={`text-pretty text-[0.95rem] leading-relaxed sm:text-lg ${
             invert ? "text-paper-100/70" : "text-ink-900/65"
           }`}
         >

@@ -1,24 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
-import { Check, X, ShieldCheck, AlertTriangle, CalendarHeart, ArrowUpRight, Clock, Info } from "lucide-react";
+import { Check, X, ShieldCheck, AlertTriangle, CalendarHeart, ArrowUpRight, Info, ChevronDown } from "lucide-react";
 import Seo, { SITE } from "../lib/Seo";
 import Button from "../components/ui/Button";
 import DomainIcon from "../components/ui/DomainIcon";
 import ProviderCard from "../components/ui/ProviderCard";
 import PageHero from "../components/ui/PageHero";
-import SectionHeading, { Eyebrow } from "../components/ui/SectionHeading";
-import AccordionItem from "../components/ui/Accordion";
-import RequestForm from "../components/ui/RequestForm";
-import Reveal, { Stagger, RevealItem } from "../components/ui/Reveal";
-import Section3D from "../components/ui/Section3D";
+import { Eyebrow } from "../components/ui/SectionHeading";
 import { getDomainBySlug, domains } from "../data/domains";
 import { api } from "../lib/api";
-import { THEME } from "../lib/theme";
 
 /**
- * Gabarit unique des pages de pôle (cahier des charges §2.2.2), décliné sept fois
- * par le contenu. Saa Walé ajoute, juste sous le bandeau, le bloc « ce qu'elle
- * fait et ne fait jamais » et la réservation anticipée.
+ * Gabarit des pages de pôle — optimisé mobile :
+ * hero compact → (scope Walé repliable) → sélection/garanties → profils → autres pôles.
  */
 export default function SolutionDetail() {
   const { slug } = useParams();
@@ -43,9 +37,9 @@ export default function SolutionDetail() {
 
   if (!domain) return <Navigate to="/404" replace />;
 
-  const theme = THEME[domain.theme];
   const otherDomains = domains.filter((d) => d.slug !== domain.slug);
   const url = `${SITE}/solutions/${domain.slug}`;
+  const selectionPreview = domain.selection.slice(0, 3);
 
   return (
     <>
@@ -94,14 +88,14 @@ export default function SolutionDetail() {
         ]}
         compact
       >
-        <div className="flex flex-wrap items-center gap-3">
-          <Button href="#demande" size="lg" variant="onDark" withArrow>
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+          <Button to="/contact" size="md" variant="onDark" withArrow className="w-full sm:w-auto">
             Demander ce service
           </Button>
-          <Button to={`/prestataires?service=${domain.slug}`} variant="glass" size="lg">
-            Voir les prestataires disponibles
+          <Button to={`/prestataires?service=${domain.slug}`} variant="glass" size="md" className="w-full sm:w-auto">
+            Voir les prestataires
           </Button>
-          <span className="glass-dark inline-flex items-center gap-3 rounded-2xl px-4 py-2.5">
+          <span className="hidden items-center gap-3 rounded-2xl px-4 py-2.5 glass-dark sm:inline-flex">
             <span className="grid size-9 place-items-center rounded-xl bg-white/12 text-gold-500">
               <DomainIcon name={domain.icon} className="size-5" />
             </span>
@@ -117,148 +111,89 @@ export default function SolutionDetail() {
 
       {!domain.available && (
         <div className="bg-sky">
-          <p className="mx-auto flex max-w-7xl items-start gap-3 px-4 py-4 text-sm text-ink-900 sm:px-6 lg:px-8">
+          <p className="mx-auto flex max-w-7xl items-start gap-2.5 px-4 py-2.5 text-sm text-ink-900 sm:px-6 lg:px-8">
             <Info className="mt-0.5 size-4 shrink-0 text-teal-700" aria-hidden="true" />
             {domain.name} ouvre bientôt. Déposez une demande pour être prévenu en priorité.
           </p>
         </div>
       )}
 
-      {/* ---------------- Ce que nous proposons ---------------- */}
-      <section className="bg-paper-100 py-16 sm:py-20" aria-labelledby="offers-heading">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionHeading eyebrow="Ce que nous proposons" title={<span id="offers-heading">Les prestations {domain.shortName}</span>} subtitle="Prestations proposées à Kinshasa. Demandez un devis pour connaître le montant exact." />
-          <Stagger as="ul" className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2" stagger={0.06}>
-            {domain.offers.map((offer) => (
-              <RevealItem as="li" key={offer.name} variant="up" className="flex flex-col gap-3 rounded-2xl border border-ink-900/8 bg-white p-5 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <h3 className="font-display text-lg font-bold text-ink-900">{offer.name}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-ink-900/75">{offer.description}</p>
-                  <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-navy-600">
-                    <Clock className="size-3.5" aria-hidden="true" />
-                    {offer.duration}
-                  </p>
-                </div>
-                <p className="shrink-0 font-display text-base font-semibold text-teal-700 sm:text-right">Sur devis</p>
-              </RevealItem>
-            ))}
-          </Stagger>
-        </div>
-      </section>
-
-      {/* ---------------- Nos formules ---------------- */}
-      <Section3D variant="up" className="bg-white">
-        <section className="bg-white py-16 sm:py-20" aria-labelledby="formulas-heading">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading eyebrow="Nos formules" title={<span id="formulas-heading">À l'heure, à la journée, à la semaine ou au mois</span>} />
-            <Stagger className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.07}>
-              {domain.formulas.map((f) => (
-                <RevealItem key={f.name} variant="up" className={`flex h-full flex-col rounded-2xl p-6 ${theme.bgSoft}`}>
-                  <h3 className="font-display text-lg font-bold text-ink-900">{f.name}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-900/80">{f.detail}</p>
-                  <p className="mt-4 font-display text-lg font-semibold text-ink-900">Sur devis</p>
-                </RevealItem>
-              ))}
-            </Stagger>
-          </div>
-        </section>
-      </Section3D>
-
-      {/* ---------------- Sélection + garanties ---------------- */}
-      <section className="bg-paper-100 py-16 sm:py-20">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <section className="bg-white py-6 sm:py-10" aria-labelledby="trust-heading">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:px-8">
           <div>
-            <Eyebrow>Comment nous sélectionnons nos agents</Eyebrow>
-            <h2 className="mt-4 font-display text-2xl font-bold text-ink-900 sm:text-3xl">Le protocole, appliqué à ce métier</h2>
-            <Stagger as="ul" stagger={0.07} className="mt-6 flex flex-col gap-2">
-              {domain.selection.map((line) => (
-                <RevealItem as="li" key={line} variant="left" className="flex items-start gap-3 rounded-xl bg-white px-4 py-3">
-                  <ShieldCheck className="mt-0.5 size-4.5 shrink-0 text-teal-600" aria-hidden="true" />
-                  <span className="text-sm text-ink-900">{line}</span>
-                </RevealItem>
+            <Eyebrow>Sélection</Eyebrow>
+            <h2 id="trust-heading" className="mt-1.5 font-display text-lg font-bold text-ink-900 sm:mt-2 sm:text-2xl">
+              Le protocole, appliqué à ce métier
+            </h2>
+            <ul className="mt-3 flex flex-col gap-1 sm:mt-4 sm:gap-1.5">
+              {selectionPreview.map((line) => (
+                <li key={line} className="flex items-start gap-2 text-sm leading-snug text-ink-900">
+                  <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-teal-600 sm:size-4" aria-hidden="true" />
+                  {line}
+                </li>
               ))}
-            </Stagger>
-            <Link to="/saatrust" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-700 hover:underline">
-              Le protocole SaaTrust en détail <ArrowUpRight className="size-4" aria-hidden="true" />
+            </ul>
+            <Link to="/saatrust" className="mt-2.5 inline-flex items-center gap-1 text-sm font-semibold text-teal-700 hover:underline sm:mt-3">
+              {domain.selection.length > 3 ? "Voir les contrôles SaaTrust" : "SaaTrust en détail"}{" "}
+              <ArrowUpRight className="size-3.5" aria-hidden="true" />
             </Link>
           </div>
           <div>
-            <Eyebrow>Nos garanties</Eyebrow>
-            <h2 className="mt-4 font-display text-2xl font-bold text-ink-900 sm:text-3xl">Remplacement, assurance, encadrement</h2>
-            <Stagger as="ul" stagger={0.07} className="mt-6 flex flex-col gap-3">
+            <Eyebrow>Garanties</Eyebrow>
+            <h2 className="mt-1.5 font-display text-lg font-bold text-ink-900 sm:mt-2 sm:text-2xl">
+              Remplacement, assurance, encadrement
+            </h2>
+            <ul className="mt-3 flex flex-col gap-1.5 sm:mt-4 sm:gap-2.5">
               {domain.guarantees.map((g) => (
-                <RevealItem as="li" key={g.title} variant="right" className="rounded-2xl border border-ink-900/8 bg-white p-5">
-                  <h3 className="font-display text-base font-bold text-ink-900">{g.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-ink-900/75">{g.detail}</p>
-                </RevealItem>
+                <li key={g.title} className="rounded-lg border border-ink-900/8 px-3 py-2 sm:rounded-xl sm:px-3.5 sm:py-2.5">
+                  <h3 className="text-sm font-bold text-ink-900">{g.title}</h3>
+                  <p className="mt-0.5 hidden text-sm leading-snug text-ink-900/70 sm:block">{g.detail}</p>
+                </li>
               ))}
-            </Stagger>
-            <p className="mt-4 text-sm text-ink-900/75">{domain.safety}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------------- Profils disponibles ---------------- */}
-      <Section3D variant="left" className="bg-white">
-        <section className="bg-white py-16 sm:py-20" aria-labelledby="profiles-heading">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-              <div>
-                <Eyebrow>Profils disponibles</Eyebrow>
-                <h2 id="profiles-heading" className="mt-4 font-display text-2xl font-bold text-ink-900 sm:text-3xl">
-                  Agents {domain.shortName} au registre
-                </h2>
-              </div>
-              {profiles.length > 0 && (
-                <Button to={`/prestataires?service=${domain.slug}`} variant="ghost" withArrow>
-                  Voir la recherche complète
-                </Button>
-              )}
-            </div>
-            {profiles.length > 0 ? (
-              <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {profiles.map((p, i) => (
-                  <ProviderCard key={p.reference} provider={p} index={i} />
-                ))}
-              </div>
-            ) : (
-              <p className="mt-8 rounded-2xl bg-paper-100 p-6 text-sm leading-relaxed text-ink-900/80">
-                Le registre {domain.shortName} se constitue en ce moment. Déposez votre demande ci-dessous : nous vous
-                présentons un agent vérifié dès l'ouverture du pôle.
-              </p>
+            </ul>
+            {domain.safety && (
+              <p className="mt-2.5 text-xs leading-snug text-ink-900/65 sm:mt-3 sm:text-sm sm:text-ink-900/70">{domain.safety}</p>
             )}
           </div>
-        </section>
-      </Section3D>
-
-      {/* ---------------- Questions + formulaire ---------------- */}
-      <section id="demande" className="scroll-mt-24 bg-paper-100 py-16 sm:py-20">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div>
-            <Eyebrow>Questions fréquentes</Eyebrow>
-            <h2 className="mt-4 font-display text-2xl font-bold text-ink-900">{domain.name} en questions</h2>
-            <div className="mt-6 flex flex-col gap-1 rounded-3xl border border-ink-900/8 bg-white p-2">
-              {domain.faq.map((f, i) => (
-                <AccordionItem key={f.q} question={f.q} answer={f.a} defaultOpen={i === 0} />
-              ))}
-            </div>
-          </div>
-          <Reveal variant="up" className="rounded-3xl border border-ink-900/8 bg-white p-6 shadow-soft sm:p-8">
-            <h2 className="font-display text-2xl font-bold text-ink-900">Demander ce service</h2>
-            <p className="mt-1.5 text-sm text-ink-900/75">Un chargé de clientèle vous rappelle pour confirmer.</p>
-            <RequestForm domainSlug={domain.slug} className="mt-6" />
-          </Reveal>
         </div>
       </section>
 
-      <section className="bg-white py-12" aria-labelledby="other-domains-heading">
+      {profiles.length > 0 && (
+        <section className="bg-paper-100 py-6 sm:py-10" aria-labelledby="profiles-heading">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <Eyebrow>Profils</Eyebrow>
+                <h2 id="profiles-heading" className="mt-1.5 font-display text-lg font-bold text-ink-900 sm:text-2xl">
+                  Agents {domain.shortName}
+                </h2>
+              </div>
+              <Button to={`/prestataires?service=${domain.slug}`} variant="ghost" size="sm" withArrow>
+                Voir tous
+              </Button>
+            </div>
+            <div className="mt-4 sm:mt-6">
+              {profiles.map((p, i) => (
+                <ProviderCard key={p.reference || p.id} provider={p} index={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="border-t border-ink-900/6 bg-white py-5 sm:py-8" aria-labelledby="other-domains-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 id="other-domains-heading" className="font-display text-xl font-bold text-ink-900">Découvrir un autre pôle</h2>
-          <ul className="mt-5 flex flex-wrap gap-3">
+          <h2 id="other-domains-heading" className="font-display text-sm font-bold text-ink-900 sm:text-base">
+            Autres pôles
+          </h2>
+          <ul className="mt-2.5 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
             {otherDomains.map((d) => (
               <li key={d.slug}>
-                <Link to={`/solutions/${d.slug}`} className="flex min-h-11 items-center gap-2 rounded-md border border-ink-900/10 bg-paper-100 px-4 py-2.5 text-sm font-medium text-ink-900 transition-colors hover:border-teal-600/40">
-                  <DomainIcon name={d.icon} className="size-4 text-teal-600" />
+                <Link
+                  to={`/solutions/${d.slug}`}
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-ink-900/10 bg-paper-100 px-2.5 py-1.5 text-xs font-medium text-ink-900 transition-colors hover:border-teal-600/40 sm:min-h-10 sm:px-3 sm:py-2 sm:text-sm"
+                >
+                  <DomainIcon name={d.icon} className="size-3.5 text-teal-600" />
                   {d.shortName}
                 </Link>
               </li>
@@ -270,67 +205,109 @@ export default function SolutionDetail() {
   );
 }
 
-/** Bloc verrouillé Saa Walé : visible dès le haut de page, jamais relégué en bas. */
+/** Walé : listes repliables sur mobile, ouvertes sur desktop. */
 function WaleScope({ domain }) {
   return (
-    <section className="bg-white py-14 sm:py-16" aria-labelledby="scope-heading">
+    <section className="bg-white py-5 sm:py-10" aria-labelledby="scope-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 id="scope-heading" className="max-w-3xl font-display text-2xl font-bold text-ink-900 sm:text-3xl">
-          Ce que notre accompagnante Walé fait, et ce qu'elle ne fait jamais
+        <h2 id="scope-heading" className="font-display text-lg font-bold text-ink-900 sm:text-2xl">
+          Ce qu&apos;elle fait — et ne fait jamais
         </h2>
-        {domain.scope.intro && (
-          <p className="mt-4 max-w-3xl text-pretty text-base leading-relaxed text-ink-900/75 sm:text-lg">
+        {domain.scope.intro && domain.scope.intro !== domain.description && (
+          <p className="mt-1.5 max-w-3xl text-pretty text-sm leading-snug text-ink-900/70 sm:mt-2 sm:leading-relaxed">
             {domain.scope.intro}
           </p>
         )}
-        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div className="rounded-3xl bg-mint p-6 sm:p-8">
-            <p className="flex items-center gap-2 font-display text-lg font-bold text-teal-700">
-              <Check className="size-5" strokeWidth={3} aria-hidden="true" /> Son rôle consiste notamment à
-            </p>
-            <dl className="mt-5 flex flex-col gap-4">
+
+        <div className="mt-4 grid grid-cols-1 gap-2.5 sm:mt-6 sm:gap-4 lg:grid-cols-2">
+          <MobileFold
+            tone="mint"
+            icon={<Check className="size-4" strokeWidth={3} aria-hidden="true" />}
+            label="Son rôle"
+            count={domain.scope.does.length}
+          >
+            <ul className="mt-2 flex flex-col gap-1.5 sm:mt-3 sm:columns-2 sm:gap-x-6">
               {domain.scope.does.map((row) => (
-                <div key={row.domain}>
-                  <dt className="text-sm font-semibold text-ink-900">{row.domain}</dt>
-                  <dd className="mt-0.5 text-sm leading-relaxed text-ink-900/80">{row.detail}</dd>
-                </div>
+                <li key={row.domain} className="break-inside-avoid text-sm leading-snug text-ink-900">
+                  <span className="font-semibold">{row.domain}</span>
+                  <span className="text-ink-900/70"> — {row.detail}</span>
+                </li>
               ))}
-            </dl>
-          </div>
-          <div className="rounded-3xl border-2 border-coral-500 bg-white p-6 sm:p-8">
-            <p className="flex items-center gap-2 font-display text-lg font-bold text-coral-800">
-              <X className="size-5" strokeWidth={3} aria-hidden="true" /> Ce qu'elle ne fait jamais
-            </p>
-            <ul className="mt-5 flex flex-col gap-3">
+            </ul>
+          </MobileFold>
+
+          <MobileFold
+            tone="coral"
+            icon={<X className="size-4" strokeWidth={3} aria-hidden="true" />}
+            label="Jamais"
+            count={domain.scope.never.length}
+          >
+            <ul className="mt-2 flex flex-col gap-1.5 sm:mt-3 sm:gap-2">
               {domain.scope.never.map((line) => (
-                <li key={line} className="flex items-start gap-2.5 text-sm leading-relaxed text-ink-900">
-                  <X className="mt-0.5 size-4 shrink-0 text-coral-700" strokeWidth={3} aria-hidden="true" />
+                <li key={line} className="flex items-start gap-2 text-sm leading-snug text-ink-900">
+                  <X className="mt-0.5 size-3.5 shrink-0 text-coral-700" strokeWidth={3} aria-hidden="true" />
                   {line}
                 </li>
               ))}
             </ul>
-          </div>
+          </MobileFold>
         </div>
-        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <p className="flex items-start gap-3 rounded-2xl bg-paper-100 p-5 text-sm leading-relaxed text-ink-900">
-            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-coral-700" aria-hidden="true" />
+
+        <div className="mt-2.5 grid grid-cols-1 gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-3">
+          <p className="flex items-start gap-2 rounded-lg bg-paper-100 px-3 py-2.5 text-xs leading-snug text-ink-900 sm:rounded-xl sm:px-3.5 sm:py-3 sm:text-sm">
+            <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-coral-700 sm:size-4" aria-hidden="true" />
             <span>
-              <strong className="block">Le protocole d'alerte</strong>
+              <strong className="font-semibold">Alerte · </strong>
               {domain.scope.alert}
             </span>
           </p>
-          <div className="flex flex-col gap-4 rounded-2xl bg-peach p-5 sm:flex-row sm:items-center">
-            <CalendarHeart className="size-8 shrink-0 text-coral-700" aria-hidden="true" />
-            <p className="flex-1 text-sm leading-relaxed text-ink-900">
-              <strong className="block">Réservation anticipée</strong>
-              {domain.earlyBooking}
-            </p>
-            <Button href="#demande" variant="primary" size="sm" className="shrink-0">
+          <div className="flex flex-col gap-2 rounded-lg bg-peach px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 sm:rounded-xl sm:px-3.5 sm:py-3">
+            <div className="flex flex-1 items-start gap-2">
+              <CalendarHeart className="mt-0.5 size-4 shrink-0 text-coral-700 sm:size-5" aria-hidden="true" />
+              <p className="text-xs leading-snug text-ink-900 sm:text-sm">
+                <strong className="font-semibold">Réservation · </strong>
+                {domain.earlyBooking}
+              </p>
+            </div>
+            <Button to="/contact" variant="primary" size="sm" className="w-full shrink-0 sm:w-auto">
               Réserver
             </Button>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function MobileFold({ tone, icon, label, count, children }) {
+  const shell =
+    tone === "coral"
+      ? "border-2 border-coral-500 bg-white text-coral-800"
+      : "bg-mint text-teal-700";
+
+  return (
+    <>
+      {/* Mobile : replié par défaut */}
+      <details className={`group rounded-xl p-3 sm:hidden ${shell}`}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-bold [&::-webkit-details-marker]:hidden">
+          <span className="inline-flex items-center gap-2">
+            {icon}
+            {label}
+            <span className="font-mono text-xs font-medium opacity-60">({count})</span>
+          </span>
+          <ChevronDown className="size-4 shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        {children}
+      </details>
+
+      {/* Desktop : toujours visible */}
+      <div className={`hidden rounded-2xl p-5 sm:block ${shell}`}>
+        <p className="flex items-center gap-2 text-sm font-bold">
+          {icon}
+          {label}
+        </p>
+        {children}
+      </div>
+    </>
   );
 }

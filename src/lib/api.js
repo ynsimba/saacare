@@ -1,6 +1,6 @@
 const TOKEN_KEY = "saacare_token";
 
-/** Base API : vide en local (proxy Vite → :8001), `https://api.saacare.com` en prod (PWA sur app.saacare.com). */
+/** Base API : vide en local (proxy Vite → :8001), `https://api.saacare.com` en prod (PWA sur www.saacare.com). */
 export const API_BASE = String(import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 
 function apiUrl(path) {
@@ -209,6 +209,8 @@ export const api = {
     request("/api/admin/utilisateurs", { method: "POST", body, auth: true }),
   updateSuperAdminUser: (id, body) =>
     request(`/api/admin/utilisateurs/${id}`, { method: "PATCH", body, auth: true }),
+  deleteSuperAdminUser: (id) =>
+    request(`/api/admin/utilisateurs/${id}/supprimer`, { method: "POST", auth: true }),
   superAdminLoginJournal: () => request("/api/admin/journal-connexions", { auth: true }),
   superAdminAccounting: () => request("/api/admin/comptabilite", { auth: true }),
   superAdminStatistics: () => request("/api/admin/statistiques", { auth: true }),
@@ -256,7 +258,13 @@ export const api = {
     const query = qs.toString();
     return request(`/api/providers${query ? `?${query}` : ""}`);
   },
-  provider: (reference) => request(`/api/providers/${encodeURIComponent(reference)}`),
+  provider: (reference) => {
+    const key = reference == null ? "" : String(reference).trim();
+    if (!key || key === "null" || key === "undefined") {
+      return Promise.reject(new ApiError("Référence prestataire manquante.", 404));
+    }
+    return request(`/api/providers/${encodeURIComponent(key)}`);
+  },
   verifySeal: (seal) => request(`/api/providers/verify?seal=${encodeURIComponent(seal)}`),
 
   // Formulaires publics

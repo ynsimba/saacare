@@ -30,7 +30,7 @@ export const domains = [
       "Sortie d'école et devoirs",
     ],
     offers: [
-      { name: "Garde d'enfants à la journée", description: "Une nounou vérifiée à votre domicile.", duration: "8 heures", price: "Sur devis" },
+      { name: "Garde d'enfants à la journée", description: "Présence à domicile pour la journée.", duration: "8 heures", price: "Sur devis" },
       { name: "Garde de nuit", description: "Surveillance du sommeil et réveils de nuit.", duration: "Une nuit", price: "Sur devis" },
       { name: "Placement d'une nounou permanente", description: "Recrutement, vérification, présentation et suivi. Vous êtes l'employeur.", duration: "Poste permanent", price: "Sur devis" },
       { name: "SaaPaie", description: "Contrat écrit, bulletin de paie, déclarations CNSS et IPR, suivi des congés.", duration: "Par mois", price: "Sur devis" },
@@ -65,7 +65,7 @@ export const domains = [
     available: true,
     tagline: "Accompagnement post-partum inspiré de la tradition du Walé",
     description:
-      "L'accompagnante Walé accompagne la mère durant la période suivant l'accouchement, en lui offrant un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé.",
+      "Accompagnante post-partum à domicile, en séjour ou bien-être, avec option diaspora pour les familles à l'étranger.",
     heroStat: { value: "Post-partum", label: "accompagnement à domicile ou en séjour" },
     services: [
       "Walé à domicile",
@@ -76,43 +76,43 @@ export const domains = [
     offers: [
       {
         name: "Walé à domicile",
-        description: "L'accompagnante vient chez la maman pendant la durée convenue, pour un cadre de repos et de soutien au quotidien.",
+        description: "L'accompagnante vient chez la maman pendant la durée convenue.",
         duration: "Selon le nombre de jours convenu",
         price: "Sur devis",
       },
       {
         name: "Walé séjour",
-        description: "La maman vient dans un espace spécialement aménagé pour sa période de repos post-partum.",
+        description: "La maman séjourne dans un espace aménagé pour son repos post-partum.",
         duration: "Séjour selon la formule",
         price: "Sur devis",
       },
       {
         name: "Walé bien-être",
-        description: "Massages, soins corporels, alimentation et repos — dans un cadre non médical.",
+        description: "Massages, soins corporels et alimentation — hors actes médicaux.",
         duration: "Séances ou forfait",
         price: "Sur devis",
       },
       {
         name: "Option diaspora",
-        description: "Compte rendu quotidien écrit et vocal adressé au payeur à l'étranger.",
+        description: "Compte rendu quotidien écrit et vocal pour le payeur à l'étranger.",
         duration: "Selon la formule",
         price: "Sur devis",
       },
     ],
     formulas: [
       {
-        name: "Walé à domicile",
-        detail: "L'accompagnante vient chez la maman pendant X jours.",
+        name: "Quelques jours",
+        detail: "Accompagnement court après la sortie de maternité.",
         price: "Sur devis",
       },
       {
-        name: "Walé séjour",
-        detail: "La maman vient dans un espace aménagé pour sa période de repos.",
+        name: "Une à deux semaines",
+        detail: "La durée la plus demandée pour le repos post-partum.",
         price: "Sur devis",
       },
       {
-        name: "Walé bien-être",
-        detail: "Massages, soins corporels, alimentation et repos, hors actes médicaux.",
+        name: "Un mois et plus",
+        detail: "Suivi prolongé jusqu'à la reprise du quotidien.",
         price: "Sur devis",
       },
     ],
@@ -125,7 +125,7 @@ export const domains = [
       "Recertification annuelle et visite de contrôle à J+2",
     ],
     safety:
-      "L'accompagnante Walé n'effectue aucun acte médical. Au moindre signe inhabituel, elle prévient la famille, le professionnel de santé et la permanence SaaCare.",
+      "Aucun acte médical. En cas de doute, alerte immédiate : famille, professionnel de santé et permanence SaaCare.",
     guarantees: [
       { title: "Remplacement sous 24 h", detail: "Une accompagnante jugée non conforme est remplacée sous 24 heures ouvrées." },
       { title: "Assurance renforcée", detail: "Une couverture dédiée au pôle, en plus de la responsabilité civile." },
@@ -133,7 +133,7 @@ export const domains = [
     ],
     scope: {
       intro:
-        "L'accompagnante Walé accompagne la mère durant la période suivant l'accouchement, en lui offrant un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé.",
+        "L'accompagnante Walé offre un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé — sans jamais remplacer un professionnel de santé.",
       does: [
         {
           domain: "Repos et adaptation",
@@ -184,23 +184,23 @@ export const domains = [
     faq: [
       {
         q: "Qu'est-ce que Saa Walé ?",
-        a: "C'est l'accompagnement post-partum : une accompagnante Walé soutient la mère après l'accouchement, dans un cadre de repos, de bien-être et de transmission inspiré des pratiques traditionnelles du Walé — sans jamais remplacer un professionnel de santé.",
+        a: "Un accompagnement post-partum à domicile ou en séjour. L'accompagnante soutient la mère au quotidien ; elle ne remplace jamais un professionnel de santé.",
       },
       {
         q: "Quelle est la différence entre Walé à domicile, séjour et bien-être ?",
-        a: "Walé à domicile : l'accompagnante vient chez la maman. Walé séjour : la maman vient dans un espace aménagé pour son repos. Walé bien-être : massages, soins corporels, alimentation et repos, dans un cadre non médical.",
+        a: "Domicile : l'accompagnante vient chez vous. Séjour : la maman se repose dans un espace aménagé. Bien-être : massages et soins corporels, hors actes médicaux.",
       },
       {
         q: "Quand faut-il réserver ?",
-        a: "Dès le 3e trimestre de grossesse, idéalement au 7e ou 8e mois. Un acompte de 50 % confirme la réservation.",
+        a: "Dès le 3e trimestre, idéalement au 7e ou 8e mois. Les dates sont ajustées si bébé arrive plus tôt ou plus tard.",
       },
       {
         q: "L'accompagnante remplace-t-elle une sage-femme ?",
-        a: "Non. Elle n'effectue aucun acte médical et ne donne aucun conseil médical. Elle aide la mère au quotidien et alerte immédiatement le professionnel de santé en cas de doute.",
+        a: "Non. Aucun acte ni conseil médical : elle aide au quotidien et alerte le professionnel de santé en cas de doute.",
       },
       {
         q: "Je vis à l'étranger, puis-je réserver pour ma sœur ?",
-        a: "Oui. L'option diaspora ajoute un compte rendu quotidien, écrit et vocal, adressé au payeur.",
+        a: "Oui. Ajoutez l'option diaspora pour un compte rendu quotidien écrit et vocal.",
       },
     ],
   },
@@ -258,38 +258,61 @@ export const domains = [
     theme: "teal",
     phase: "Disponible",
     available: true,
-    tagline: "Un chauffeur professionnel, à l'heure",
+    tagline: "Chauffeurs, courses du quotidien et livraisons",
     description:
-      "Chauffeurs professionnels à l'heure, à la semaine ou au mois, chauffeurs de direction et mise à disposition pour entreprises, ONG, ambassades et missions.",
+      "Chauffeurs à la journée ou au mois, courtiers pour vos courses du quotidien (marché, récupération et dépôt), et livraison de produits pour particuliers et entreprises à Kinshasa.",
     heroStat: { value: "10 h", label: "journée de chauffeur type" },
     services: [
       "Chauffeur à la journée",
+      "Courses du quotidien",
+      "Livraison de produits",
       "Chauffeur au mois",
       "Chauffeur de direction",
+      "Livraison entreprises",
       "Mise à disposition entreprises",
     ],
     offers: [
       { name: "Chauffeur à la journée", description: "Votre véhicule, un chauffeur vérifié.", duration: "10 heures", price: "Sur devis" },
       { name: "Placement d'un chauffeur privé", description: "Chauffeur à demeure, vous êtes l'employeur.", duration: "Poste permanent", price: "Sur devis" },
       { name: "Chauffeur au mois, mise à disposition", description: "SaaCare emploie et déclare le chauffeur : CNSS, INPP, ONEM, IPR.", duration: "Contrat de 12 à 24 mois", price: "Sur devis" },
+      {
+        name: "Courses du quotidien",
+        description: "Un courtier vérifié fait le marché, récupère ou dépose un colis, un document ou un objet pour vous.",
+        duration: "À la course ou à la demi-journée",
+        price: "Sur devis",
+      },
+      {
+        name: "Livraison de produits",
+        description: "Aide aux particuliers et aux entreprises pour livrer leurs produits en ville — ponctuel ou régulier.",
+        duration: "À la tournée ou au forfait",
+        price: "Sur devis",
+      },
     ],
     formulas: [
-      { name: "À l'heure", detail: "Course ou rendez-vous ponctuel.", price: "Sur devis" },
+      { name: "À l'heure", detail: "Course, livraison ou rendez-vous ponctuel.", price: "Sur devis" },
       { name: "À la journée", detail: "10 heures de disponibilité.", price: "Sur devis" },
-      { name: "À la semaine", detail: "Même chauffeur, horaires convenus.", price: "Sur devis" },
+      { name: "À la semaine", detail: "Même agent, horaires convenus.", price: "Sur devis" },
       { name: "Au mois", detail: "Mise à disposition entreprise.", price: "Sur devis" },
     ],
     selection: [
       "Protocole SaaTrust complet en 7 étapes",
-      "Vérification du permis de conduire",
+      "Vérification du permis de conduire (chauffeurs et livreurs motorisés)",
       "Épreuve de conduite sur parcours, notée sur grille",
-      "Formation à la conduite défensive",
+      "Formation à la conduite défensive et aux consignes de livraison",
     ],
-    safety: "Chauffeur mis à disposition : contrat de travail écrit, remis avant le début de la mission.",
+    safety: "Chauffeur, courtier ou livreur mis à disposition : contrat écrit, remis avant le début de la mission.",
     guarantees: COMMON_GUARANTEES,
     faq: [
       { q: "Le chauffeur fournit-il le véhicule ?", a: "Non, par défaut le chauffeur conduit votre véhicule. Certains profils déclarent un véhicule personnel ou une moto : filtrez-les dans la recherche." },
       { q: "Mon ONG a besoin de trois chauffeurs pour un an.", a: "C'est une mise à disposition : SaaCare est l'employeur déclaré et vous facture un montant unique par mois. Demandez un devis entreprise." },
+      {
+        q: "Qu'est-ce qu'un courtier Saa Driver ?",
+        a: "Un agent vérifié qui gère vos courses du quotidien : aller au marché, récupérer ou déposer un colis, un document ou un objet, selon vos consignes.",
+      },
+      {
+        q: "Proposez-vous la livraison pour mon commerce ?",
+        a: "Oui. Saa Driver aide les particuliers et les entreprises à livrer leurs produits en ville, en mission ponctuelle ou en forfait régulier. Demandez un devis.",
+      },
     ],
   },
   {

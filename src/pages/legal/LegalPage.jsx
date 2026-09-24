@@ -19,7 +19,7 @@ export default function LegalPage({ slug }) {
         compact
       />
 
-      <section className="bg-paper-100 py-16 sm:py-20">
+      <section className="bg-paper-100 py-8 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           {/* Sommaire ancré */}
           <Reveal variant="up" className="mb-12 rounded-2xl border border-ink-900/8 bg-white p-5 shadow-soft">

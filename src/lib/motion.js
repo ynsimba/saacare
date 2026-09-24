@@ -191,3 +191,26 @@ export function usePointerParallax(intensity = 1) {
 
   return { x: sx, y: sy };
 }
+
+/* ============================================================
+   Jetons « app mobile » : ressorts courts et interruptibles.
+   snappy → retours tactiles, onglets ; gentle → panneaux, feuilles.
+   ============================================================ */
+export const springs = {
+  snappy: { type: "spring", stiffness: 520, damping: 38, mass: 0.7 },
+  gentle: { type: "spring", stiffness: 340, damping: 34, mass: 0.9 },
+  sheet: { type: "spring", stiffness: 420, damping: 40, mass: 0.9 },
+};
+
+/** Vrai sur écran tactile (téléphone, tablette) — évalué une fois, côté client. */
+export const IS_COARSE_POINTER =
+  typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+
+/** Micro-retour haptique (Android) ; ignoré silencieusement ailleurs. */
+export function haptic(ms = 8) {
+  try {
+    if (IS_COARSE_POINTER) navigator.vibrate?.(ms);
+  } catch {
+    /* navigateur sans vibration */
+  }
+}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProviderProfile;
+use App\Support\ProviderIdentity;
 use App\Support\PublicProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,19 +26,30 @@ class ProviderController extends Controller
             });
         }
 
-        $items = $query->latest('id')->get()->map(
-            fn (ProviderProfile $p) => PublicProvider::serialize($p, true)
-        );
+        $items = $query->latest('id')->get()->map(function (ProviderProfile $p) {
+            ProviderIdentity::ensure($p);
+
+            return PublicProvider::serialize($p, true);
+        });
 
         return response()->json(['items' => $items]);
     }
 
     public function show(string $reference): JsonResponse
     {
-        $profile = ProviderProfile::with('user')
-            ->where('status', 'approved')
-            ->whereRaw('LOWER(reference) = ?', [strtolower($reference)])
-            ->firstOrFail();
+        $base = ProviderProfile::with('user')->where('status', 'approved');
+
+        $profile = null;
+        if (ctype_digit($reference)) {
+            $profile = (clone $base)->whereKey((int) $reference)->first();
+        }
+        if (! $profile) {
+            $profile = (clone $base)
+                ->whereRaw('LOWER(reference) = ?', [strtolower($reference)])
+                ->firstOrFail();
+        }
+
+        ProviderIdentity::ensure($profile);
 
         return response()->json(['item' => PublicProvider::serialize($profile, true)]);
     }

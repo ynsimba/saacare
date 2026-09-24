@@ -7,6 +7,36 @@ import { DeskAlert, DeskEmpty, DeskHeading, initials } from "../../components/ad
 
 const cellBase = "bg-desk-canvas px-3 py-3 align-middle transition-colors duration-200 group-hover:bg-desk-mint/55";
 
+function DocsBadge({ submitted }) {
+  const flags = submitted || {};
+  const keys = [
+    ["photo", "Photo"],
+    ["identity", "ID"],
+    ["cv", "CV"],
+    ["motivationLetter", "LM"],
+  ];
+  const ok = keys.filter(([k]) => flags[k]).length;
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-xs font-semibold text-desk-ink">
+        {ok}/{keys.length} pièces
+      </p>
+      <div className="flex flex-wrap gap-1">
+        {keys.map(([k, label]) => (
+          <span
+            key={k}
+            className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ${
+              flags[k] ? "bg-desk-mint text-desk-ink" : "bg-desk-pink/70 text-desk-ink/70"
+            }`}
+          >
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminValidation() {
   const navigate = useNavigate();
   const { query = "" } = useOutletContext() || {};
@@ -52,7 +82,9 @@ export default function AdminValidation() {
       <DeskHeading as="h1" count={items.length}>
         Validation
       </DeskHeading>
-      <p className="mt-2 text-sm text-desk-ink/60">Approuvez ou refusez les dossiers en attente.</p>
+      <p className="mt-2 text-sm text-desk-ink/60">
+        Ouvrez un dossier pour consulter la fiche d’inscription complète et les documents, puis approuvez ou refusez.
+      </p>
 
       {error && (
         <div className="mt-4">
@@ -76,7 +108,7 @@ export default function AdminValidation() {
                   E-mail
                 </th>
                 <th scope="col" className="px-3 pb-1 font-medium">
-                  Bio
+                  Documents
                 </th>
                 <th scope="col" className="px-3 pb-1 font-medium">
                   Actions
@@ -111,8 +143,8 @@ export default function AdminValidation() {
                     <p className="text-xs text-desk-ink/55">{item.domain || "Domaine —"}</p>
                   </td>
                   <td className={`${cellBase} max-w-[14rem] truncate text-desk-ink/70`}>{item.user?.email || "—"}</td>
-                  <td className={`${cellBase} max-w-[16rem]`}>
-                    <p className="line-clamp-2 text-desk-ink/75">{item.bio || "—"}</p>
+                  <td className={`${cellBase} max-w-[12rem]`}>
+                    <DocsBadge submitted={item.documentsSubmitted} />
                   </td>
                   <td className={`${cellBase} rounded-r-2xl pr-4`}>
                     <div className="flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>

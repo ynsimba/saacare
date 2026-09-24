@@ -22,12 +22,12 @@ export default function CTASection({
 
   return (
     <Section3D variant="down" intensity={1.2} className="bg-paper-100">
-    <section ref={ref} className="bg-paper-100 px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+    <section ref={ref} className="bg-paper-100 px-4 py-8 sm:px-6 sm:py-16 lg:px-8">
       {/* Fondu simple : la mise à l'échelle est déjà portée par Section3D. */}
       <Reveal
         variant="fade"
         duration={0.45}
-        className="noise-overlay relative isolate mx-auto max-w-5xl overflow-hidden rounded-2xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 px-8 py-16 text-center shadow-lifted sm:px-16 sm:py-20"
+        className="noise-overlay relative isolate mx-auto max-w-5xl overflow-hidden rounded-2xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 px-5 py-7 text-center shadow-lifted sm:px-16 sm:py-16"
       >
         {/* Halos animés */}
         <motion.div
@@ -44,15 +44,15 @@ export default function CTASection({
           {eyebrow}
         </span>
 
-        <h2 className="relative mt-6 text-balance font-display text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-[2.6rem]">
+        <h2 className="relative mt-4 text-balance font-display text-2xl sm:mt-6 sm:text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-[2.6rem]">
           {title}
         </h2>
 
-        <p className="relative mx-auto mt-5 max-w-xl text-pretty leading-relaxed text-white/65">
+        <p className="relative mx-auto mt-3 max-w-xl text-pretty text-sm leading-relaxed text-white/65 sm:mt-5 sm:text-base">
           {subtitle}
         </p>
 
-        <div className="relative mt-10 flex flex-wrap items-center justify-center gap-3">
+        <div className="relative mt-6 grid grid-cols-1 gap-2.5 sm:mt-10 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
           <Button to={primaryTo} size="lg" variant="onDark" withArrow magnetic>
             {primaryLabel}
           </Button>
@@ -61,7 +61,7 @@ export default function CTASection({
           </Button>
         </div>
 
-        <p className="relative mt-8 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-white/40">
+        <p className="relative mt-8 hidden font-mono text-[0.68rem] sm:block uppercase tracking-[0.2em] text-white/40">
           Aucun frais pour les agents · Un interlocuteur dédié
         </p>
       </Reveal>

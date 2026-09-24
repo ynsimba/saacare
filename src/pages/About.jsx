@@ -71,7 +71,7 @@ export default function About() {
 
       {/* ---------------- Le constat ---------------- */}
       <Section3D variant="up" className="bg-paper-100">
-        <section className="bg-paper-100 py-20 sm:py-24" aria-labelledby="problem-heading">
+        <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="problem-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal variant="up" className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-md bg-coral-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-coral-800">
@@ -87,7 +87,7 @@ export default function About() {
                 deux côtés.
               </p>
             </Reveal>
-            <div className="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div className="snap-row-lg mt-6 sm:mt-12 grid grid-cols-1 gap-5 lg:grid-cols-2">
               {[
                 ["Du côté des familles et des entreprises", PROBLEMS.families],
                 ["Du côté des travailleurs", PROBLEMS.workers],
@@ -110,10 +110,10 @@ export default function About() {
       </Section3D>
 
       {/* ---------------- Notre réponse ---------------- */}
-      <section className="bg-white py-20 sm:py-24" aria-labelledby="value-heading">
+      <section className="bg-white py-8 sm:py-16" aria-labelledby="value-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Notre promesse" title={<span id="value-heading">{PROMISE}</span>} />
-          <Stagger className="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-3" stagger={0.1}>
+          <Stagger className="snap-row-lg mt-6 sm:mt-12 grid grid-cols-1 gap-5 lg:grid-cols-3" stagger={0.1}>
             {VALUE.map(({ icon: Icon, who, points }) => (
               <RevealItem key={who} variant="up" className="rounded-3xl border border-ink-900/8 bg-paper-100 p-7">
                 <span className="grid size-12 place-items-center rounded-2xl bg-teal-600 text-white">
@@ -136,7 +136,7 @@ export default function About() {
 
       {/* ---------------- Le symbole ---------------- */}
       <Section3D variant="left" className="bg-navy-800">
-        <section className="bg-navy-800 py-20 text-paper-50 sm:py-24" aria-labelledby="symbol-heading">
+        <section className="bg-navy-800 py-8 text-paper-50 sm:py-16" aria-labelledby="symbol-heading">
           <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
             <Reveal variant="scale" className="mx-auto w-full max-w-sm rounded-3xl bg-white p-8">
               <img src="/icone.png" alt="Le symbole SaaCare : trois personnes, des trajectoires qui convergent et un chevron orange" width={862} height={620} loading="lazy" className="h-auto w-full" />
@@ -146,7 +146,7 @@ export default function About() {
               <h2 id="symbol-heading" className="mt-4 text-balance font-display text-3xl font-bold sm:text-4xl">
                 L'élan collectif : plusieurs présences convergent pour soutenir une même trajectoire.
               </h2>
-              <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <ul className="snap-row mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {SYMBOL.map((s) => (
                   <li key={s.title} className="rounded-2xl bg-white/8 p-5">
                     <p className="flex items-center gap-2 font-display font-bold">
@@ -166,10 +166,10 @@ export default function About() {
       <ValuesBento />
 
       {/* ---------------- Feuille de route ---------------- */}
-      <section className="bg-paper-100 py-20 sm:py-24" aria-labelledby="roadmap-heading">
+      <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="roadmap-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Feuille de route" title={<span id="roadmap-heading">Commencer à Kinshasa, grandir ville par ville</span>} />
-          <Stagger as="ol" className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+          <Stagger as="ol" className="snap-row mt-6 sm:mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
             {ROADMAP.map((r) => (
               <RevealItem as="li" key={r.period} variant="up" className="rounded-2xl bg-white p-6">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-gold-700">{r.period}</p>

@@ -278,7 +278,8 @@ export default function PrestataireProfileShell() {
           </div>
         </div>
 
-        <div className="border-t border-ink-900/8">
+        {/* Mobile / tablette : la barre d'onglets basse prend le relais. */}
+        <div className="hidden border-t border-ink-900/8 lg:block">
           <SpaceNav links={PRESTATAIRE_NAV} variant="tabs" />
         </div>
       </div>

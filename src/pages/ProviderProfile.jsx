@@ -23,6 +23,10 @@ export default function ProviderProfile() {
   const closeRef = useRef(null);
 
   useEffect(() => {
+    if (!reference || reference === "null" || reference === "undefined") {
+      setStatus("missing");
+      return undefined;
+    }
     let cancelled = false;
     setStatus("loading");
     api
@@ -58,7 +62,7 @@ export default function ProviderProfile() {
   if (status === "missing") return <Navigate to="/404" replace />;
   if (status === "loading" || !provider) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <p className="text-sm text-ink-900/55">Chargement du profil…</p>
       </div>
     );

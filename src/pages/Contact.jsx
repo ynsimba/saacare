@@ -7,9 +7,10 @@ import Reveal, { Stagger, RevealItem } from "../components/ui/Reveal";
 import Spotlight from "../components/ui/Spotlight";
 import Field from "../components/ui/Field";
 import Button from "../components/ui/Button";
+import { InstagramIcon } from "../components/ui/InstagramIcon";
 import { EASE } from "../lib/motion";
 import { api } from "../lib/api";
-import { EMAIL } from "../data/site";
+import { EMAIL, SOCIAL } from "../data/site";
 
 const CONTACT_INFO = [
   { icon: Mail, label: EMAIL, sub: "Réponse sous 24 h ouvrées", href: `mailto:${EMAIL}` },
@@ -21,6 +22,8 @@ const CONTACT_INFO = [
     href: null,
   },
 ];
+
+const SOCIAL_ICONS = { instagram: InstagramIcon };
 
 const SUBJECT_LABELS = {
   demande: "Question sur une demande",
@@ -72,7 +75,7 @@ export default function Contact() {
         compact
       />
 
-      <section className="bg-paper-100 py-16 sm:py-20">
+      <section className="bg-paper-100 py-8 sm:py-16">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.25fr] lg:px-8">
           <Stagger as="ul" className="flex flex-col gap-4">
             {CONTACT_INFO.map(({ icon: Icon, label, sub, href }) => (
@@ -100,6 +103,31 @@ export default function Contact() {
                 </Spotlight>
               </RevealItem>
             ))}
+
+            {SOCIAL.length > 0 && (
+              <RevealItem as="li" variant="left">
+                <div className="rounded-2xl border border-ink-900/8 bg-white p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-900/45">Suivez-nous</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {SOCIAL.map(({ id, label, href }) => {
+                      const Icon = SOCIAL_ICONS[id];
+                      return (
+                        <a
+                          key={id}
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-teal-50 px-4 text-sm font-semibold text-teal-800 transition-colors hover:bg-teal-600 hover:text-white"
+                        >
+                          {Icon ? <Icon className="size-4" aria-hidden="true" /> : null}
+                          {label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </RevealItem>
+            )}
 
             <RevealItem as="li" variant="left">
               <div className="flex items-start gap-3 rounded-2xl border border-dashed border-teal-200 bg-teal-50/50 p-5">

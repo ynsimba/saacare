@@ -49,8 +49,8 @@ export default function SaaTrust() {
       </PageHero>
 
       {/* ---------------- Taux d'admission ---------------- */}
-      <section className="bg-white py-16 sm:py-20" aria-labelledby="admission-heading">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <section className="bg-white py-8 sm:py-16" aria-labelledby="admission-heading">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-6 px-4 sm:gap-10 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div>
             <SectionHeading
               eyebrow="Taux d'admission"
@@ -58,7 +58,7 @@ export default function SaaTrust() {
               subtitle="Le recrutement n'est pas un problème de volume, c'est un problème de tri. Ce taux sera publié et mis à jour chaque mois dès l'ouverture du registre."
             />
           </div>
-          <div className="grid grid-cols-10 gap-1.5 rounded-3xl bg-paper-100 p-5 sm:gap-2 sm:p-6" role="img" aria-label={`${ADMITTED} candidatures admises sur 100`}>
+          <div className="mx-auto grid w-full max-w-md grid-cols-10 gap-1.5 rounded-3xl bg-paper-100 p-5 sm:gap-2 sm:p-6 lg:max-w-none" role="img" aria-label={`${ADMITTED} candidatures admises sur 100`}>
             {Array.from({ length: 100 }, (_, i) => (
               <motion.span
                 key={i}
@@ -75,12 +75,12 @@ export default function SaaTrust() {
 
       {/* ---------------- Les sept étapes ---------------- */}
       <Section3D variant="up" className="bg-paper-100">
-        <section className="bg-paper-100 py-16 sm:py-24" aria-labelledby="steps-heading">
+        <section className="bg-paper-100 py-8 sm:py-16" aria-labelledby="steps-heading">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading eyebrow="Les sept étapes" title={<span id="steps-heading">Ce qui est contrôlé, comment, et ce qui entraîne un refus</span>} />
-            <Stagger as="ol" className="mt-12 flex flex-col gap-4" stagger={0.06}>
+            <Stagger as="ol" className="snap-row-lg mt-6 flex flex-col gap-4 [--snap-w:86%] [--snap-w-sm:52%] sm:mt-12" stagger={0.06}>
               {saatrustSteps.map((step) => (
-                <RevealItem as="li" key={step.number} variant="up" className="grid grid-cols-1 gap-5 rounded-2xl border border-ink-900/8 bg-white p-6 md:grid-cols-[14rem_1fr_1fr_1fr] md:items-start">
+                <RevealItem as="li" key={step.number} variant="up" className="grid grid-cols-1 content-start gap-3 rounded-2xl border border-ink-900/8 bg-white p-4 sm:gap-5 sm:p-6 lg:grid-cols-[14rem_1fr_1fr_1fr] lg:items-start">
                   <div className="flex items-center gap-3">
                     <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-teal-600 text-white">
                       <ProcessIcon name={step.icon} className="size-5" />
@@ -109,10 +109,10 @@ export default function SaaTrust() {
       </Section3D>
 
       {/* ---------------- Niveaux de certification ---------------- */}
-      <section className="bg-white py-16 sm:py-20" aria-labelledby="levels-heading">
+      <section className="bg-white py-8 sm:py-16" aria-labelledby="levels-heading">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Trois niveaux" title={<span id="levels-heading">Vérifié, Certifié, Élite</span>} subtitle="Le niveau d'un agent s'affiche sur son profil, toujours écrit en toutes lettres." />
-          <Stagger className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3" stagger={0.1}>
+          <Stagger className="snap-row mt-6 grid grid-cols-1 gap-4 sm:mt-10 md:grid-cols-3" stagger={0.1}>
             {certificationLevels.map((level, i) => (
               <RevealItem key={level.name} variant="up" className="flex h-full flex-col gap-4 rounded-2xl border border-ink-900/8 bg-paper-100 p-6">
                 <div className="flex items-center justify-between">
@@ -128,14 +128,14 @@ export default function SaaTrust() {
 
       {/* ---------------- Le sceau ---------------- */}
       <Section3D variant="left" className="bg-navy-800">
-        <section className="relative isolate overflow-hidden bg-navy-800 py-16 text-paper-50 sm:py-24" aria-labelledby="seal-heading">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
+        <section className="relative isolate overflow-hidden bg-navy-800 py-8 text-paper-50 sm:py-16" aria-labelledby="seal-heading">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-4 sm:gap-12 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-200">Le sceau SaaTrust</p>
-              <h2 id="seal-heading" className="mt-4 max-w-2xl text-balance font-display text-3xl font-bold sm:text-4xl">
+              <h2 id="seal-heading" className="mt-3 max-w-2xl text-balance font-display text-2xl sm:mt-4 sm:text-3xl font-bold sm:text-4xl">
                 Chaque agent porte un sceau vérifiable en ligne.
               </h2>
-              <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <ul className="snap-row mt-6 grid grid-cols-1 gap-4 [--snap-w:70%] sm:mt-8 md:grid-cols-3">
                 {[
                   { icon: Hash, title: "Numéro unique", text: "Sur sa carte professionnelle et son profil." },
                   { icon: BadgeCheck, title: "Date de vérification", text: "Le jour où les 7 contrôles ont été validés." },
@@ -154,7 +154,7 @@ export default function SaaTrust() {
                 </Button>
               </div>
             </div>
-            <div className="mx-auto">
+            <div className="mx-auto hidden sm:block">
               <VerificationSeal size={220} />
             </div>
           </div>
@@ -162,10 +162,10 @@ export default function SaaTrust() {
       </Section3D>
 
       {/* ---------------- Ce que SaaCare ne fait pas ---------------- */}
-      <section className="bg-white py-16 sm:py-20" aria-labelledby="never-heading">
+      <section className="bg-white py-8 sm:py-16" aria-labelledby="never-heading">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <SectionHeading align="center" eyebrow="Tolérance zéro" title={<span id="never-heading">Ce que SaaCare ne fait jamais</span>} />
-          <ul className="mt-10 grid grid-cols-1 gap-4 text-left sm:grid-cols-3">
+          <ul className="snap-row mt-6 grid grid-cols-1 gap-4 text-left [--snap-w:78%] sm:mt-10 md:grid-cols-3">
             {[
               { icon: Ban, text: "Aucun frais n'est demandé à un prestataire, ni à l'inscription, ni ensuite." },
               { icon: Ban, text: "Aucune personne de moins de 18 ans n'est placée, sans exception." },

@@ -15,13 +15,18 @@ import {
 } from "lucide-react";
 import Reveal from "../ui/Reveal";
 import Button from "../ui/Button";
+import { InstagramIcon } from "../ui/InstagramIcon";
 import { EASE, useIsReducedMotion } from "../../lib/motion";
-import { EMAIL } from "../../data/site";
+import { EMAIL, SOCIAL, WHATSAPP_HREF as SITE_WHATSAPP } from "../../data/site";
 
 const YEAR = new Date().getFullYear();
 const PHONE = "+243 816 483 538";
 const PHONE_HREF = "tel:+243816483538";
-const WHATSAPP_HREF = "https://wa.me/243816483538";
+const WHATSAPP_HREF = SITE_WHATSAPP;
+
+const SOCIAL_ICONS = {
+  instagram: InstagramIcon,
+};
 
 const COLUMNS = [
   {
@@ -39,9 +44,10 @@ const COLUMNS = [
     links: [
       { to: "/contact", label: "Nous contacter" },
       { to: "/faq", label: "Centre d'aide" },
-      { to: "/login", label: "Espace membre" },
       { to: "/inscription", label: "S’inscrire" },
+      { to: "/inscription/client", label: "Compte client" },
       { to: "/inscription/prestataire", label: "Candidature prestataire" },
+      { to: "/login", label: "Espace membre" },
     ],
   },
   {
@@ -87,7 +93,7 @@ export default function Footer() {
   const [openColumn, setOpenColumn] = useState(null);
 
   return (
-    <footer className="noise-overlay relative isolate overflow-hidden bg-gradient-to-b from-navy-900 via-navy-900 to-ink-950 text-white">
+    <footer className="noise-overlay relative isolate overflow-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] xl:pb-0 bg-gradient-to-b from-navy-900 via-navy-900 to-ink-950 text-white">
       {/* Filet dégradé en haut de page */}
       <div
         className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,var(--color-teal-500),var(--color-gold-500),transparent)]"
@@ -107,7 +113,7 @@ export default function Footer() {
         {/* ---------------- Bande d'assistance ---------------- */}
         <Reveal
           variant="up"
-          className="flex flex-col gap-4 border-b border-white/8 py-6 sm:gap-6 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:py-12"
+          className="hidden flex-col gap-4 border-b border-white/8 py-6 sm:gap-6 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:py-12 xl:flex"
         >
           <div>
             <h2 className="text-balance font-display text-xl font-bold leading-snug text-paper-50 sm:text-2xl lg:text-[1.75rem]">
@@ -141,8 +147,8 @@ export default function Footer() {
         </Reveal>
 
         {/* ---------------- Colonnes ---------------- */}
-        <div className="grid grid-cols-1 gap-x-10 gap-y-0 py-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-y-12 lg:py-14">
-          <Reveal variant="blur" className="mb-4 lg:mb-0">
+        <div className="grid grid-cols-1 gap-x-10 gap-y-0 py-6 sm:grid-cols-2 sm:items-start lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-y-12 lg:py-14">
+          <Reveal variant="blur" className="mb-4 sm:row-span-3 lg:row-span-1 lg:mb-0">
             <Link to="/" className="group inline-flex items-center" aria-label="SaaCare — Accueil">
               <img
                 src="/logo-1.png"
@@ -154,18 +160,40 @@ export default function Footer() {
               />
             </Link>
 
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/55 line-clamp-2 sm:mt-4 sm:line-clamp-none">
+            <p className="mt-4 hidden max-w-sm text-sm leading-relaxed text-white/55 sm:block">
               Des professionnels vérifiés, formés et suivis pour la garde d'enfants, le transport, le
               soutien scolaire et les services à domicile — à Kinshasa.
             </p>
 
-            <ul className="mt-4 flex flex-col gap-0.5 sm:mt-6 sm:gap-1">
+            <ul className="mt-4 grid grid-cols-2 gap-1 sm:mt-6 sm:flex sm:flex-col sm:gap-1">
               {CONTACT.map(({ icon: Icon, label, sub, href }) => (
                 <li key={label}>
                   <ContactRow icon={Icon} label={label} sub={sub} href={href} />
                 </li>
               ))}
             </ul>
+
+            {SOCIAL.length > 0 && (
+              <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6">
+                <p className="sr-only">Réseaux sociaux</p>
+                {SOCIAL.map(({ id, label, href }) => {
+                  const Icon = SOCIAL_ICONS[id];
+                  return (
+                    <a
+                      key={id}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${label} SaaCare`}
+                      title={label}
+                      className="inline-flex size-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/70 transition-colors duration-300 hover:border-white/25 hover:bg-teal-500/20 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+                    >
+                      {Icon ? <Icon className="size-4" aria-hidden="true" /> : <span className="text-xs font-semibold">{label[0]}</span>}
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </Reveal>
 
           {COLUMNS.map((col, colIndex) => {
@@ -223,7 +251,7 @@ export default function Footer() {
         {/* ---------------- Réassurance ---------------- */}
         <Reveal
           variant="fade"
-          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-xl border border-white/8 bg-white/3 px-4 py-3 sm:gap-x-10 sm:rounded-2xl sm:px-6 sm:py-4"
+          className="hidden flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-xl border border-white/8 bg-white/3 px-4 py-3 sm:flex sm:gap-x-10 sm:rounded-2xl sm:px-6 sm:py-4"
         >
           <span className="inline-flex items-center gap-2 text-[0.7rem] text-white/55 sm:text-xs">
             <ShieldCheck className="size-3.5 shrink-0 text-teal-300 sm:size-4" aria-hidden="true" />
@@ -248,7 +276,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })}
-              className="group inline-flex min-h-10 items-center gap-2 rounded-md border border-white/10 px-3.5 py-2 text-xs text-white/55 transition-colors duration-300 hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-gold-500 sm:min-h-11 sm:text-sm"
+              className="group hidden min-h-10 items-center gap-2 rounded-md border border-white/10 px-3.5 py-2 text-xs xl:inline-flex text-white/55 transition-colors duration-300 hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-gold-500 sm:min-h-11 sm:text-sm"
             >
               Retour en haut
               <ArrowUp

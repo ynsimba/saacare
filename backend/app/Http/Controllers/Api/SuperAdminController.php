@@ -141,6 +141,42 @@ class SuperAdminController extends Controller
         return response()->json(['item' => $this->serializeUser($user->fresh())]);
     }
 
+    public function deleteUser(Request $request, int $id): JsonResponse
+    {
+        $actor = $request->user();
+        $user = User::findOrFail($id);
+
+        if ($user->id === $actor->id) {
+            return response()->json(['error' => 'Vous ne pouvez pas supprimer votre propre compte.'], 422);
+        }
+
+        if ($user->is_super_admin) {
+            $otherSuperAdmins = User::query()
+                ->where('is_super_admin', true)
+                ->where('id', '!=', $user->id)
+                ->count();
+
+            if ($otherSuperAdmins < 1) {
+                return response()->json(['error' => 'Impossible de supprimer le dernier super-admin.'], 422);
+            }
+        }
+
+        $snapshot = $this->serializeUser($user);
+
+        DB::transaction(function () use ($user) {
+            if (Schema::hasTable('personal_access_tokens')) {
+                DB::table('personal_access_tokens')
+                    ->where('tokenable_type', User::class)
+                    ->where('tokenable_id', $user->id)
+                    ->delete();
+            }
+
+            $user->delete();
+        });
+
+        return response()->json(['ok' => true, 'item' => $snapshot]);
+    }
+
     public function loginJournal(): JsonResponse
     {
         $items = LoginLog::with('user')

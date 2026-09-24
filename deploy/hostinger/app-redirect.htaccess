@@ -1,0 +1,7 @@
+# Redirection de l’ancien sous-domaine app → www
+# À placer dans public_html/app/.htaccess
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ https://www.saacare.com/$1 [L,R=301]
+</IfModule>

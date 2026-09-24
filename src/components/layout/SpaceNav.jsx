@@ -14,19 +14,19 @@ import {
 import { NavLink } from "react-router-dom";
 
 export const CLIENT_NAV = [
-  { to: "/client/dashboard", label: "Tableau de bord", icon: LayoutDashboard, end: true },
-  { to: "/client/profil", label: "Mon profil", icon: UserRound },
-  { to: "/client/reservations", label: "Mes réservations", icon: CalendarCheck },
+  { to: "/client/dashboard", label: "Tableau de bord", short: "Accueil", icon: LayoutDashboard, end: true },
+  { to: "/client/profil", label: "Mon profil", short: "Profil", icon: UserRound },
+  { to: "/client/reservations", label: "Mes réservations", short: "Réservations", icon: CalendarCheck },
   { to: "/client/paiements", label: "Paiements", icon: CreditCard },
   { to: "/client/messages", label: "Messages", icon: MessageSquare },
 ];
 
 export const PRESTATAIRE_NAV = [
-  { to: "/prestataire/dashboard", label: "Tableau de bord", icon: LayoutDashboard, end: true },
-  { to: "/prestataire/profil", label: "Mon profil", icon: UserRound },
+  { to: "/prestataire/dashboard", label: "Tableau de bord", short: "Accueil", icon: LayoutDashboard, end: true },
+  { to: "/prestataire/profil", label: "Mon profil", short: "Profil", icon: UserRound },
   { to: "/prestataire/missions", label: "Missions", icon: Briefcase },
   { to: "/prestataire/notifications", label: "Notifications", icon: Bell },
-  { to: "/prestataire/disponibilite", label: "Disponibilité", icon: Clock },
+  { to: "/prestataire/disponibilite", label: "Disponibilité", short: "Dispo", icon: Clock },
   { to: "/prestataire/planning", label: "Planning", icon: CalendarDays },
   { to: "/prestataire/gains", label: "Gains", icon: Wallet },
   { to: "/prestataire/avis", label: "Avis", icon: Star },
