@@ -24,6 +24,16 @@
 </IfModule>
 
 <IfModule mod_headers.c>
+    # Sécurité : pas de reniflage MIME, pas d'encadrement par un site tiers,
+    # HTTPS strict, capteurs limités au site (la géolocalisation sert au suivi).
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(self), camera=(self), microphone=(), payment=(), usb=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+    Header always set Content-Security-Policy "object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests"
+    Header unset X-Powered-By
+
     <FilesMatch "\.(js|css|woff2?|png|jpg|jpeg|webp|svg|ico)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { api, clearToken, getToken, setToken } from "./api";
+import { api, clearToken, getToken, setToken, SESSION_EXPIRED_EVENT } from "./api";
 
 const AuthContext = createContext(null);
 
@@ -30,9 +30,13 @@ export function AuthProvider({ children }) {
       const data = await api.me();
       setUser(data.user);
       return data.user;
-    } catch {
-      clearToken();
-      setUser(null);
+    } catch (err) {
+      // Seul un refus explicite invalide la session : une coupure réseau
+      // ou une API momentanément indisponible ne doit pas déconnecter.
+      if (err?.status === 401 || err?.status === 403) {
+        clearToken();
+        setUser(null);
+      }
       return null;
     } finally {
       setLoading(false);
@@ -42,6 +46,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  useEffect(() => {
+    const onExpired = () => setUser(null);
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
+  }, []);
 
   const login = useCallback(async (credentials) => {
     const data = await api.login(credentials);

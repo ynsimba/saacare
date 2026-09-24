@@ -20,8 +20,7 @@ export default function NotFound() {
           style={reduced ? undefined : { x: parallax.x, y: parallax.y }}
           aria-hidden="true"
         >
-          <div className="aurora-blob left-[15%] top-[10%] size-[28rem] bg-teal-500/22 animate-aurora" />
-          <div className="aurora-blob bottom-[5%] right-[12%] size-80 bg-coral-500/16 animate-aurora-slow" />
+          <div className="pattern-rays pointer-events-none absolute -bottom-16 -right-16 h-72 w-[26rem] opacity-[0.07]" aria-hidden="true" />
         </motion.div>
 
         <motion.div
@@ -42,7 +41,7 @@ export default function NotFound() {
             Erreur 404
           </p>
           <h1 className="mt-4 text-balance font-display text-4xl font-bold leading-tight text-paper-50 sm:text-5xl">
-            Cette page n'existe pas <span className="text-gradient">ou plus</span>.
+            Cette page n'existe pas <span className="text-gold-200">ou plus</span>.
           </h1>
           <p className="mt-5 leading-relaxed text-paper-100/65">
             Vérifiez l'adresse saisie, ou repartez depuis l'accueil pour trouver un prestataire de confiance.

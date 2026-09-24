@@ -57,7 +57,7 @@ export default function DomainCard({ domain, index = 0 }) {
             {domain.heroStat.label}
           </span>
           <span
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink-900/5 text-ink-900 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-navy-700 group-hover:text-white"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink-900/5 text-ink-900 transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-navy-700 group-hover:text-white"
             aria-hidden="true"
           >
             <ArrowUpRight className="size-4 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

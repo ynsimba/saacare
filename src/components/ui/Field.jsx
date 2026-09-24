@@ -54,10 +54,10 @@ export default function Field({
       props.onChange?.(e);
     },
     className: [
-      "peer w-full rounded-lg border border-ink-900/10 bg-paper-100 px-3.5 text-sm text-ink-900 outline-none",
-      "transition-[border-color,background-color] duration-300",
+      "peer w-full rounded-2xl border border-ink-900/10 bg-paper-100 px-4 text-sm text-ink-900 outline-none",
+      "transition-[border-color,background-color,box-shadow] duration-300",
       "placeholder:text-transparent",
-      "focus:border-teal-600/40 focus:bg-white focus:outline-none focus-visible:outline-none",
+      "focus:border-teal-600/50 focus:bg-white focus:shadow-[0_0_0_4px_rgba(1,67,61,0.10)] focus:outline-none focus-visible:outline-none",
       isTextarea ? "min-h-[140px] resize-y pb-3 pt-7" : "h-14 pb-2 pt-6",
       isSelect ? "cursor-pointer appearance-none pr-10" : "",
       isDateLike
@@ -141,7 +141,7 @@ function FloatingLabel({ htmlFor, floating, textarea = false, children }) {
           : { top: textarea ? 22 : 22, scale: 1.05, color: "rgba(16,42,42, 0.45)" }
       }
       transition={{ duration: 0.22, ease: EASE }}
-      className="pointer-events-none absolute left-3.5 origin-left text-[0.68rem] font-semibold uppercase tracking-[0.12em]"
+      className="pointer-events-none absolute left-4 origin-left text-[0.68rem] font-semibold uppercase tracking-[0.12em]"
     >
       {children}
     </motion.label>
@@ -356,9 +356,9 @@ function CustomSelectField({
             }}
             onKeyDown={onSearchKeyDown}
             className={[
-              "h-14 w-full rounded-lg border bg-paper-100 px-3.5 pt-5 pr-10 text-left text-sm outline-none transition-[border-color,background-color] duration-300 focus-visible:outline-none",
+              "h-14 w-full rounded-2xl border bg-paper-100 px-4 pt-5 pr-10 text-left text-sm outline-none transition-[border-color,background-color,box-shadow] duration-300 focus-visible:outline-none",
               open || focused
-                ? "border-teal-600/40 bg-white"
+                ? "border-teal-600/50 bg-white shadow-[0_0_0_4px_rgba(1,67,61,0.10)]"
                 : "border-ink-900/10",
               displayValue ? "text-ink-900" : "text-ink-900/45",
             ].join(" ")}
@@ -382,9 +382,9 @@ function CustomSelectField({
             }}
             onKeyDown={onTriggerKeyDown}
             className={[
-              "flex h-14 w-full items-center rounded-lg border bg-paper-100 px-3.5 pt-5 text-left text-sm outline-none transition-[border-color,background-color] duration-300 focus-visible:outline-none",
+              "flex h-14 w-full items-center rounded-2xl border bg-paper-100 px-4 pt-5 text-left text-sm outline-none transition-[border-color,background-color,box-shadow] duration-300 focus-visible:outline-none",
               open || focused
-                ? "border-teal-600/40 bg-white"
+                ? "border-teal-600/50 bg-white shadow-[0_0_0_4px_rgba(1,67,61,0.10)]"
                 : "border-ink-900/10",
             ].join(" ")}
           >
@@ -420,7 +420,7 @@ function CustomSelectField({
             exit={{ opacity: 0, y: 6, scale: 0.98 }}
             transition={{ duration: 0.22, ease: EASE }}
             onKeyDown={onListKeyDown}
-            className="absolute left-0 right-0 top-[calc(100%+0.4rem)] z-30 max-h-72 overflow-auto rounded-xl border border-ink-900/10 bg-white p-1.5 shadow-lifted"
+            className="absolute left-0 right-0 top-[calc(100%+0.4rem)] z-30 max-h-72 overflow-auto rounded-2xl border border-ink-900/10 bg-white p-1.5 shadow-lifted"
           >
             {showMinHint && (
               <li className="px-3 py-2.5 text-xs text-ink-900/50" role="presentation">

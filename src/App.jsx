@@ -143,7 +143,7 @@ export default function App() {
   const inSpace = isAppSpace(location.pathname);
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper-100">
+    <div className="flex min-h-dvh flex-col bg-paper-100">
       <SkipLink />
       {!inSpace && <Navbar />}
       {!inSpace && <BackToTop />}

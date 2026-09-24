@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import { Search, ShieldCheck, Lock, Headphones, MapPin, BadgeCheck, ChevronDown, Check } from "lucide-react";
-import Button from "../ui/Button";
+import { Link, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion, useTransform } from "motion/react";
+import { Search, ShieldCheck, Lock, Headphones, MapPin, BadgeCheck, ChevronDown, Check, ArrowRight } from "lucide-react";
 import AnimatedText from "../ui/AnimatedText";
+import BottomSheet from "../ui/BottomSheet";
 import { domains } from "../../data/domains";
 import { COMMUNES } from "../../data/providerForm";
 import { EASE, useIsReducedMotion, usePointerParallax } from "../../lib/motion";
@@ -26,33 +26,22 @@ const HERO_IMAGES = [
 export default function Hero() {
   const navigate = useNavigate();
   const reduced = useIsReducedMotion();
-  const sectionRef = useRef(null);
   const [slide, setSlide] = useState(0);
   const [domainSlug, setDomainSlug] = useState("");
   const [commune, setCommune] = useState("");
 
-  // Indique au Navbar de passer en mode clair sur fond sombre tant qu'on est en haut.
-  useDeclareNavTheme("dark");
+  useDeclareNavTheme("light");
 
+  // Légère profondeur au pointeur, sur le cadre photo uniquement (desktop).
   const parallax = usePointerParallax(1);
-  const glowX = useTransform(parallax.x, (v) => v * -50);
-  const glowY = useTransform(parallax.y, (v) => v * -40);
-  const imageX = useTransform(parallax.x, (v) => v * -22);
-  const imageY = useTransform(parallax.y, (v) => v * -18);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 110]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const frameX = useTransform(parallax.x, (v) => v * -10);
+  const frameY = useTransform(parallax.y, (v) => v * -8);
+  const chipX = useTransform(parallax.x, (v) => v * 16);
+  const chipY = useTransform(parallax.y, (v) => v * 12);
 
   useEffect(() => {
     if (reduced) return undefined;
-    const id = window.setInterval(() => {
-      setSlide((current) => (current + 1) % HERO_IMAGES.length);
-    }, 6000);
+    const id = window.setInterval(() => setSlide((c) => (c + 1) % HERO_IMAGES.length), 6000);
     return () => window.clearInterval(id);
   }, [reduced]);
 
@@ -64,216 +53,228 @@ export default function Hero() {
     navigate(`/trouver-un-prestataire?${params.toString()}`);
   };
 
-  const container = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.11, delayChildren: 0.25 } },
-  };
+  const container = { hidden: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } } };
   const item = {
-    hidden: { opacity: 0, y: 26, filter: "blur(8px)" },
-    show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: EASE } },
+    hidden: { opacity: 0, y: 22 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 20 } },
   };
 
   return (
-    <section
-      ref={sectionRef}
-      data-nav-theme="dark"
-      className="noise-overlay relative isolate -mt-20 flex min-h-[85svh] items-center overflow-hidden bg-ink-950 pt-20 sm:min-h-[100svh]"
-    >
-      {/* ---------- Visuels de fond : crossfade + Ken Burns + parallaxe pointeur ---------- */}
-      <motion.div
-        className="absolute inset-0 -z-20"
-        style={reduced ? undefined : { scale: bgScale, x: imageX, y: imageY }}
-        aria-hidden="true"
-      >
-        <AnimatePresence initial={false}>
-          <motion.img
-            key={HERO_IMAGES[slide].src}
-            src={HERO_IMAGES[slide].src}
-            alt=""
-            loading="eager"
-            fetchPriority="high"
-            initial={reduced ? false : { opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={reduced ? undefined : { opacity: 0 }}
-            transition={{ opacity: { duration: 1.4, ease: EASE }, scale: { duration: 7, ease: "linear" } }}
-            style={{ "--hero-pos": HERO_IMAGES[slide].mobilePosition }}
-            className="absolute inset-0 size-full object-cover will-change-transform [object-position:var(--hero-pos)] lg:scale-105 lg:[object-position:center]"
-          />
-        </AnimatePresence>
-      </motion.div>
+    <section className="relative isolate -mt-20 overflow-hidden bg-paper-100 pt-24 sm:pt-28 lg:pt-32">
+      {/* Trame de marque très discrète, en vert, derrière la photo */}
+      <div className="hero-rays pointer-events-none absolute -right-24 top-10 -z-10 hidden h-[34rem] w-[48rem] lg:block" aria-hidden="true" />
 
-      {/* ---------- Voiles de lisibilité ---------- */}
-      <div
-        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(1,31,28,0.82)_0%,rgba(1,31,28,0.55)_38%,rgba(1,31,28,0.72)_100%)] lg:bg-[linear-gradient(100deg,rgba(1,31,28,0.96)_0%,rgba(1,31,28,0.88)_32%,rgba(1,47,43,0.55)_62%,rgba(1,47,43,0.28)_100%)]"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 -z-10 bg-[radial-gradient(120%_80%_at_50%_35%,transparent_40%,rgba(1,31,28,0.55)_100%)] lg:bg-[radial-gradient(120%_90%_at_20%_40%,transparent_35%,rgba(1,31,28,0.7)_100%)]"
-        aria-hidden="true"
-      />
+      <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 pb-10 sm:px-6 sm:pb-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-14 lg:px-8 lg:pb-24">
+        {/* ---------------- Texte ---------------- */}
+        <motion.div variants={container} initial="hidden" animate="show" className="min-w-0">
+          <motion.p variants={item} className="inline-flex items-center gap-2 rounded-full border border-teal-600/15 bg-white/80 px-3 py-1.5 text-xs font-semibold text-teal-700 shadow-soft backdrop-blur">
+            <span className="relative flex size-2" aria-hidden="true">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-gold-500/60" />
+              <span className="relative inline-flex size-2 rounded-full bg-gold-500" />
+            </span>
+            Kinshasa · Registre d’agents vérifiés
+          </motion.p>
 
-      {/* ---------- Halos colorés animés ---------- */}
-      <motion.div
-        className="absolute inset-x-0 top-0 -z-10 h-[100vh] overflow-hidden lg:inset-0 lg:h-auto"
-        style={reduced ? undefined : { x: glowX, y: glowY }}
-        aria-hidden="true"
-      >
-        <div className="aurora-blob -left-32 top-[-10%] size-[38rem] bg-teal-500/25 animate-aurora" />
-        <div className="aurora-blob bottom-[-18%] left-[18%] size-[30rem] bg-coral-500/20 animate-aurora-slow" />
-        <div className="aurora-blob right-[-8%] top-[12%] size-[26rem] bg-gold-500/14 animate-aurora" />
-      </motion.div>
-
-      {/* ---------- Contenu ---------- */}
-      <motion.div
-        style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
-        className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 sm:pb-28 lg:px-8 lg:pb-32 lg:pt-16"
-      >
-        <div>
-          <motion.div variants={container} initial="hidden" animate="show" className="max-w-2xl">
-            {/* Titre */}
-            <h1 className="text-balance font-display text-[2.25rem] font-bold leading-[1.06] tracking-[-0.02em] text-paper-50 sm:text-6xl sm:leading-[1.04] lg:text-[4.15rem]">
-              <AnimatedText text="Des professionnels" as="span" className="block" delay={0.35} />
-              <AnimatedText text="de confiance," as="span" className="block" delay={0.5} />
-              <span className="mt-1 block">
-                <AnimatedText
-                  text="SaaCare"
-                  as="span"
-                  className="text-gold-500"
-                  delay={0.68}
-                />
-                {" "}
-                <AnimatedText
-                  text="à la porte de votre foyer."
-                  as="span"
-                  delay={0.78}
-                />
+          <h1 className="mt-5 text-balance font-display text-[2.6rem] font-extrabold leading-[0.98] text-ink-900 sm:mt-6 sm:text-6xl lg:text-[4.6rem]">
+            <AnimatedText text="Des professionnels" as="span" className="block" delay={0.2} />
+            <AnimatedText text="de confiance" as="span" className="block" delay={0.32} />
+            <span className="block">
+              <AnimatedText text="à la porte de" as="span" delay={0.44} />{" "}
+              <span className="relative inline-block text-teal-600">
+                <AnimatedText text="votre foyer." as="span" delay={0.56} />
+                <motion.svg
+                  viewBox="0 0 300 18"
+                  preserveAspectRatio="none"
+                  className="absolute -bottom-2 left-0 h-3 w-full text-gold-500"
+                  aria-hidden="true"
+                >
+                  <motion.path
+                    d="M3 12 C 80 2, 180 2, 297 10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                    initial={reduced ? false : { pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.9, delay: 1, ease: EASE }}
+                  />
+                </motion.svg>
               </span>
-            </h1>
+            </span>
+          </h1>
 
-            <motion.p
-              variants={item}
-              className="mt-4 max-w-xl text-pretty text-[0.95rem] leading-relaxed text-paper-100/72 sm:mt-7 sm:text-lg"
+          <motion.p variants={item} className="mt-6 max-w-xl text-pretty text-[0.98rem] leading-relaxed text-ink-900/65 sm:text-lg">
+            Nounous, chauffeurs, livreurs, répétiteurs et artisans vérifiés, formés et notés.{" "}
+            <span className="font-medium text-ink-900">Le paiement n’est libéré qu’après votre validation.</span>
+          </motion.p>
+
+          {/* Recherche : capsule de verre, l’unique action principale */}
+          <motion.form
+            variants={item}
+            onSubmit={onSearch}
+            role="search"
+            aria-label="Recherche rapide de prestataire"
+            className="glass-capsule relative z-40 mt-7 flex flex-col gap-1.5 rounded-[1.75rem] p-2 sm:flex-row sm:items-center sm:rounded-full sm:p-1.5 sm:pl-3"
+          >
+            <HeroSelect
+              id="hero-domain"
+              label="Domaine"
+              icon={BadgeCheck}
+              value={domainSlug}
+              onChange={setDomainSlug}
+              placeholder="Tous les domaines"
+              options={domains.map((d) => ({ value: d.slug, label: d.name }))}
+            />
+            <span className="hidden h-7 w-px bg-ink-900/10 sm:block" aria-hidden="true" />
+            <HeroSelect
+              id="hero-commune"
+              label="Commune"
+              icon={MapPin}
+              value={commune}
+              onChange={setCommune}
+              placeholder="Toutes les communes"
+              options={COMMUNES.map((c) => ({ value: c, label: c }))}
+            />
+            <button
+              type="submit"
+              className="tap group flex min-h-12 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-teal-600 px-6 text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgba(1,67,61,0.8)] transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 sm:w-auto"
             >
-              Nounous, chauffeurs, répétiteurs et artisans vérifiés, formés et notés. Réservez en
-              quelques clics et payez en toute sécurité —{" "}
-              <span className="font-medium text-paper-50">
-                le paiement n'est libéré qu'après votre validation.
-              </span>
-            </motion.p>
+              <Search className="size-4 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
+              Rechercher
+            </button>
+          </motion.form>
 
-            {/* Recherche */}
-            <motion.form
-              variants={item}
-              onSubmit={onSearch}
-              role="search"
-              aria-label="Recherche rapide de prestataire"
-              className="gradient-border glass-dark relative z-40 mt-5 flex flex-col gap-2 rounded-2xl p-2 sm:mt-9 sm:flex-row sm:items-center"
-            >
-              <HeroSelect
-                id="hero-domain"
-                label="Domaine"
-                icon={BadgeCheck}
-                value={domainSlug}
-                onChange={setDomainSlug}
-                placeholder="Tous les domaines"
-                options={domains.map((d) => ({ value: d.slug, label: d.name }))}
-              />
-
-              <span className="hidden h-7 w-px bg-white/12 sm:block" aria-hidden="true" />
-
-              <HeroSelect
-                id="hero-commune"
-                label="Commune"
-                icon={MapPin}
-                value={commune}
-                onChange={setCommune}
-                placeholder="Toutes les communes"
-                options={COMMUNES.map((c) => ({ value: c, label: c }))}
-              />
-
-              <button
-                type="submit"
-                className="shine group relative flex w-full shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl bg-[linear-gradient(110deg,var(--color-teal-600),var(--color-teal-500)_50%,var(--color-coral-500))] bg-[length:220%_auto] px-6 py-3.5 text-sm font-semibold text-white transition-[background-position,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[position:100%_center] hover:shadow-[0_16px_40px_-16px_rgba(1,67,61,0.9)] focus-visible:outline-2 focus-visible:outline-gold-500 sm:w-auto sm:py-3"
-              >
-                <Search className="relative z-10 size-4 transition-transform duration-500 group-hover:scale-110" aria-hidden="true" />
-                <span className="relative z-10">Rechercher</span>
-              </button>
-            </motion.form>
-
-            {/* Actions */}
-            <motion.div variants={item} className="relative z-0 mt-7 hidden gap-3 sm:flex sm:flex-row sm:flex-wrap sm:items-center">
-              <Button to="/trouver-un-prestataire" size="lg" variant="primary" withArrow magnetic className="w-full sm:w-auto">
-                Trouver un prestataire
-              </Button>
-              <Button to="/devenir-prestataire" size="lg" variant="glass" magnetic className="w-full sm:w-auto">
-                Devenir prestataire
-              </Button>
-            </motion.div>
-
-            {/* Gages de confiance */}
-            <motion.ul variants={item} className="mt-5 flex flex-wrap gap-x-5 gap-y-2 sm:mt-9 sm:gap-x-7 sm:gap-y-3">
+          <motion.div variants={item} className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2.5">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
               {TRUST_ITEMS.map(({ icon: Icon, label }) => (
-                <li key={label} className="flex items-center gap-2 text-sm text-paper-100/65">
-                  <Icon className="size-4 text-teal-300" aria-hidden="true" />
+                <li key={label} className="flex items-center gap-1.5 text-sm text-ink-900/60">
+                  <Icon className="size-4 text-teal-600" aria-hidden="true" />
                   {label}
                 </li>
               ))}
-            </motion.ul>
+            </ul>
+            <Link
+              to="/devenir-prestataire"
+              className="group inline-flex items-center gap-1 text-sm font-semibold text-teal-700 underline decoration-gold-500/50 decoration-2 underline-offset-4 hover:decoration-gold-500"
+            >
+              Vous êtes un professionnel ?
+              <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
           </motion.div>
-        </div>
+        </motion.div>
 
-      </motion.div>
-
-      {/* ---------- Indicateurs de diapositive ---------- */}
-      <div className="absolute bottom-10 right-6 z-10 hidden items-center gap-2 lg:flex" aria-hidden="true">
-        {HERO_IMAGES.map((image, index) => (
-          <button
-            key={image.src}
-            type="button"
-            tabIndex={-1}
-            onClick={() => setSlide(index)}
-            className="group relative h-1 w-9 overflow-hidden rounded-full bg-white/20"
+        {/* ---------------- Cadre photo + capsules de verre ---------------- */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 30, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: "spring", stiffness: 90, damping: 20, delay: 0.25 }}
+          className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-none"
+        >
+          <motion.div
+            style={reduced ? undefined : { x: frameX, y: frameY }}
+            className="relative aspect-[5/4] overflow-hidden rounded-[2.5rem] bg-teal-100 shadow-[0_40px_80px_-40px_rgba(1,67,61,0.55)] ring-1 ring-ink-900/5 sm:aspect-[4/5] lg:aspect-[4/5]"
           >
-            <motion.span
-              className="absolute inset-y-0 left-0 rounded-full bg-paper-50"
-              initial={false}
-              animate={{ width: index === slide ? "100%" : "0%" }}
-              transition={{ duration: index === slide && !reduced ? 6 : 0.3, ease: "linear" }}
-            />
-          </button>
-        ))}
+            <AnimatePresence initial={false}>
+              <motion.img
+                key={HERO_IMAGES[slide].src}
+                src={HERO_IMAGES[slide].src}
+                alt=""
+                loading="eager"
+                fetchPriority="high"
+                initial={reduced ? false : { opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduced ? undefined : { opacity: 0 }}
+                transition={{ opacity: { duration: 1.1, ease: EASE }, scale: { duration: 6, ease: "linear" } }}
+                style={{ "--hero-pos": HERO_IMAGES[slide].mobilePosition }}
+                className="absolute inset-0 size-full object-cover [object-position:var(--hero-pos)]"
+              />
+            </AnimatePresence>
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-950/35 to-transparent" aria-hidden="true" />
+
+            {/* Indicateurs de diapositive, dans le cadre */}
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white/25 p-1.5 backdrop-blur-md" aria-hidden="true">
+              {HERO_IMAGES.map((image, index) => (
+                <button
+                  key={image.src}
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setSlide(index)}
+                  className="relative h-1.5 w-6 overflow-hidden rounded-full bg-white/40"
+                >
+                  <motion.span
+                    className="absolute inset-y-0 left-0 rounded-full bg-white"
+                    initial={false}
+                    animate={{ width: index === slide ? "100%" : "0%" }}
+                    transition={{ duration: index === slide && !reduced ? 6 : 0.3, ease: "linear" }}
+                  />
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Capsule : protocole */}
+          <motion.div
+            style={reduced ? undefined : { x: chipX, y: chipY }}
+            initial={reduced ? false : { opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: "spring", stiffness: 120, damping: 16, delay: 0.7 }}
+            className="glass-capsule absolute -left-3 top-8 flex items-center gap-3 rounded-2xl py-2.5 pl-2.5 pr-4 sm:-left-8 sm:top-12"
+          >
+            <span className="grid size-10 place-items-center rounded-full bg-teal-600 text-white">
+              <ShieldCheck className="size-5" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block font-display text-lg font-extrabold leading-none text-ink-900 tabular-nums">7 contrôles</span>
+              <span className="mt-1 block text-[0.7rem] text-ink-900/55">avant toute mise en relation</span>
+            </span>
+          </motion.div>
+
+          {/* Capsule : remplacement */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 120, damping: 16, delay: 0.85 }}
+            className="glass-capsule absolute -right-2 bottom-16 flex items-center gap-2.5 rounded-full py-2 pl-2 pr-4 sm:-right-6 sm:bottom-20"
+          >
+            <span className="grid size-8 place-items-center rounded-full bg-gold-500 text-white">
+              <Check className="size-4" strokeWidth={3} aria-hidden="true" />
+            </span>
+            <span className="text-sm font-semibold text-ink-900">Remplacement sous 24 h</span>
+          </motion.div>
+        </motion.div>
       </div>
-
-      {/* ---------- Invitation au défilement ---------- */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.5 }}
-        className="absolute bottom-9 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2.5 lg:flex"
-        aria-hidden="true"
-      >
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.28em] text-paper-100/45">
-          Découvrir
-        </span>
-        <span className="relative flex h-9 w-5 justify-center rounded-full border border-white/25">
-          <span className="mt-1.5 h-1.5 w-1 rounded-full bg-paper-50/70 animate-scroll-hint" />
-        </span>
-      </motion.div>
-
-      {/* ---------- Raccord vers la bande de chiffres (navy) ---------- */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 bg-gradient-to-b from-transparent to-navy-900"
-        aria-hidden="true"
-      />
     </section>
   );
 }
 
-/** Liste déroulante du hero : ouverture au clic (champ + chevron), panneau sombre optimisé. */
+/** Liste déroulante du hero : ouverture au clic (champ + chevron), panneau clair. */
 function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, options }) {
   const rootRef = useRef(null);
   const [open, setOpen] = useState(false);
+  // Sens et hauteur calculés à l'ouverture : la liste reste dans la zone visible,
+  // hors de la barre d'onglets (mobile), du bouton Support (desktop) et de la navigation.
+  const [placement, setPlacement] = useState({ up: false, maxHeight: 256 });
   const selected = options.find((opt) => opt.value === value) ?? null;
+
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const toggle = () => {
+    // Téléphone : feuille glissante plein écran, toujours au-dessus de la barre d'onglets.
+    if (window.matchMedia("(max-width: 639px)").matches) {
+      setSheetOpen(true);
+      return;
+    }
+    if (!open && rootRef.current) {
+      const rect = rootRef.current.getBoundingClientRect();
+      const BOTTOM_UI = 128; // bouton « Support client » flottant (desktop) + marge
+      const TOP_UI = 88; // navigation flottante
+      const below = window.innerHeight - rect.bottom - BOTTOM_UI;
+      const above = rect.top - TOP_UI;
+      const up = below < 200 && above > below;
+      setPlacement({ up, maxHeight: Math.max(160, Math.min(256, up ? above : below)) });
+    }
+    setOpen((o) => !o);
+  };
 
   useEffect(() => {
     if (!open) return undefined;
@@ -297,17 +298,17 @@ function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, optio
         id={id}
         type="button"
         aria-haspopup="listbox"
-        aria-expanded={open}
+        aria-expanded={open || sheetOpen}
         aria-label={label}
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-1 text-left transition-colors hover:bg-white/5 focus-visible:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+        onClick={toggle}
+        className="flex w-full items-center gap-2.5 rounded-full px-3 py-1 text-left transition-colors hover:bg-ink-900/5 focus-visible:bg-ink-900/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
       >
-        <Icon className="size-4 shrink-0 text-teal-300" aria-hidden="true" />
-        <span className={`min-w-0 flex-1 truncate py-2.5 text-sm ${selected ? "text-paper-50" : "text-paper-100/55"}`}>
+        <Icon className="size-4 shrink-0 text-teal-600" aria-hidden="true" />
+        <span className={`min-w-0 flex-1 truncate py-2.5 text-sm ${selected ? "font-medium text-ink-900" : "text-ink-900/55"}`}>
           {selected?.label ?? placeholder}
         </span>
         <ChevronDown
-          className={`size-4 shrink-0 text-paper-100/40 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`size-4 shrink-0 text-ink-900/35 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           aria-hidden="true"
         />
       </button>
@@ -317,11 +318,14 @@ function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, optio
           <motion.ul
             role="listbox"
             aria-labelledby={id}
-            initial={{ opacity: 0, y: 6, scale: 0.98 }}
+            initial={{ opacity: 0, y: placement.up ? -6 : 6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+            exit={{ opacity: 0, y: placement.up ? -4 : 4, scale: 0.98 }}
             transition={{ duration: 0.2, ease: EASE }}
-            className="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 max-h-56 overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-navy-900 p-1.5 shadow-lifted sm:max-h-64"
+            style={{ maxHeight: placement.maxHeight }}
+            className={`absolute left-0 right-0 z-50 overflow-y-auto overscroll-contain rounded-2xl border border-ink-900/8 bg-white p-1.5 shadow-lifted ${
+              placement.up ? "bottom-[calc(100%+0.35rem)] origin-bottom" : "top-[calc(100%+0.35rem)] origin-top"
+            }`}
           >
             <li role="presentation">
               <button
@@ -333,11 +337,11 @@ function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, optio
                   setOpen(false);
                 }}
                 className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
-                  !value ? "bg-white/10 text-paper-50" : "text-paper-100/75 hover:bg-white/8 hover:text-paper-50"
+                  !value ? "bg-teal-50 font-medium text-teal-700" : "text-ink-900/75 hover:bg-ink-900/5"
                 }`}
               >
                 <span className="truncate">{placeholder}</span>
-                {!value && <Check className="size-3.5 shrink-0 text-teal-300" aria-hidden="true" />}
+                {!value && <Check className="size-3.5 shrink-0 text-teal-600" aria-hidden="true" />}
               </button>
             </li>
             {options.map((opt) => {
@@ -354,12 +358,12 @@ function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, optio
                     }}
                     className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                       isSelected
-                        ? "bg-teal-500/20 text-paper-50"
-                        : "text-paper-100/75 hover:bg-white/8 hover:text-paper-50"
+                        ? "bg-teal-50 font-medium text-teal-700"
+                        : "text-ink-900/75 hover:bg-ink-900/5"
                     }`}
                   >
                     <span className="truncate">{opt.label}</span>
-                    {isSelected && <Check className="size-3.5 shrink-0 text-teal-300" aria-hidden="true" />}
+                    {isSelected && <Check className="size-3.5 shrink-0 text-teal-600" aria-hidden="true" />}
                   </button>
                 </li>
               );
@@ -367,6 +371,33 @@ function HeroSelect({ id, label, icon: Icon, value, onChange, placeholder, optio
           </motion.ul>
         )}
       </AnimatePresence>
+
+      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={label}>
+        <ul role="listbox" aria-label={label} className="flex flex-col gap-1 pb-2">
+          {[{ value: "", label: placeholder }, ...options].map((opt) => {
+            const isSelected = opt.value === value || (!opt.value && !value);
+            return (
+              <li key={opt.value || "__all"}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setSheetOpen(false);
+                  }}
+                  className={`tap flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl px-4 text-left text-[0.95rem] ${
+                    isSelected ? "bg-teal-50 font-semibold text-teal-700" : "text-ink-900"
+                  }`}
+                >
+                  <span className="truncate">{opt.label}</span>
+                  {isSelected && <Check className="size-4 shrink-0 text-teal-600" aria-hidden="true" />}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </BottomSheet>
     </div>
   );
 }

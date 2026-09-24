@@ -93,7 +93,8 @@ export default function Footer() {
   const [openColumn, setOpenColumn] = useState(null);
 
   return (
-    <footer className="noise-overlay relative isolate overflow-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] xl:pb-0 bg-gradient-to-b from-navy-900 via-navy-900 to-ink-950 text-white">
+    <div className="bg-paper-100 px-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:px-5 xl:pb-5">
+    <footer className="noise-overlay relative isolate mx-auto max-w-[96rem] overflow-hidden rounded-[2rem] bg-gradient-to-b from-navy-800 via-navy-900 to-ink-950 text-white sm:rounded-[2.5rem]">
       {/* Filet dégradé en haut de page */}
       <div
         className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,var(--color-teal-500),var(--color-gold-500),transparent)]"
@@ -105,8 +106,7 @@ export default function Footer() {
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-        <div className="aurora-blob -left-32 bottom-0 size-[28rem] bg-teal-500/12 animate-aurora-slow" />
-        <div className="aurora-blob -right-24 top-10 size-80 bg-gold-500/8 animate-aurora" />
+        <div className="pattern-rays pointer-events-none absolute -right-20 top-6 h-64 w-96 opacity-[0.05]" aria-hidden="true" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -304,6 +304,7 @@ export default function Footer() {
         </motion.span>
       </div>
     </footer>
+    </div>
   );
 }
 
@@ -311,7 +312,7 @@ export default function Footer() {
 function ContactRow({ icon: Icon, label, sub, href }) {
   const content = (
     <>
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/6 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:bg-teal-500/20 sm:size-9 sm:rounded-xl">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/6 transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:bg-teal-500/20 sm:size-9 sm:rounded-xl">
         <Icon className="size-3.5 text-teal-300 sm:size-4" aria-hidden="true" />
       </span>
       <span className="min-w-0">
@@ -343,12 +344,12 @@ function FooterLink({ to, children }) {
       className="group flex min-h-9 items-center gap-0 rounded-lg py-1.5 text-sm text-white/60 transition-colors duration-300 hover:text-white sm:min-h-10 sm:py-2"
     >
       <span
-        className="mr-0 size-1 shrink-0 scale-0 rounded-full bg-teal-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:mr-2 group-hover:scale-100"
+        className="mr-0 size-1 shrink-0 scale-0 rounded-full bg-teal-400 transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:mr-2 group-hover:scale-100"
         aria-hidden="true"
       />
       <span>{children}</span>
       <ArrowUpRight
-        className="ml-1 size-3 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-60"
+        className="ml-1 size-3 -translate-x-1 opacity-0 transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-300 group-hover:translate-x-0 group-hover:opacity-60"
         aria-hidden="true"
       />
     </Link>

@@ -92,10 +92,6 @@ export default function ValuesBento() {
   return (
     <Section3D variant="left" className="bg-white">
     <section className="relative overflow-hidden bg-white py-8 sm:py-20" aria-labelledby="values-heading">
-      <div
-        className="pointer-events-none absolute left-1/2 top-1/3 -z-10 size-[42rem] -translate-x-1/2 rounded-full bg-teal-100/35 blur-3xl"
-        aria-hidden="true"
-      />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Stagger stagger={0.1} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -107,8 +103,7 @@ export default function ValuesBento() {
             <div className="noise-overlay relative isolate flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 p-6 text-paper-50 sm:p-10">
               {/* Halos */}
               <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-                <div className="aurora-blob -left-16 top-[-20%] size-72 bg-teal-500/22 animate-aurora" />
-                <div className="aurora-blob -right-10 bottom-[-25%] size-64 bg-gold-500/12 animate-aurora-slow" />
+                <div className="pattern-rays pointer-events-none absolute -bottom-10 -left-12 h-56 w-80 opacity-[0.07]" aria-hidden="true" />
               </div>
 
               <div className="relative">
@@ -200,7 +195,7 @@ function ValueTile({ value, index }) {
 
         <div className="relative flex items-start justify-between gap-4">
           <span
-            className={`flex size-12 shrink-0 items-center justify-center rounded-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:scale-105 ${accent.chip} ${accent.chipHover}`}
+            className={`flex size-12 shrink-0 items-center justify-center rounded-2xl transition-[translate,scale,rotate,transform,background-color,color,opacity,margin] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-6 group-hover:scale-105 ${accent.chip} ${accent.chipHover}`}
           >
             <Icon className="size-5" aria-hidden="true" strokeWidth={1.75} />
           </span>

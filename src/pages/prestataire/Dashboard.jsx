@@ -60,15 +60,15 @@ export default function PrestataireDashboard() {
           </div>
         )}
 
-        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="stagger-in mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {(data?.stats || []).map((s) => (
             <Link
               key={s.label}
               to={STAT_LINKS[s.label] || "/prestataire/dashboard"}
-              className="rounded-xl border border-ink-900/8 bg-paper-100/70 px-4 py-4 transition-[transform,background-color] duration-200 hover:-translate-y-0.5 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+              className="tap rounded-xl border border-ink-900/8 bg-paper-100/70 px-4 py-4 transition-[transform,background-color] duration-200 hover:-translate-y-0.5 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
             >
               <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-wide text-ink-900/45">{s.label}</p>
-              <p className="mt-1 font-display text-2xl font-bold text-ink-900">{s.value}</p>
+              <p className="mt-1 font-display text-2xl font-bold tabular-nums text-ink-900">{s.value}</p>
             </Link>
           ))}
         </div>

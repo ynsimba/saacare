@@ -1,5 +1,8 @@
 const TOKEN_KEY = "saacare_token";
 
+/** Émis quand l'API refuse le jeton (expiré, révoqué après changement de mot de passe…). */
+export const SESSION_EXPIRED_EVENT = "saacare:session-expired";
+
 /** Base API : vide en local (proxy Vite → :8001), `https://api.saacare.com` en prod (PWA sur www.saacare.com). */
 export const API_BASE = String(import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 
@@ -63,6 +66,16 @@ async function request(path, { method = "GET", body, auth = false, headers = {} 
 
   if (!data) {
     throw new ApiError("Le service est momentanément indisponible. Contactez-nous par téléphone ou WhatsApp.", res.status);
+  }
+
+  // Jeton expiré ou révoqué : on l'oublie et on prévient l'application.
+  if (res.status === 401 && auth) {
+    clearToken();
+    try {
+      window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
+    } catch {
+      /* environnement sans window */
+    }
   }
 
   if (!res.ok) {

@@ -33,7 +33,10 @@ export default function AnimatedText({
     );
   }
 
-  const chunks = by === "char" ? Array.from(text) : text.split(" ");
+  // Typographie française : « ? ! : ; » restent collés au mot précédent (espace insécable),
+  // sinon le découpage mot à mot les renvoie seuls en début de ligne.
+  const typeset = String(text).replace(/ ([?!:;»])/g, "\u00a0$1").replace(/(«) /g, "$1\u00a0");
+  const chunks = by === "char" ? Array.from(typeset) : typeset.split(" ");
 
   const container = {
     hidden: {},

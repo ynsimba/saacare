@@ -147,7 +147,7 @@ export default function AdminValidation() {
                     <DocsBadge submitted={item.documentsSubmitted} />
                   </td>
                   <td className={`${cellBase} rounded-r-2xl pr-4`}>
-                    <div className="flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         disabled={busyId === item.id}

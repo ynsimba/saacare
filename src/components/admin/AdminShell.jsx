@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { LogOut, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Search } from "lucide-react";
 import "@fontsource/urbanist/latin-400.css";
@@ -7,6 +8,7 @@ import "@fontsource/urbanist/latin-600.css";
 import "@fontsource/urbanist/latin-700.css";
 import { useAuth } from "../../lib/auth";
 import BottomSheet from "../ui/BottomSheet";
+import { haptic, springs } from "../../lib/motion";
 import { adminDayGreeting, adminDayGreetingParts } from "../../lib/adminGreeting";
 import { initials } from "./DeskUI";
 import { onMediaChange, readMedia } from "../../lib/userMedia";
@@ -59,6 +61,13 @@ export default function AdminShell({ links }) {
   });
   const greeting = adminDayGreeting(user);
   const greetingParts = adminDayGreetingParts(user);
+  const { pathname } = useLocation();
+  const mainRef = useRef(null);
+
+  // Le contenu défile dans <main>, pas dans la fenêtre : on le remet en haut à chaque écran.
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [pathname]);
 
   useEffect(() => {
     if (!user?.id) {
@@ -192,7 +201,8 @@ export default function AdminShell({ links }) {
             </div>
           </header>
 
-          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-28 pt-4 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
+          <main ref={mainRef} className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-28 pt-4 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
+            {pathname === "/admin/dashboard" && (
             <section
               aria-label="Salutation"
               className="relative mb-5 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-white via-white to-desk-butter/70 px-5 py-4 shadow-[0_10px_30px_-18px_rgba(29,31,36,0.35)] lg:hidden"
@@ -219,8 +229,11 @@ export default function AdminShell({ links }) {
               </p>
               <p className="relative mt-2 text-sm text-desk-ink/55">Back-office SaaCare</p>
             </section>
+            )}
 
-            <Outlet context={{ query: query.trim().toLowerCase() }} />
+            <div key={pathname} className="screen-in">
+              <Outlet context={{ query: query.trim().toLowerCase() }} />
+            </div>
           </main>
         </div>
       </div>
@@ -292,7 +305,7 @@ function MobileAdminDock({ links, onLogout }) {
 
       <nav
         aria-label="Navigation du back-office"
-        className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 grid grid-cols-5 items-center gap-1 rounded-[1.75rem] bg-white px-1.5 py-2 shadow-[0_12px_40px_-12px_rgba(29,31,36,0.35)] lg:hidden"
+        className="admin-dock fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 mx-auto grid max-w-lg grid-cols-5 items-center gap-1 rounded-[1.75rem] bg-white/90 px-1.5 py-2 shadow-[0_12px_40px_-12px_rgba(29,31,36,0.35)] ring-1 ring-desk-ink/5 backdrop-blur-xl lg:hidden"
       >
         {primary.map((link) => {
           const { to, label, icon: Icon } = link;
@@ -302,11 +315,20 @@ function MobileAdminDock({ links, onLogout }) {
               key={to}
               to={to}
               title={label}
+              onClick={() => haptic()}
               aria-current={active ? "page" : undefined}
               className={`admin-rail-link flex h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 ${
                 active ? "admin-rail-link--active" : "admin-rail-link--idle"
               }`}
             >
+              {active && (
+                <motion.span
+                  layoutId="admin-dock-pill"
+                  className="absolute inset-0 z-0 rounded-2xl bg-desk-ink"
+                  transition={springs.snappy}
+                  aria-hidden="true"
+                />
+              )}
               <Icon className="relative z-10 size-6 shrink-0" strokeWidth={1.75} aria-hidden="true" />
               <span className="relative z-10 max-w-full truncate px-0.5 text-[0.62rem] font-semibold leading-none">
                 {label === "Tableau de bord" ? "Accueil" : label === "Missions actives" ? "Missions" : label === "Commandes" ? "Commandes" : label}
@@ -319,11 +341,22 @@ function MobileAdminDock({ links, onLogout }) {
           title="Plus"
           aria-expanded={moreOpen}
           aria-haspopup="dialog"
-          onClick={() => setMoreOpen(true)}
+          onClick={() => {
+            haptic();
+            setMoreOpen(true);
+          }}
           className={`admin-rail-link flex h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 ${
             moreActive || moreOpen ? "admin-rail-link--active" : "admin-rail-link--idle"
           }`}
         >
+          {(moreActive || moreOpen) && (
+            <motion.span
+              layoutId="admin-dock-pill"
+              className="absolute inset-0 z-0 rounded-2xl bg-desk-ink"
+              transition={springs.snappy}
+              aria-hidden="true"
+            />
+          )}
           <MoreHorizontal className="relative z-10 size-6 shrink-0" strokeWidth={1.75} aria-hidden="true" />
           <span className="relative z-10 text-[0.62rem] font-semibold leading-none">Plus</span>
         </button>

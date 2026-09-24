@@ -27,7 +27,7 @@ export default function CTASection({
       <Reveal
         variant="fade"
         duration={0.45}
-        className="noise-overlay relative isolate mx-auto max-w-5xl overflow-hidden rounded-2xl bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 px-5 py-7 text-center shadow-lifted sm:px-16 sm:py-16"
+        className="noise-overlay relative isolate mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-navy-800 via-navy-900 to-ink-950 sm:rounded-[2.5rem] px-5 py-7 text-center shadow-lifted sm:px-16 sm:py-16"
       >
         {/* Halos animés */}
         <motion.div
@@ -35,8 +35,7 @@ export default function CTASection({
           style={reduced ? undefined : { y: blobY }}
           aria-hidden="true"
         >
-          <div className="aurora-blob left-[10%] top-[-30%] size-80 bg-teal-500/25 animate-aurora" />
-          <div className="aurora-blob right-[5%] bottom-[-40%] size-72 bg-gold-500/16 animate-aurora-slow" />
+          <div className="pattern-rays pointer-events-none absolute -bottom-16 -right-10 h-56 w-80 opacity-[0.08] sm:h-72 sm:w-[26rem]" aria-hidden="true" />
         </motion.div>
 
         <span className="relative inline-flex items-center gap-2 rounded-md border border-white/12 bg-white/6 px-4 py-1.5 font-mono text-xs font-medium uppercase tracking-[0.18em] text-gold-200">

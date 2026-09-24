@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check, Download, ExternalLink, FileText, X } from "lucide-react";
 import Seo from "../../lib/Seo";
@@ -11,6 +11,7 @@ import {
   ID_TYPES,
   RELIGIONS,
 } from "../../data/providerForm";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 const STATUS = {
   pending: { label: "En attente", tone: "bg-desk-butter" },
@@ -63,7 +64,42 @@ function Section({ title, children }) {
   );
 }
 
+/**
+ * N'accepte qu'une data URL image/PDF en base64 et la convertit en URL blob :
+ * le type affiché est celui que nous imposons, jamais celui fourni par le
+ * candidat (un « .pdf » contenant du HTML ne peut donc pas s'exécuter).
+ */
+const SAFE_DOC = /^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,([A-Za-z0-9+/=\s]+)$/;
+
+function useSafeDocument(dataUrl) {
+  const parsed = useMemo(() => {
+    const match = SAFE_DOC.exec(dataUrl || "");
+    if (!match) return null;
+    try {
+      const binary = atob(match[2].replace(/\s/g, ""));
+      const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+      return { mime: match[1], url: URL.createObjectURL(new Blob([bytes], { type: match[1] })) };
+    } catch {
+      return null;
+    }
+  }, [dataUrl]);
+
+  useEffect(() => () => parsed && URL.revokeObjectURL(parsed.url), [parsed]);
+  return parsed;
+}
+
 function DocumentViewer({ title, doc }) {
+  const safe = useSafeDocument(doc?.dataUrl);
+
+  if (doc?.dataUrl && !safe) {
+    return (
+      <div className="flex flex-col rounded-2xl border border-dashed border-red-300 bg-red-50/60 p-4">
+        <p className="text-sm font-semibold text-desk-ink">{title}</p>
+        <p className="mt-2 text-sm text-red-700">Format non reconnu : document bloqué par sécurité.</p>
+      </div>
+    );
+  }
+
   if (!doc?.dataUrl) {
     return (
       <div className="flex flex-col rounded-2xl border border-dashed border-desk-ink/15 bg-desk-canvas/60 p-4">
@@ -73,9 +109,8 @@ function DocumentViewer({ title, doc }) {
     );
   }
 
-  const mime = doc.mime || "";
-  const isImage = mime.startsWith("image/");
-  const isPdf = mime === "application/pdf" || /\.pdf$/i.test(doc.name || "");
+  const isImage = safe.mime.startsWith("image/");
+  const isPdf = safe.mime === "application/pdf";
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-desk-ink/5">
@@ -86,7 +121,7 @@ function DocumentViewer({ title, doc }) {
         </div>
         <div className="flex shrink-0 gap-1">
           <a
-            href={doc.dataUrl}
+            href={safe.url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex size-9 items-center justify-center rounded-full bg-desk-canvas text-desk-ink transition-colors hover:bg-desk-mint"
@@ -96,7 +131,7 @@ function DocumentViewer({ title, doc }) {
             <ExternalLink className="size-4" aria-hidden="true" />
           </a>
           <a
-            href={doc.dataUrl}
+            href={safe.url}
             download={doc.name || title}
             className="inline-flex size-9 items-center justify-center rounded-full bg-desk-canvas text-desk-ink transition-colors hover:bg-desk-mint"
             aria-label={`Télécharger ${title}`}
@@ -109,14 +144,14 @@ function DocumentViewer({ title, doc }) {
       <div className="bg-desk-canvas/40 p-3">
         {isImage ? (
           <img
-            src={doc.dataUrl}
+            src={safe.url}
             alt={title}
             className="mx-auto max-h-72 w-auto max-w-full rounded-lg object-contain"
           />
         ) : isPdf ? (
           <iframe
             title={title}
-            src={doc.dataUrl}
+            src={safe.url}
             className="h-72 w-full rounded-lg bg-white"
           />
         ) : (
@@ -204,7 +239,7 @@ export default function AdminProviderDetail() {
         </div>
       )}
 
-      {!item && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!item && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement du prestataire" />}
 
       {item && (
         <div className="mt-5 space-y-6">

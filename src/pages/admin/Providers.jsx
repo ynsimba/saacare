@@ -145,7 +145,7 @@ export default function AdminProviders() {
                       </span>
                     </td>
                     <td className={`${cellBase} rounded-r-2xl pr-4`}>
-                      <div className="flex flex-wrap items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex flex-wrap items-center gap-1.5" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                         {canDeactivate && (
                           <button
                             type="button"

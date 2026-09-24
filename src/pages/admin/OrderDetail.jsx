@@ -7,6 +7,7 @@ import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading, initials } from "../../components/admin/DeskUI";
 import { domains } from "../../data/domains";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 const STATUS = {
   nouvelle: "Nouvelle",
@@ -165,7 +166,7 @@ export default function AdminOrderDetail() {
           <DeskAlert>{error}</DeskAlert>
         </div>
       )}
-      {!item && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!item && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement de la commande" />}
 
       {item && (
         <div className="mt-5 space-y-5">

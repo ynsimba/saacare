@@ -95,13 +95,13 @@ export default function SolutionDetail() {
           <Button to={`/prestataires?service=${domain.slug}`} variant="glass" size="md" className="w-full sm:w-auto">
             Voir les prestataires
           </Button>
-          <span className="hidden items-center gap-3 rounded-2xl px-4 py-2.5 glass-dark sm:inline-flex">
-            <span className="grid size-9 place-items-center rounded-xl bg-white/12 text-gold-500">
+          <span className="glass-capsule hidden items-center gap-3 rounded-full py-2 pl-2 pr-5 sm:inline-flex">
+            <span className="grid size-9 place-items-center rounded-full bg-gold-500 text-white">
               <DomainIcon name={domain.icon} className="size-5" />
             </span>
             <span>
-              <span className="block font-display text-lg font-bold text-paper-50">{domain.heroStat.value}</span>
-              <span className="block text-xs text-paper-50/80">{domain.heroStat.label}</span>
+              <span className="block font-display text-lg font-extrabold text-ink-900">{domain.heroStat.value}</span>
+              <span className="block text-xs text-ink-900/60">{domain.heroStat.label}</span>
             </span>
           </span>
         </div>

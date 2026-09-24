@@ -184,12 +184,12 @@ export default function DashboardLayout() {
   if (user?.role === "admin") return <AdminShell links={links} />;
 
   return (
-    <div className="min-h-screen bg-paper-100">
-      <header className="sticky top-0 z-40 border-b border-ink-900/8 bg-white/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <div className="min-h-dvh bg-paper-100">
+      <header className="sticky top-0 z-40 px-3 pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:px-5 sm:pt-[calc(env(safe-area-inset-top)+0.75rem)]">
+        <div className="glass-capsule mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 rounded-full pl-4 pr-2 sm:h-16 sm:pl-6">
           <Link to={homeForRole(user?.role)} className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="SaaCare" width={1400} height={322} className="h-9 w-auto" />
-            <span className="hidden rounded-md bg-teal-50 px-2 py-0.5 font-mono text-[0.65rem] font-semibold uppercase tracking-wide text-teal-700 sm:inline">
+            <img src="/logo.png" alt="SaaCare" width={1400} height={322} className="h-8 w-auto sm:h-9" />
+            <span className="hidden rounded-full bg-teal-50 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-teal-700 sm:inline">
               Espace
             </span>
           </Link>
@@ -198,7 +198,7 @@ export default function DashboardLayout() {
             <button
               type="button"
               onClick={logout}
-              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-ink-900/65 transition-colors hover:bg-ink-900/5 hover:text-ink-900"
+              className="tap inline-flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium text-ink-900/65 transition-colors hover:bg-ink-900/5 hover:text-ink-900"
             >
               <LogOut className="size-4" aria-hidden="true" />
               <span className="hidden sm:inline">Déconnexion</span>

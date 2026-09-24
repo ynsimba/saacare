@@ -18,6 +18,7 @@ import { DeskAlert, DeskHeading, initials } from "../../components/admin/DeskUI"
 import { api } from "../../lib/api";
 import { subscribeToMission } from "../../lib/realtime";
 import { formatDistance, formatEta } from "../../lib/tripFormat";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 const ORDER_STATUS = {
   nouvelle: "Nouvelle",
@@ -221,7 +222,7 @@ export default function AdminMissionDetail() {
           <DeskAlert>{error}</DeskAlert>
         </div>
       )}
-      {!data && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!data && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement de la mission" />}
 
       {data && order && (
         <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">

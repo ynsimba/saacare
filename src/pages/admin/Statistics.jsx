@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Seo from "../../lib/Seo";
 import { api } from "../../lib/api";
 import { DeskAlert, DeskHeading, DeskWidget } from "../../components/admin/DeskUI";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 const ROLE_LABEL = { client: "Clients", prestataire: "Prestataires", admin: "Admins" };
 const STAT_TONES = ["mint", "butter", "lilac", "pink"];
@@ -42,7 +43,7 @@ export default function AdminStatistics() {
           <DeskAlert>{error}</DeskAlert>
         </div>
       )}
-      {!data && !error && <p className="mt-6 text-sm text-desk-ink/55">Chargement…</p>}
+      {!data && !error && <SkeletonPage tone="desk" className="mt-6" label="Chargement des statistiques" />}
 
       {data && (
         <div className="mt-5 space-y-5">

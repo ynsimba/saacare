@@ -1,7 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { AnimatePresence, motion } from "motion/react";
 import { Search, SearchX, SlidersHorizontal, X, Info, ShieldCheck } from "lucide-react";
 import Seo from "../lib/Seo";
 import PageHero from "../components/ui/PageHero";
@@ -11,7 +9,7 @@ import { domains, getDomainBySlug } from "../data/domains";
 import { hasPublicRating, AVAILABILITY, LEVELS, pickOnePerDomain } from "../data/providers";
 import { COMMUNES, LANGUAGES, METIERS, DRIVING, EXPERIENCE_RANGES, GENDERS } from "../data/providerForm";
 import { api } from "../lib/api";
-import { EASE } from "../lib/motion";
+import BottomSheet from "../components/ui/BottomSheet";
 
 const PAGE_SIZE = 12;
 const LEVEL_WEIGHT = { "Élite": 3, "Certifié": 2, "Vérifié": 1 };
@@ -84,6 +82,7 @@ export default function FindProvider() {
   const [query, setQuery] = useState(urlQuery);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [panelOpen, setPanelOpen] = useState(false);
+  const closePanel = useCallback(() => setPanelOpen(false), []);
   const [providers, setProviders] = useState([]);
   const [loadError, setLoadError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -137,21 +136,6 @@ export default function FindProvider() {
   }, [query, urlQuery]);
 
   useEffect(() => setVisible(PAGE_SIZE), [params, query]);
-
-  // Le tiroir mobile se ferme au clavier, et la page dessous ne défile plus.
-  useEffect(() => {
-    if (!panelOpen) return undefined;
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") setPanelOpen(false);
-    };
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [panelOpen]);
 
   const domain = getDomainBySlug(filters.service);
   const metiers = METIERS.filter((m) => !filters.service || m.pole === filters.service);
@@ -349,7 +333,7 @@ export default function FindProvider() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Métier, compétence, commune ou référence…"
-                className="min-h-12 w-full rounded-lg border border-ink-900/15 bg-white pl-10 pr-3 text-sm text-ink-900 outline-none focus:border-teal-600"
+                className="min-h-12 w-full rounded-full border border-ink-900/15 bg-white pl-10 pr-3 text-sm text-ink-900 outline-none focus:border-teal-600"
               />
             </div>
             <select
@@ -504,60 +488,31 @@ export default function FindProvider() {
         </div>
       </section>
 
-      {/* ---------------- Panneau de filtres mobile ----------------
-          Porté dans <body> : la page est enveloppée d'un filtre de transition,
-          qui ferait sinon de `fixed` un positionnement relatif à la page. */}
-      {createPortal(
-        <AnimatePresence>
-          {panelOpen && (
-            <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Filtres">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setPanelOpen(false)}
-                className="absolute inset-0 bg-ink-950/50"
-                aria-hidden="true"
-              />
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-3xl bg-white"
-              >
-                <div className="flex items-center justify-between border-b border-ink-900/8 px-5 py-4">
-                  <h2 className="font-display text-lg font-bold text-ink-900">Filtres</h2>
-                  <button
-                    type="button"
-                    onClick={() => setPanelOpen(false)}
-                    aria-label="Fermer les filtres"
-                    className="grid size-11 place-items-center rounded-full hover:bg-ink-900/5"
-                  >
-                    <X className="size-5" aria-hidden="true" />
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto px-5 py-5">{filterPanel}</div>
-                <div className="flex gap-3 border-t border-ink-900/8 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                  <button type="button" onClick={reset} className="min-h-12 flex-1 rounded-lg border border-ink-900/15 text-sm font-semibold text-ink-900">
-                    Effacer
-                  </button>
-                  <button type="button" onClick={() => setPanelOpen(false)} className="min-h-12 flex-[2] rounded-lg bg-teal-600 text-sm font-semibold text-white">
-                    Voir {results.length} profil{results.length > 1 ? "s" : ""}
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>,
-        document.body,
-      )}
+      {/* ---------------- Panneau de filtres mobile : feuille glissante ---------------- */}
+      <BottomSheet
+        open={panelOpen}
+        onClose={closePanel}
+        title="Filtres"
+        className="lg:hidden"
+        footer={
+          <div className="flex gap-3">
+            <button type="button" onClick={reset} className="tap min-h-12 flex-1 rounded-2xl border border-ink-900/15 text-sm font-semibold text-ink-900">
+              Effacer
+            </button>
+            <button type="button" onClick={closePanel} className="tap min-h-12 flex-[2] rounded-2xl bg-teal-600 text-sm font-semibold text-white">
+              Voir {results.length} profil{results.length > 1 ? "s" : ""}
+            </button>
+          </div>
+        }
+      >
+        <div className="pt-1">{filterPanel}</div>
+      </BottomSheet>
     </>
   );
 }
 
 const selectClass =
-  "w-full cursor-pointer rounded-lg border border-ink-900/15 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-teal-600";
+  "w-full cursor-pointer rounded-full border border-ink-900/15 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-teal-600";
 
 function Group({ label, children }) {
   return (
@@ -629,7 +584,7 @@ function EmptyState({ domainSlug, hasCommune, onWiden, onReset }) {
         </p>
         <div className="flex flex-wrap gap-3">
           {hasCommune && (
-            <button type="button" onClick={onWiden} className="min-h-11 rounded-lg bg-teal-600 px-4 text-sm font-semibold text-white">
+            <button type="button" onClick={onWiden} className="min-h-11 rounded-full bg-teal-600 px-4 text-sm font-semibold text-white">
               Élargir aux communes voisines
             </button>
           )}

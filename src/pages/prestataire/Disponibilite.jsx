@@ -3,6 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import Seo from "../../lib/Seo";
 import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
+import { SkeletonList } from "../../components/ui/Skeleton";
 
 const WEEKDAYS = [
   { value: 1, label: "Lundi" },
@@ -80,7 +81,7 @@ export default function PrestataireDisponibilite() {
         <p className="mt-2 text-sm text-ink-900/60">Indiquez vos créneaux habituels pour faciliter l’affectation des missions.</p>
 
         {loading ? (
-          <p className="mt-8 text-sm text-ink-900/50">Chargement…</p>
+          <SkeletonList rows={4} className="mt-8" label="Chargement des disponibilités" />
         ) : (
           <form onSubmit={onSave} className="mt-6 space-y-4">
             {slots.map((slot, index) => (

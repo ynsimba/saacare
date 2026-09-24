@@ -8,6 +8,7 @@ import TripMap from "../../components/tracking/TripMap";
 import TripStatusPanel from "../../components/tracking/TripStatusPanel";
 import { api } from "../../lib/api";
 import { subscribeToMission } from "../../lib/realtime";
+import { SkeletonPage } from "../../components/ui/Skeleton";
 
 /**
  * Suivi de l'arrivée du prestataire, côté client (§8).
@@ -65,7 +66,7 @@ export default function ClientOrderTracking() {
   if (!data) {
     return (
       <div className="rounded-2xl border border-ink-900/8 bg-white p-6 sm:p-8">
-        <p className="text-sm text-ink-900/55">Chargement du suivi…</p>
+        <SkeletonPage label="Chargement du suivi" />
       </div>
     );
   }

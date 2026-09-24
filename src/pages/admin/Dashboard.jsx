@@ -229,7 +229,7 @@ export default function AdminDashboard() {
         <div className="min-w-0 space-y-8">
           <section>
             <DeskHeading count={pending.length + missions.length}>Vos activités du jour</DeskHeading>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="stagger-in mt-4 grid gap-4 sm:grid-cols-2">
               <ActivityCard
                 tone="mint"
                 title="Validation"
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
 
           <section>
             <DeskHeading>Suivi de la plateforme</DeskHeading>
-            <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="stagger-in mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
               {stats.map((s, i) => {
                 const to = STAT_LINKS[s.label] || "/admin/dashboard";
                 return (
